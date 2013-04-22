@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AST_Getter
+﻿namespace AST_Getter
 {
     public abstract class GlobalConstants
     {
@@ -12,7 +6,7 @@ namespace AST_Getter
         //'C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\'.
         public const string SolutionPath = @"..\..\..\";
 
-        public const string OutputPath = SolutionPath + @"ASTGetter\Output\";
+        public const string OutputPath = SolutionPath + @"ASTGetter\GeneratedOutput\";
         public const string ExampleCodePath = SolutionPath + @"ExampleCode\";
 
         public const string FirstFileToProcess = "Aisle";

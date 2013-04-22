@@ -14,7 +14,8 @@ namespace AST_Getter.Visitor
         {
 
             Output = new FormatHelper("cSharpFile(");
-            Output.AddWithQuotesAndComma(filename);
+            //double backslashes, the file will be in .rsc so they will count as escapes
+            Output.AddWithQuotesAndComma(filename.Replace("\\","\\\\"));
         }
 
         public FormatHelper Output { get; set; }
