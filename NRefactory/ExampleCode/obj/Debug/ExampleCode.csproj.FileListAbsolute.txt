@@ -1,0 +1,5 @@
+C:\Uitvoering\NRefactory\ExampleCode\bin\Debug\ExampleCode.dll
+C:\Uitvoering\NRefactory\ExampleCode\bin\Debug\ExampleCode.pdb
+C:\Uitvoering\NRefactory\ExampleCode\obj\Debug\ExampleCode.csprojResolveAssemblyReference.cache
+C:\Uitvoering\NRefactory\ExampleCode\obj\Debug\ExampleCode.dll
+C:\Uitvoering\NRefactory\ExampleCode\obj\Debug\ExampleCode.pdb

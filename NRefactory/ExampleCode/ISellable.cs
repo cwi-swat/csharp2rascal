@@ -1,0 +1,6 @@
+﻿namespace ExampleCode
+{
+    interface ISellable
+    {
+    }
+}

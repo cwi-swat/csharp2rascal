@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTGetter", "ASTGetter\AST Getter.csproj", "{9416D919-3DF0-4CC1-A392-B2162D4C06E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{639A51ED-CCE3-444F-8065-2A0CA331195C}"
+	ProjectSection(SolutionItems) = preProject
+		Assemblies\ICSharpCode.NRefactory.CSharp.dll = Assemblies\ICSharpCode.NRefactory.CSharp.dll
+		Assemblies\ICSharpCode.NRefactory.CSharp.pdb = Assemblies\ICSharpCode.NRefactory.CSharp.pdb
+		Assemblies\ICSharpCode.NRefactory.CSharp.xml = Assemblies\ICSharpCode.NRefactory.CSharp.xml
+		Assemblies\ICSharpCode.NRefactory.dll = Assemblies\ICSharpCode.NRefactory.dll
+		Assemblies\ICSharpCode.NRefactory.pdb = Assemblies\ICSharpCode.NRefactory.pdb
+		Assemblies\ICSharpCode.NRefactory.xml = Assemblies\ICSharpCode.NRefactory.xml
+		Assemblies\ICSharpCode.NRefactory.Xml.dll = Assemblies\ICSharpCode.NRefactory.Xml.dll
+		Assemblies\ICSharpCode.NRefactory.Xml.pdb = Assemblies\ICSharpCode.NRefactory.Xml.pdb
+		Assemblies\ICSharpCode.NRefactory.Xml.xml = Assemblies\ICSharpCode.NRefactory.Xml.xml
+		Assemblies\Mono.Cecil.dll = Assemblies\Mono.Cecil.dll
+		Assemblies\Mono.Cecil.pdb = Assemblies\Mono.Cecil.pdb
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleCode", "ExampleCode\ExampleCode.csproj", "{7E8DE259-3D85-41FD-BE07-A2D05E988A9D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9416D919-3DF0-4CC1-A392-B2162D4C06E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9416D919-3DF0-4CC1-A392-B2162D4C06E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9416D919-3DF0-4CC1-A392-B2162D4C06E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9416D919-3DF0-4CC1-A392-B2162D4C06E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E8DE259-3D85-41FD-BE07-A2D05E988A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E8DE259-3D85-41FD-BE07-A2D05E988A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E8DE259-3D85-41FD-BE07-A2D05E988A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E8DE259-3D85-41FD-BE07-A2D05E988A9D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

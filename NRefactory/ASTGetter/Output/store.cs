@@ -1,0 +1,19 @@
+[
+usingDeclaration("System"),
+usingDeclaration("System.Collections.Generic"),
+usingDeclaration("System.Linq"),
+usingDeclaration("System.Text"),
+usingDeclaration("System.Threading.Tasks"),
+namespaceDeclaration(Example_source,Roslyn.Example_source,
+[
+  identifier("Roslyn"),
+  identifier("Example_source"),
+],
+[
+  typeDeclaration(Store,
+[
+],
+[
+],Class,,
+])
+]
