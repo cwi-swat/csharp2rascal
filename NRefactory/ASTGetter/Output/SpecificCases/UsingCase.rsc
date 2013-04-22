@@ -1,0 +1,17 @@
+[cSharpFile("C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\SpecificCases\UsingCase.cs",[
+usingDeclaration("System"),
+usingDeclaration("System.Collections.Generic"),
+usingDeclaration("System.Linq"),
+usingDeclaration("System.Text"),
+usingDeclaration("System.Threading.Tasks"),
+namespaceDeclaration("SpecificCases","ExampleCode.SpecificCases",[],
+[attributedNode(typeDeclaration("UsingCase",[],[simpleType("IDisposable",[]),],class(),[],
+[memberDeclaration(methodDeclaration("Dispose",[],blockStatementPlaceholder(
+[throwStatement(objectCreateExpression([],emptyExpression(),simpleType("NotImplementedException",[])))]),[],false,[],[modifiersPublic(),],[],[],primitiveType("void")))
+,
+memberDeclaration(methodDeclaration("Using",[],blockStatementPlaceholder(
+[usingStatement(blockStatementPlaceholder([]),statement(variableDeclarationStatement([modifiersNone(),],
+[variableInitializer("Var",objectCreateExpression([],emptyExpression(),simpleType("UsingCase",[])))],simpleType("var",[]))))]),[],false,[],[modifiersNone(),],[],[],primitiveType("void")))
+],[],[modifiersNone(),],[],))
+])
+])]

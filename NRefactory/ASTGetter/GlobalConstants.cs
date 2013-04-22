@@ -8,26 +8,13 @@ namespace AST_Getter
 {
     public abstract class GlobalConstants
     {
-        public const string Path = @"C:\Uitvoering\NRefactory\ExampleCode\";
-        //public const string Filename = "product.cs";
-        //public const string Filename = "milk.cs";
-        //public const string Filename = "Aisle.cs";
-        //public const string Filename = "ISellable.cs";
-        //public const string Filename = "ShoppingCart.cs";
-     
-        //public const string Filename = @"SpecificCases\TryCatch.cs";
-        //public const string Filename = @"SpecificCases\linq.cs";
-        //public const string Filename = @"SpecificCases\typeParameter.cs";
-        //public const string Filename = @"SpecificCases\dowhileCase.cs";
-        //public const string Filename = @"SpecificCases\foreachCase.cs";
-        //public const string Filename = @"SpecificCases\forCase.cs";
-        //public const string Filename = @"SpecificCases\enumCase.cs";
-        //public const string Filename = @"SpecificCases\eventCase.cs";
-        //public const string Filename = @"SpecificCases\lockCase.cs";
-        //public const string Filename = @"SpecificCases\usingCase.cs";
-        //public const string Filename = @"SpecificCases\whileCase.cs";
-        //public const string Filename = @"SpecificCases\fixedUnsafeCheckedUncheckedCase.cs";
-        //public const string Filename = @"SpecificCases\yieldCase.cs";
-        public const string Filename = @"SpecificCases\AttributeCase.cs";
+        //coming from the .exe executable in the debug or release folder
+        //'C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\'.
+        public const string SolutionPath = @"..\..\..\";
+
+        public const string OutputPath = SolutionPath + @"ASTGetter\Output\";
+        public const string ExampleCodePath = SolutionPath + @"ExampleCode\";
+
+        public const string FirstFileToProcess = "Aisle";
     }
 }

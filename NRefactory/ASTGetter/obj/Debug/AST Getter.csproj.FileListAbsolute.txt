@@ -35,3 +35,17 @@ C:\Uitvoering\NRefactory\ASTGetter\obj\Debug\AST Getter.pdb
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\AST Getter.exe.config
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Debug\AST Getter.exe
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Debug\AST Getter.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\AST Getter.exe
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\AST Getter.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.CSharp.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.Xml.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\Mono.Cecil.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.xml
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.CSharp.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.CSharp.xml
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.Xml.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.Xml.xml
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\Mono.Cecil.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Debug\AST Getter.csprojResolveAssemblyReference.cache
