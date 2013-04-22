@@ -1,0 +1,10 @@
+[cSharpFile("C:\\Uitvoering\\Workspace\\git\\csharp2rascal\\NRefactory\\ExampleCode\\Item.cs",[
+usingDeclaration("System"),
+usingDeclaration("System.Collections.Generic"),
+usingDeclaration("System.Linq"),
+usingDeclaration("System.Text"),
+usingDeclaration("System.Threading.Tasks"),
+namespaceDeclaration("ExampleCode","ExampleCode",[],
+[attributedNode(typeDeclaration("Item",[],[simpleType("Object",[]),],class(),[],[],[],[modifiersPublic(),],[],))
+])
+])]

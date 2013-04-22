@@ -64,10 +64,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="GeneratedOutput\Aisle.rsc" />
+    <None Include="GeneratedOutput\Company.rsc" />
+    <None Include="GeneratedOutput\ISellable.rsc" />
+    <None Include="GeneratedOutput\Item.rsc" />
+    <None Include="GeneratedOutput\Milk.rsc" />
+    <None Include="GeneratedOutput\Product.rsc" />
+    <None Include="GeneratedOutput\Properties\AssemblyInfo.rsc" />
+    <None Include="GeneratedOutput\Shopper.rsc" />
+    <None Include="GeneratedOutput\ShoppingCart.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\AttributeCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\DoWhileCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\EnumCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\EventCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\fixedUnsafeCheckedUncheckedCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\ForCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\ForEachCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\Linq.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\LockCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\SwitchCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\TryCatch.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\TypeParameter.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\UsingCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\WhileCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\yieldCase.rsc" />
+    <None Include="GeneratedOutput\Store.rsc" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GeneratedOutput\SpecificCases\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Notes.txt" />
   </ItemGroup>

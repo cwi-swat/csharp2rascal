@@ -1,0 +1,21 @@
+[cSharpFile("C:\\Uitvoering\\Workspace\\git\\csharp2rascal\\NRefactory\\ExampleCode\\SpecificCases\\TryCatch.cs",[
+usingDeclaration("System"),
+namespaceDeclaration("SpecificCases","ExampleCode.SpecificCases",[],
+[attributedNode(typeDeclaration("TryCatch",[],[],class(),[],
+[memberDeclaration(methodDeclaration("_TryCatch",[],blockStatementPlaceholder(
+[variableDeclarationStatement([modifiersNone(),],
+[variableInitializer("a",primitiveExpression("asd"))],primitiveType("object")),
+tryCatchStatement(
+[catchClause(blockStatementPlaceholder(
+[expressionStatement(assignmentExpression(identifierExpression("ex",[]),assignmentOperatorAssign(),objectCreateExpression(
+[primitiveExpression("error in casting"),
+identifierExpression("ex",[])],emptyExpression(),simpleType("Exception",[])),)
+),
+throwStatement(emptyExpression())]),"ex")],blockStatementPlaceholder(
+[expressionStatement(assignmentExpression(identifierExpression("a",[]),assignmentOperatorAssign(),null(),)
+)]),blockStatementPlaceholder(
+[expressionStatement(assignmentExpression(identifierExpression("a",[]),assignmentOperatorAssign(),primitiveExpression(1),)
+)]))]),[],false,[],[modifiersNone(),],[],[],primitiveType("void")))
+],[],[modifiersNone(),],[],))
+])
+])]
