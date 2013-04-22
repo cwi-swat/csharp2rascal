@@ -3,25 +3,27 @@ module csharp::reader::FileInput
 import csharp::syntax::CSharpSyntax;
 import ValueIO;
 
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/shoppingcart.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/aisle.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/linq.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/dowhilecase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/forcase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/foreachcase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/enumCase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/eventCase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/fixedUnsafeCheckedUncheckedCase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/yieldcase.cs|;
-//loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/typeparameter.cs|;
-loc filename = |file:///C:/Uitvoering/NRefactory/ASTGetter/Output/specificcases/AttributeCase.cs|;
 
+loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/|;
+//str filename = "shoppingcart.rsc";
+//str filename = "aisle.rsc";
+//str filename = "specificcases/linq.rsc";
+//str filename = "specificcases/dowhilecase.rsc";
+//str filename = "specificcases/forcase.rsc";
+//str filename = "specificcases/foreachcase.rsc";
+//str filename = "specificcases/enumCase.rsc";
+//str filename = "specificcases/eventCase.rsc";
+//str filename = "specificcases/fixedUnsafeCheckedUncheckedCase.rsc";
+//str filename = "specificcases/yieldcase.rsc";
+str filename = "specificcases/typeparameter.rsc";
+//str filename = "specificcases/AttributeCase.rsc";
 
 public CSharpProject read()
 {
-	return read(filename);
+	return read(folderPath + filename);
 }
 public CSharpProject read(loc file)
 {
 	return  readTextValueFile(#CSharpProject, file);
 }
+
