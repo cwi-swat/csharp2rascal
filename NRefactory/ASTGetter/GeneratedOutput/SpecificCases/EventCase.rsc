@@ -37,6 +37,17 @@ memberDeclaration(eventDeclaration("",[],[],[modifiersNone(),],
 memberDeclaration(eventDeclaration("",[],[],[modifiersNone(),],
 [variableInitializer("Event3",emptyExpression())],simpleType("MyThirdEventHandler",[simpleType("String",[]),])))
 ,
+memberDeclaration(fieldDeclaration("_onDraw",[],[],[modifiersPrivate(),],
+[variableInitializer("_onDraw",emptyExpression())],simpleType("EventHandler",[])))
+,
+memberDeclaration(customEventDeclaration("OnDraw",accessor([],blockStatementPlaceholder(
+[expressionStatement(assignmentExpression(identifierExpression("_onDraw",[]),assignmentOperatorAdd(),identifierExpression("value",[]),)
+)]),[],[modifiersNone(),],)
+,[],[],[modifiersNone(),],accessor([],blockStatementPlaceholder(
+[expressionStatement(assignmentExpression(identifierExpression("_onDraw",[]),assignmentOperatorSubtract(),identifierExpression("value",[]),)
+)]),[],[modifiersNone(),],)
+,))
+,
 constructorDeclaration("EventCase",[],blockStatementPlaceholder(
 [expressionStatement(assignmentExpression(memberReferenceExpression("Event",thisReferenceExpression(),[]),assignmentOperatorAdd(),identifierExpression("EventCase_Event",[]),)
 ),

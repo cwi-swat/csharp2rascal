@@ -9,6 +9,8 @@
         public const string OutputPath = SolutionPath + @"ASTGetter\GeneratedOutput\";
         public const string ExampleCodePath = SolutionPath + @"ExampleCode\";
 
-        public const string FirstFileToProcess = "Aisle";
+        public const string FirstFileToProcess = @"specificcases\AnonymousMethodCase";
+        //public const string FirstFileToProcess = @"Product";
+        
     }
 }

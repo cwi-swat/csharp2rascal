@@ -21,13 +21,15 @@ namespace AST_Getter.Helpers
             }
             else if (astType is ComposedType)
             {
-                //composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank)
-                //var composedType = astType as ComposedType;
-                //var formatter = new FormatHelper("composedType(");
-                //formatter.AddWithComma(CollectionHelper.Get(composedType.ArraySpecifiers));
-                //formatter.AddWithComma(composedType.HasNullableSpecifier.ToString().ToLower());
-                //formatter.Add("primitiveExpression(" + composedType.PointerRank + ")");
-                //type += formatter.S;
+                //composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType)
+                var composedType = astType as ComposedType;
+                var formatter = new FormatHelper("composedType(");
+                formatter.AddWithComma(CollectionHelper.Get(composedType.ArraySpecifiers));
+                formatter.AddWithComma(composedType.HasNullableSpecifier.ToString().ToLower());
+                formatter.AddWithComma(composedType.PointerRank.ToString());
+                formatter.Add(Get(composedType.BaseType));
+
+                type += formatter.S;
             }
             else if (astType is MemberType)
             {
@@ -40,7 +42,6 @@ namespace AST_Getter.Helpers
                 formatter.Add(CollectionHelper.Get(memberType.TypeArguments));
 
                 type += formatter.S;
-
             }
             else if (astType is PrimitiveType)
             {

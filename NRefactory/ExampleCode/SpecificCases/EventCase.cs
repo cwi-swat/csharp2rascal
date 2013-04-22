@@ -3,7 +3,7 @@
 namespace ExampleCode.SpecificCases
 {
     class EventCase
-    { 
+    {
         void EventCase_Event(object sender, EventArgs e)
         {
             throw new NotImplementedException();
@@ -19,6 +19,19 @@ namespace ExampleCode.SpecificCases
         event MySecondEventHandler Event2;
         event MyThirdEventHandler<String> Event3;
 
+        private EventHandler _onDraw;
+        event EventHandler OnDraw
+        {
+            add
+            {
+                _onDraw += value;
+            }
+            remove
+            {
+                _onDraw -= value;
+            }
+        }
+
         public EventCase()
         {
             this.Event += EventCase_Event;
@@ -26,7 +39,7 @@ namespace ExampleCode.SpecificCases
             this.Event3 += EventCase_Event3;
         }
 
-       
+
         String EventCase_Event2(object sender, EventArgs e)
         {
             throw new NotImplementedException();

@@ -11,8 +11,12 @@
         static void TestMethod()
         {
 
-            var pt = new Point();
-
+            var pt = new Point
+            {
+                y = checked(1),
+                x = unchecked(1)
+            };
+            
             unsafe
             {
                 pt.x = 1;
@@ -22,6 +26,8 @@
                     *p = 1;
                 }
             }
+
+            
 
             checked
             {

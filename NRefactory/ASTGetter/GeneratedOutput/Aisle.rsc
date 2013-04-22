@@ -6,7 +6,8 @@ usingDeclaration("System.Text"),
 usingDeclaration("System.Threading.Tasks"),
 namespaceDeclaration("Example_source","Roslyn.Example_source",[],
 [attributedNode(typeDeclaration("Aisle",[],[],class(),[],
-[memberDeclaration(fieldDeclaration("Name",[],[],[modifiersPublic(),],[],primitiveType("string")))
+[memberDeclaration(fieldDeclaration("Name",[],[],[modifiersPublic(),],
+[variableInitializer("Name",emptyExpression())],primitiveType("string")))
 ,
 memberDeclaration(propertyDeclaration("Products",[],accessor([],emptyStatement(),[],[modifiersNone(),],)
 ,[],[modifiersPublic(),],accessor([],emptyStatement(),[],[modifiersNone(),],)

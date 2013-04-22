@@ -39,9 +39,11 @@ expressionStatement(assignmentExpression(identifierExpression("_products",[]),as
 )]),[],[modifiersNone(),],)
 ,simpleType("List",[simpleType("Product",[]),])))
 ,
-memberDeclaration(fieldDeclaration("_products",[],[],[modifiersPrivate(),],[],simpleType("List",[simpleType("Product",[]),])))
+memberDeclaration(fieldDeclaration("_products",[],[],[modifiersPrivate(),],
+[variableInitializer("_products",emptyExpression())],simpleType("List",[simpleType("Product",[]),])))
 ,
-memberDeclaration(fieldDeclaration("_totalProductsAddedToShippingCarts",[],[],[modifiersPrivate(),modifiersStatic(),],[],primitiveType("int")))
+memberDeclaration(fieldDeclaration("_totalProductsAddedToShippingCarts",[],[],[modifiersPrivate(),modifiersStatic(),],
+[variableInitializer("_totalProductsAddedToShippingCarts",emptyExpression())],primitiveType("int")))
 ,
 memberDeclaration(methodDeclaration("TotalProductsAddedToShoppingCarts",[],blockStatementPlaceholder(
 [expressionStatement(assignmentExpression(identifierExpression("total",[]),assignmentOperatorAssign(),identifierExpression("_totalProductsAddedToShippingCarts",[]),)

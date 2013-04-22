@@ -1,0 +1,16 @@
+[cSharpFile("C:\\Uitvoering\\Workspace\\git\\csharp2rascal\\NRefactory\\ExampleCode\\SpecificCases\\CastCase.cs",[
+usingDeclaration("System"),
+usingDeclaration("System.Collections.Generic"),
+usingDeclaration("System.Linq"),
+usingDeclaration("System.Text"),
+usingDeclaration("System.Threading.Tasks"),
+namespaceDeclaration("SpecificCases","ExampleCode.SpecificCases",[],
+[attributedNode(typeDeclaration("CastCase",[],[],class(),[],
+[memberDeclaration(fieldDeclaration("a",[],[],[modifiersStatic(),],
+[variableInitializer("a",emptyExpression())],primitiveType("object")))
+,
+memberDeclaration(fieldDeclaration("b",[],[],[modifiersNone(),],
+[variableInitializer("b",castExpression(identifierExpression("a",[]),primitiveType("int")))],primitiveType("int")))
+],[],[modifiersNone(),],[],))
+])
+])]

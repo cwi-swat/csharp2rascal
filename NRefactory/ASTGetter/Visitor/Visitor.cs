@@ -15,7 +15,7 @@ namespace AST_Getter.Visitor
 
             Output = new FormatHelper("cSharpFile(");
             //double backslashes, the file will be in .rsc so they will count as escapes
-            Output.AddWithQuotesAndComma(filename.Replace("\\","\\\\"));
+            Output.AddWithQuotesAndComma(filename.Replace("\\", "\\\\"));
         }
 
         public FormatHelper Output { get; set; }
@@ -37,6 +37,9 @@ namespace AST_Getter.Visitor
         #endregion Root, CSharpFile
 
         #region AstNode
+
+
+        #region Output extenders
 
         public override void VisitUsingDeclaration(UsingDeclaration usingDeclaration)
         {
@@ -63,6 +66,18 @@ namespace AST_Getter.Visitor
             Output.Add(CollectionHelper.Get(namespaceDeclaration.Members));
             Output.AddLine(")");
         }
+
+        public override void VisitUsingAliasDeclaration(UsingAliasDeclaration usingDeclaration)
+        {
+            base.VisitUsingAliasDeclaration(usingDeclaration);
+            //usingAliasDeclaration(str \alias, AstType \import)
+            Output.Add("usingAliasDeclaration(");
+            Output.AddWithQuotesAndComma(usingDeclaration.Alias);
+            Output.Add(CommonHelper.Get(usingDeclaration.Import));
+            Output.AddLine(")");
+        }
+
+        #endregion Output extenders
 
         public override void VisitParameterDeclaration(ParameterDeclaration parameterDeclaration)
         {
@@ -134,8 +149,30 @@ namespace AST_Getter.Visitor
             formatter.AddWithQuotesAndComma(attributeSection.AttributeTarget);
             formatter.Add(CollectionHelper.Get(attributeSection.Attributes));
             formatter.Add(")");
-            
+
             attributeSection.RascalString = formatter.S;
+        }
+
+        public override void VisitArraySpecifier(ArraySpecifier arraySpecifier)
+        {
+            base.VisitArraySpecifier(arraySpecifier);
+            //arraySpecifier(int dimensions)
+
+            arraySpecifier.RascalString = "arraySpecifier(" + arraySpecifier.Dimensions + ")";
+        }
+
+        public override void VisitVariableInitializer(VariableInitializer variableInitializer)
+        {
+            base.VisitVariableInitializer(variableInitializer);
+            //variableInitializer(str name, 
+            //                    Expression initializer)
+
+            var formatter = new FormatHelper("variableInitializer(");
+            formatter.AddWithQuotesAndComma(variableInitializer.Name);
+            formatter.Add(ExpressionHelper.Get(variableInitializer.Initializer));
+            formatter.Add(")");
+
+            variableInitializer.RascalString = formatter.S;
         }
 
         #endregion AstNode
@@ -244,7 +281,7 @@ namespace AST_Getter.Visitor
             formatter.AddWithComma("[]");
             formatter.Add(EnumHelper.Translate(enumMemberDeclaration.Modifiers));
             formatter.AddLine(")");
-            
+
             enumMemberDeclaration.RascalString = formatter.S;
         }
 
@@ -349,7 +386,7 @@ namespace AST_Getter.Visitor
             formatter.AddWithComma(CollectionHelper.Get(fieldDeclaration.Attributes));
             formatter.AddWithComma("[]");
             formatter.AddWithComma(EnumHelper.Translate(fieldDeclaration.Modifiers));
-            formatter.AddWithComma("[]");
+            formatter.AddWithComma(CollectionHelper.Get(fieldDeclaration.Variables));
             formatter.Add(CommonHelper.Get(fieldDeclaration.ReturnType));
             formatter.AddLine("))");
 
@@ -402,6 +439,59 @@ namespace AST_Getter.Visitor
             formatter.AddLine("))");
 
             eventDeclaration.RascalString = formatter.S;
+        }
+
+        public override void VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration)
+        {
+            base.VisitIndexerDeclaration(indexerDeclaration);
+            //indexerDeclaration(str name, 
+            //                   list[AstNode] attributes, 
+            //                   AttributedNode getter, 
+            //                   list[AstNode] modifierTokens, 
+            //                   list[Modifiers] modifiers, 
+            //                   list[AstNode] parameters, 
+            //                   AttributedNode setter,
+            //                   AstType type)
+
+
+
+            var formatter = new FormatHelper("memberDeclaration(indexerDeclaration(");
+
+            formatter.AddWithQuotesAndComma(indexerDeclaration.Name);
+            formatter.AddWithComma(CollectionHelper.Get(indexerDeclaration.Attributes));
+            formatter.AddWithComma(CommonHelper.Get(indexerDeclaration.Getter));
+            formatter.AddWithComma("[]");
+            formatter.AddWithComma(EnumHelper.Translate(indexerDeclaration.Modifiers));
+            formatter.AddWithComma(CollectionHelper.Get(indexerDeclaration.Parameters));
+            formatter.AddWithComma(CommonHelper.Get(indexerDeclaration.Setter));
+            formatter.Add(CommonHelper.Get(indexerDeclaration.ReturnType));
+            formatter.AddLine("))");
+
+            indexerDeclaration.RascalString = formatter.S;
+        }
+
+        public override void VisitCustomEventDeclaration(CustomEventDeclaration eventDeclaration)
+        {
+            base.VisitCustomEventDeclaration(eventDeclaration);
+            //customEventDeclaration(str name, 
+            //                       AttributedNode addAccessor, 
+            //                       list[AstNode] attributes, 
+            //                       list[AstNode] modifierTokens, 
+            //                       list[Modifiers] modifiers,
+            //                       AttributedNode removeAccessor)
+
+            var formatter = new FormatHelper("memberDeclaration(customEventDeclaration(");
+
+            formatter.AddWithQuotesAndComma(eventDeclaration.Name);
+            formatter.AddWithComma(CommonHelper.Get(eventDeclaration.AddAccessor));
+            formatter.AddWithComma(CollectionHelper.Get(eventDeclaration.Attributes));
+            formatter.AddWithComma("[]");
+            formatter.AddWithComma(EnumHelper.Translate(eventDeclaration.Modifiers));
+            formatter.AddWithComma(CommonHelper.Get(eventDeclaration.RemoveAccessor));
+            formatter.AddLine("))");
+
+            eventDeclaration.RascalString = formatter.S;
+
         }
 
         #endregion MemberDeclaration
@@ -664,6 +754,135 @@ namespace AST_Getter.Visitor
             directionExpression.RascalString = formatter.S;
         }
 
+        public override void VisitConditionalExpression(ConditionalExpression conditionalExpression)
+        {
+            base.VisitConditionalExpression(conditionalExpression);
+            //conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression)
+
+            var formatter = new FormatHelper("conditionalExpression(");
+            formatter.AddWithComma(conditionalExpression.Condition.RascalString);
+            formatter.AddWithComma(ExpressionHelper.Get(conditionalExpression.FalseExpression));
+            formatter.AddWithComma(ExpressionHelper.Get(conditionalExpression.TrueExpression));
+            formatter.Add(")");
+
+            conditionalExpression.RascalString = formatter.S;
+        }
+
+        public override void VisitCastExpression(CastExpression castExpression)
+        {
+            base.VisitCastExpression(castExpression);
+            //castExpression(Expression expression, AstType \type)
+            var formatter = new FormatHelper("castExpression(");
+            formatter.AddWithComma(ExpressionHelper.Get(castExpression.Expression));
+            formatter.Add(CommonHelper.Get(castExpression.Type));
+            formatter.Add(")");
+
+            castExpression.RascalString = formatter.S;
+        }
+
+        public override void VisitTypeOfExpression(TypeOfExpression typeOfExpression)
+        {
+            base.VisitTypeOfExpression(typeOfExpression);
+            //typeOfExpression(AstType \type)
+
+            typeOfExpression.RascalString = "typeOfExpression(" + CommonHelper.Get(typeOfExpression.Type) + ")";
+        }
+
+        public override void VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression)
+        {
+            base.VisitDefaultValueExpression(defaultValueExpression);
+            //defaultValueExpression(AstType \type)
+
+            defaultValueExpression.RascalString = "defaultValueExpression(" + CommonHelper.Get(defaultValueExpression.Type) + ")";
+        }
+
+        public override void VisitSizeOfExpression(SizeOfExpression sizeOfExpression)
+        {
+            base.VisitSizeOfExpression(sizeOfExpression);
+            sizeOfExpression.RascalString = "sizeOfExpression()";
+        }
+
+        public override void VisitIsExpression(IsExpression isExpression)
+        {
+            base.VisitIsExpression(isExpression);
+            //isExpression(Expression expression, AstType \type)
+            isExpression.RascalString = "isExpression(" + ExpressionHelper.Get(isExpression.Expression) + "," + CommonHelper.Get(isExpression.Type) + ")";
+        }
+
+        public override void VisitAsExpression(AsExpression asExpression)
+        {
+            base.VisitAsExpression(asExpression);
+            //asExpression(Expression expression, AstType \type)
+            asExpression.RascalString = "asExpression(" + ExpressionHelper.Get(asExpression.Expression) + "," + CommonHelper.Get(asExpression.Type) + ")";
+        }
+
+        public override void VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression)
+        {
+            base.VisitArrayCreateExpression(arrayCreateExpression);
+            //arrayCreateExpression(list[AstNode] additionalArraySpecifiers, 
+            //                      list[Expression] arguments, 
+            //                      Expression initializer)
+
+            var formatter = new FormatHelper("arrayCreateExpression(");
+            formatter.AddWithComma(CollectionHelper.Get(arrayCreateExpression.AdditionalArraySpecifiers));
+            formatter.AddWithComma(CollectionHelper.Get(arrayCreateExpression.Arguments));
+            formatter.Add(ExpressionHelper.Get(arrayCreateExpression.Initializer));
+            formatter.Add(")");
+
+            arrayCreateExpression.RascalString = formatter.S;
+        }
+
+        public override void VisitCheckedExpression(CheckedExpression checkedExpression)
+        {
+            base.VisitCheckedExpression(checkedExpression);
+            //checkedExpression(Expression expression)
+            checkedExpression.RascalString = "checkedExpression(" + ExpressionHelper.Get(checkedExpression.Expression) + ")";
+        }
+
+        public override void VisitUncheckedExpression(UncheckedExpression uncheckedExpression)
+        {
+            base.VisitUncheckedExpression(uncheckedExpression);
+            //uncheckedExpression(Expression expression)
+            uncheckedExpression.RascalString = "uncheckedExpression(" + ExpressionHelper.Get(uncheckedExpression.Expression) + ")";
+        }
+
+        public override void VisitIndexerExpression(IndexerExpression indexerExpression)
+        {
+            base.VisitIndexerExpression(indexerExpression);
+            //indexerExpression(list[Expression] arguments, Expression target)
+
+            var formatter = new FormatHelper("indexerExpression(");
+            formatter.AddWithComma(CollectionHelper.Get(indexerExpression.Arguments));
+            formatter.Add(ExpressionHelper.Get(indexerExpression.Target));
+            formatter.Add(")");
+
+            indexerExpression.RascalString = formatter.S;
+        }
+
+        public override void VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression)
+        {
+            base.VisitAnonymousMethodExpression(anonymousMethodExpression);
+            //anonymousMethodExpression(Statement bodyS, 
+            //                          bool hasParameterList, 
+            //                          list[AstNode] parameters)
+
+            var formatter = new FormatHelper("anonymousMethodExpression(");
+            formatter.AddWithComma(StatementHelper.Get(anonymousMethodExpression.Body));
+            formatter.AddWithComma(anonymousMethodExpression.HasParameterList.ToString().ToLower());
+            formatter.Add(CollectionHelper.Get(anonymousMethodExpression.Parameters));
+            formatter.Add(")");
+
+            anonymousMethodExpression.RascalString = formatter.S;
+        }
+
+        public override void VisitStackAllocExpression(StackAllocExpression stackAllocExpression)
+        {
+            base.VisitStackAllocExpression(stackAllocExpression);
+            //stackAllocExpression(Expression countExpression)
+
+            stackAllocExpression.RascalString = "stackAllocExpression(" + ExpressionHelper.Get(stackAllocExpression.CountExpression) + ")";
+        }
+        
         #endregion Expression
 
         #region Statement
@@ -694,7 +913,7 @@ namespace AST_Getter.Visitor
             var formatter = new FormatHelper("ifElseStatement(");
             formatter.AddWithComma(ifElseStatement.Condition.RascalString);
             formatter.AddWithComma(StatementHelper.Get(ifElseStatement.FalseStatement));
-            formatter.AddWithComma(ifElseStatement.TrueStatement.RascalString);
+            formatter.AddWithComma(StatementHelper.Get(ifElseStatement.TrueStatement));
             formatter.Add(")");
 
             ifElseStatement.RascalString = formatter.S;
@@ -722,20 +941,6 @@ namespace AST_Getter.Visitor
             formatter.Add(")");
 
             variableDeclarationStatement.RascalString = formatter.S;
-        }
-
-        public override void VisitVariableInitializer(VariableInitializer variableInitializer)
-        {
-            base.VisitVariableInitializer(variableInitializer);
-            //variableInitializer(str name, 
-            //                    Expression initializer)
-
-            var formatter = new FormatHelper("variableInitializer(");
-            formatter.AddWithQuotesAndComma(variableInitializer.Name);
-            formatter.Add(ExpressionHelper.Get(variableInitializer.Initializer));
-            formatter.Add(")");
-
-            variableInitializer.RascalString = formatter.S;
         }
 
         public override void VisitDoWhileStatement(DoWhileStatement doWhileStatement)
@@ -784,7 +989,7 @@ namespace AST_Getter.Visitor
 
             var formatter = new FormatHelper("forStatement(");
             formatter.AddWithComma(ExpressionHelper.Get(forStatement.Condition));
-            formatter.AddWithComma(StatementHelper.Get(forStatement.EmbeddedStatement)); 
+            formatter.AddWithComma(StatementHelper.Get(forStatement.EmbeddedStatement));
             formatter.AddWithComma(CollectionHelper.Get(forStatement.Initializers));
             formatter.Add(CollectionHelper.Get(forStatement.Iterators));
             formatter.Add(")");
@@ -826,7 +1031,7 @@ namespace AST_Getter.Visitor
             var formatter = new FormatHelper("usingStatement(");
             formatter.AddWithComma(StatementHelper.Get(usingStatement.EmbeddedStatement));
             formatter.Add(usingStatement.ResourceAcquisition is Expression
-                        ? "expression(" + ExpressionHelper.Get((Expression)usingStatement.ResourceAcquisition) +")"
+                        ? "expression(" + ExpressionHelper.Get((Expression)usingStatement.ResourceAcquisition) + ")"
                         : "statement(" + usingStatement.ResourceAcquisition.RascalString + ")"
                         );
             formatter.Add(")");
@@ -872,7 +1077,7 @@ namespace AST_Getter.Visitor
 
             unsafeStatement.RascalString = formatter.S;
         }
-       
+
         public override void VisitCheckedStatement(CheckedStatement checkedStatement)
         {
             base.VisitCheckedStatement(checkedStatement);

@@ -23,11 +23,14 @@ parameterDeclaration("type",[],expressionPlaceholder(),parameterModifierNone())
 parameterDeclaration("price",[],primitiveExpression(0),parameterModifierNone())
 ],)
 ,
-memberDeclaration(fieldDeclaration("ExpireDays",[],[],[modifiersPublic(),],[],primitiveType("int")))
+memberDeclaration(fieldDeclaration("ExpireDays",[],[],[modifiersPublic(),],
+[variableInitializer("ExpireDays",emptyExpression())],primitiveType("int")))
 ,
-memberDeclaration(fieldDeclaration("Type",[],[],[modifiersPublic(),],[],primitiveType("string")))
+memberDeclaration(fieldDeclaration("Type",[],[],[modifiersPublic(),],
+[variableInitializer("Type",emptyExpression())],primitiveType("string")))
 ,
-memberDeclaration(fieldDeclaration("company",[],[],[modifiersInternal(),],[],simpleType("Company",[])))
+memberDeclaration(fieldDeclaration("company",[],[],[modifiersInternal(),],
+[variableInitializer("company",emptyExpression())],simpleType("Company",[])))
 ],[],[modifiersPublic(),],[],))
 ])
 ])]

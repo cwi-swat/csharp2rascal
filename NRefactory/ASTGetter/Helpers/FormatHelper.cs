@@ -6,7 +6,7 @@ namespace AST_Getter.Helpers
 {
     public class FormatHelper
     {
-        public String S;
+        public String S { get; set; }
 
         public FormatHelper() { }
         public FormatHelper(string s) { S = s; }

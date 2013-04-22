@@ -6,9 +6,11 @@ usingDeclaration("System.Text"),
 usingDeclaration("System.Threading.Tasks"),
 namespaceDeclaration("SpecificCases","ExampleCode.SpecificCases",[],
 [attributedNode(typeDeclaration("LockCase",[],[],class(),[],
-[memberDeclaration(fieldDeclaration("_lock",[],[],[modifiersReadonly(),],[],primitiveType("object")))
+[memberDeclaration(fieldDeclaration("_lock",[],[],[modifiersReadonly(),],
+[variableInitializer("_lock",objectCreateExpression([],emptyExpression(),primitiveType("object")))],primitiveType("object")))
 ,
-memberDeclaration(fieldDeclaration("_vulnerableVariable",[],[],[modifiersNone(),],[],primitiveType("double")))
+memberDeclaration(fieldDeclaration("_vulnerableVariable",[],[],[modifiersNone(),],
+[variableInitializer("_vulnerableVariable",primitiveExpression(50))],primitiveType("double")))
 ,
 memberDeclaration(methodDeclaration("Lock",[],blockStatementPlaceholder(
 [lockStatement(blockStatementPlaceholder(

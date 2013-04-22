@@ -1,0 +1,11 @@
+[cSharpFile("C:\\Uitvoering\\Workspace\\git\\csharp2rascal\\NRefactory\\ExampleCode\\SpecificCases\\UsingAliasCase.cs",[
+usingDeclaration("System"),
+usingDeclaration("System.Collections.Generic"),
+usingDeclaration("System.Linq"),
+usingDeclaration("System.Text"),
+usingDeclaration("System.Threading.Tasks"),
+usingAliasDeclaration("Cat",memberType(false,"Text",simpleType("System",[]),[]))
+namespaceDeclaration("SpecificCases","ExampleCode.SpecificCases",[],
+[attributedNode(typeDeclaration("UsingAliasCase",[],[],class(),[],[],[],[modifiersNone(),],[],))
+])
+])]

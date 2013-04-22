@@ -11,19 +11,17 @@ data AstNode =
   |  	constraint(list[AstType] baseTypes, AstType typeParameter) //Edit: typeparameter is AstNode geworden van str
   |  	attribute(list[Expression] arguments, AstType \type) //EDIT: type toegevoegd
   |  	attributeSection(str attributeTarget, list[AstNode] attributes) //EDIT: AttributeType naar str
-  |  cSharpModifierToken(list[Modifiers] allModifiers, list[Modifiers] modifier)
   |  	cSharpTokenNode()
-  |  variablePlaceholder(str name, Expression initializer)
   |  	usingDeclaration(str namespace)
   |  	parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier)
   |  	switchSection(list[AstNode] caseLabels, list[Statement] statements)
-  |  usingAliasDeclaration(str \alias)
-  |  typeParameterDeclaration(str name, VarianceModifier variance)
+  |  	usingAliasDeclaration(str \alias, AstType \import) //EDIT: import toegevoegd
+  |  	typeParameterDeclaration(str name, VarianceModifier variance)
   |  	catchClause(Statement body, str variableName)
   |  	identifier(str name)
   |  	constructorInitializer(list[Expression] arguments, ConstructorInitializer constructorInitializerType)
   |  	variableInitializer(str name, Expression initializer)
-  |  arraySpecifier(int dimensions)
+  |  	arraySpecifier(int dimensions)
   |  	caseLabel(Expression expression)
   |  	statement(Statement nodeStatement)
   |  	astType(AstType nodeAstType)
@@ -31,59 +29,72 @@ data AstNode =
   |  	expression(Expression nodeExpression)
   |  	queryClause(QueryClause nodeQueryClause)
   |  	queryOrdering(QueryOrderingDirection direction, Expression expression)
-  |  	astNodePlaceholder();   //EDIT: nieuw
+  |  	astNodePlaceholder()   //EDIT: nieuw
+  
+  //Have not encoutered and dont recognize
+  |  cSharpModifierToken(list[Modifiers] allModifiers, list[Modifiers] modifier)
+  |  variablePlaceholder(str name, Expression initializer)
+  ;
 
 data Expression = 
 	 	lambdaExpression(AstNode body, list[AstNode] parameters)
-  |  conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression)
+  |  	conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression)
   |  	binaryOperatorExpression(Expression left, BinaryOperator operator, Expression right)
   |  	directionExpression(Expression expression, FieldDirection fieldDirection)
-  |  castExpression(Expression expression)
-  |  indexerExpression(list[Expression] arguments, Expression target)
+  |  	castExpression(Expression expression, AstType \type) //EDIT: type toegevoegd 
   |  	parenthesizedExpression(Expression expression)
   |  	baseReferenceExpression()
-  |  sizeOfExpression()
-  |  arrayCreateExpression(list[AstNode] additionalArraySpecifiers, list[Expression] arguments, Expression initializer)
   |  	unaryOperatorExpression(Expression expression, UnaryOperator operatorU)
-  |  asExpression(Expression expression)
-  |  typeReferenceExpression(AstType \type) //EDIT: type toegevoegd
-  |  typeOfExpression()
-  |  defaultValueExpression()
-  |  anonymousMethodExpression(Statement bodyS, bool hasParameterList, list[AstNode] parameters)
   |	 	anonymousTypeCreateExpression(list[Expression] Initializers)
-  |  uncheckedExpression(Expression expression)
-  |  isExpression(Expression expression)
   |  	identifierExpression(str identifier, list[AstType] typeArguments)
-  |  checkedExpression(Expression expression)
   |  	primitiveExpression(value \value)
   |  	expressionPlaceholder()
   |  	objectCreateExpression(list[Expression] arguments, Expression initializer, AstType \type) //EDIT:  type toegevoegd
   |  	namedArgumentExpression(Expression expression, str name)
   |  	namedExpression(Expression expression, str name)
-  |  argListExpression(list[Expression] arguments, bool isAccess)
   |  	memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
   |  	invocationExpression(list[Expression] arguments, Expression target)
-  |  pointerReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
   |  	assignmentExpression(Expression left, AssignmentOperator operatorA, Expression right)
   |  	thisReferenceExpression()
-  |  stackAllocExpression(Expression countExpression)
-  |  arrayInitializerExpression(list[Expression] elements)
+  |  	arrayInitializerExpression(list[Expression] elements)
   |  	queryExpression(list[QueryClause] clauses)
   |  	emptyExpression()  //EDIT: nieuw, aangemaakt voor objectCreateExpression, initializer is optioneel.
-  |  	null(); 			//EDIT: toegevoegd
+  |  	typeOfExpression(AstType \type) //EDIT: type
+  |  	defaultValueExpression(AstType \type) //EDIT: type
+  |  	indexerExpression(list[Expression] arguments, Expression target)
+  |  	arrayCreateExpression(list[AstNode] additionalArraySpecifiers, list[Expression] arguments, Expression initializer)
+  |  	asExpression(Expression expression, AstType \type) //EDIT: type
+  |  	typeReferenceExpression(AstType \type) //EDIT: type toegevoegd
+  |  	anonymousMethodExpression(Statement bodyS, bool hasParameterList, list[AstNode] parameters)
+  |  	uncheckedExpression(Expression expression)
+  | 	isExpression(Expression expression, AstType \type) //EDIT: type
+  |  	checkedExpression(Expression expression)
+  |  	null() 			//EDIT: toegevoegd
+  |  	sizeOfExpression()
+
+//wont do, out of scope
+//pointer is ignored and treated like a normal variable declaration
+  |  stackAllocExpression(Expression countExpression)
+  |  	pointerReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
+
+//wont do, it's hidden ffs. and non-existend in NRefactory(probably the same reason)
+  |  argListExpression(list[Expression] arguments, bool isAccess)  
+  ;
 
 data MemberDeclaration = 
- 	 indexerDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, AttributedNode setter)
+ 	 	indexerDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
   | 	methodDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] constraints, bool isExtensionMethod, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters, AstType \type) //EDIT: type toegevoegd
-  |  operatorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers, Operator operatorType, list[AstNode] parameters)
   |  	propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
-  |  customEventDeclaration(str name, AttributedNode addAccessor, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode removeAccessor)
   |  	fieldDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type)  //EDIT: type toegevoegd
-  |  	eventDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type); //EDIT: type toegevoegd
+  |  	eventDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type) //EDIT: type toegevoegd
+  |  	customEventDeclaration(str name, AttributedNode addAccessor, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode removeAccessor)
 
+//wont do, out of scope  
+  |  operatorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers, Operator operatorType, list[AstNode] parameters)
+  ;
 data AstType = 
 		simpleType(str identifier, list[AstType] typeArguments)
-  |  composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank)
+  |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
   |  	typePlaceholder()
   |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd
   |  	primitiveType(str keyword);
@@ -148,7 +159,7 @@ data FieldDirection = fieldDirectionNone()
   |  fieldDirectionRef()
   |  fieldDirectionOut();
 
-//done?
+//done
 data BinaryOperator = conditionalOr()
   |  divide()
   |  inEquality()

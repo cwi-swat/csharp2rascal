@@ -1,0 +1,5 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\obj\Release\ExampleCode.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\bin\Release\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\bin\Release\ExampleCode.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\obj\Release\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\obj\Release\ExampleCode.pdb

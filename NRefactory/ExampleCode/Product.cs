@@ -19,7 +19,7 @@ namespace Roslyn.Example_source
         {
             IsOnSale = true;
         }
-        
+
         public string Name { get; set; }
 
         public bool IsOnSale = false;
@@ -29,16 +29,13 @@ namespace Roslyn.Example_source
         {
             get
             {
-                if(IsOnSale)
-                    return _price * 0.8;
-
-                return _price;
+                return IsOnSale ? _price * 0.8 : _price;
             }
             set
             {
                 _price = value;
             }
         }
-     
+
     }
 }

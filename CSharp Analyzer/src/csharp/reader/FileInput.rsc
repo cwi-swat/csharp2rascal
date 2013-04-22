@@ -5,7 +5,7 @@ import ValueIO;
 
 
 loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/|;
-//str filename = "shoppingcart.rsc";
+//str filename = "product.rsc";
 //str filename = "aisle.rsc";
 //str filename = "specificcases/linq.rsc";
 //str filename = "specificcases/dowhilecase.rsc";
@@ -15,8 +15,10 @@ loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/A
 //str filename = "specificcases/eventCase.rsc";
 //str filename = "specificcases/fixedUnsafeCheckedUncheckedCase.rsc";
 //str filename = "specificcases/yieldcase.rsc";
-str filename = "specificcases/typeparameter.rsc";
+//str filename = "specificcases/typeparameter.rsc";
 //str filename = "specificcases/AttributeCase.rsc";
+str filename = "specificcases/EventCase.rsc";
+
 
 public CSharpProject read()
 {

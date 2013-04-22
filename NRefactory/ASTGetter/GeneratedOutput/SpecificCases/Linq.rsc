@@ -25,9 +25,11 @@ querySelectClause(identifierExpression("e",[]))]))],simpleType("var",[]))]),[],f
 ],[],[modifiersNone(),],[],))
 ,
 attributedNode(typeDeclaration("example",[],[],class(),[],
-[memberDeclaration(fieldDeclaration("firstname",[],[],[modifiersPublic(),],[],primitiveType("string")))
+[memberDeclaration(fieldDeclaration("firstname",[],[],[modifiersPublic(),],
+[variableInitializer("firstname",emptyExpression())],primitiveType("string")))
 ,
-memberDeclaration(fieldDeclaration("lastname",[],[],[modifiersPublic(),],[],primitiveType("string")))
+memberDeclaration(fieldDeclaration("lastname",[],[],[modifiersPublic(),],
+[variableInitializer("lastname",emptyExpression())],primitiveType("string")))
 ,
 constructorDeclaration("example",[],blockStatementPlaceholder(
 [expressionStatement(assignmentExpression(memberReferenceExpression("firstname",thisReferenceExpression(),[]),assignmentOperatorAssign(),identifierExpression("firstname",[]),)

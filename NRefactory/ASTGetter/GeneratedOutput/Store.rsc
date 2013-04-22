@@ -25,7 +25,8 @@ memberDeclaration(propertyDeclaration("Aisles",[],accessor([],blockStatementPlac
 )]),[],[modifiersNone(),],)
 ,simpleType("List",[simpleType("Aisle",[]),])))
 ,
-memberDeclaration(fieldDeclaration("_aisles",[],[],[modifiersPrivate(),],[],simpleType("List",[simpleType("Aisle",[]),])))
+memberDeclaration(fieldDeclaration("_aisles",[],[],[modifiersPrivate(),],
+[variableInitializer("_aisles",emptyExpression())],simpleType("List",[simpleType("Aisle",[]),])))
 ],[],[modifiersPublic(),],[],))
 ])
 ])]
