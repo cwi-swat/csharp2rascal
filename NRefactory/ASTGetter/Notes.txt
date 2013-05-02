@@ -1,9 +1,3 @@
-﻿Field declaration and Property declaration contain no information about the type.
-type zit in ReturnType, nog niet in Rascal data definition
-
-
-AstType
-	ComposedTypes?
-	MemberTypes?
+﻿
 
 class nesting werkt nog niet

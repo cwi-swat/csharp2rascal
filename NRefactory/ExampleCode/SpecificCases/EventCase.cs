@@ -4,18 +4,12 @@ namespace ExampleCode.SpecificCases
 {
     class EventCase
     {
-        void EventCase_Event(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-
         delegate void MyEventHandler(object sender, EventArgs e);
         delegate String MySecondEventHandler(object sender, EventArgs e);
         delegate void MyThirdEventHandler<in T>(object sender, T e);
         //todo contravariant testen
 
-        event MyEventHandler Event;
+        event MyEventHandler Event = EventCase_Event;
         event MySecondEventHandler Event2;
         event MyThirdEventHandler<String> Event3;
 
@@ -39,6 +33,10 @@ namespace ExampleCode.SpecificCases
             this.Event3 += EventCase_Event3;
         }
 
+        static void EventCase_Event(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         String EventCase_Event2(object sender, EventArgs e)
         {

@@ -10,5 +10,10 @@ namespace ExampleCode.SpecificCases
     {
         static object a;
         int b = (int)a;
+        void AsTest()
+        {
+            a = b as object;
+
+        }
     }
 }

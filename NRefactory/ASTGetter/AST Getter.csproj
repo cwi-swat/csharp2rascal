@@ -55,6 +55,7 @@
     <Compile Include="Helpers\CommonHelper.cs" />
     <Compile Include="Helpers\EnumHelper.cs" />
     <Compile Include="Helpers\ExpressionHelper.cs" />
+    <Compile Include="Helpers\LocationHelper.cs" />
     <Compile Include="Helpers\StatementHelper.cs" />
     <Compile Include="Helpers\FormatHelper.cs" />
     <Compile Include="Processor.cs" />

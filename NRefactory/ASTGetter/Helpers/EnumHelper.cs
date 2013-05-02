@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace AST_Getter.Helpers
 {
     static class EnumHelper
     {
-        public static string Translate(Modifiers modifier)
+        internal static string Translate(Modifiers modifier)
         {
             var modifiers = modifier.ToString().Split(',');
             var rascalString = "";
@@ -56,14 +57,7 @@ namespace AST_Getter.Helpers
         {
             return ConvertToLowerCaseWithParentheses(unaryOperatorType.ToString());
         }
-
-        private static string ConvertToLowerCaseWithParentheses(string s)
-        {
-            var _s = s.Substring(0, 1).ToLower();
-            _s += s.Substring(1);
-            return _s + "()";
-        }
-
+        
         internal static string Translate(ConstructorInitializerType constructorInitializerType)
         {
             switch (constructorInitializerType)
@@ -87,7 +81,7 @@ namespace AST_Getter.Helpers
             return String.Format("fieldDirection{0}()", fieldDirection.ToString());
         }
 
-        internal static string Translate(ICSharpCode.NRefactory.TypeSystem.VarianceModifier varianceModifier)
+        internal static string Translate(VarianceModifier varianceModifier)
         {
             string format;
 
@@ -108,5 +102,19 @@ namespace AST_Getter.Helpers
 
             return format;
         }
+ 
+        internal static string Translate(AssignmentOperatorType Enum)
+        {
+            return "assignmentOperator" + Enum.ToString() + "()";
+        }
+
+        private static string ConvertToLowerCaseWithParentheses(string s)
+        {
+            var _s = s.Substring(0, 1).ToLower();
+            _s += s.Substring(1);
+            return _s + "()";
+        }
+
+       
     }
 }

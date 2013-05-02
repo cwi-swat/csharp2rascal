@@ -22,5 +22,4 @@ namespace Roslyn.Example_source
             this.Name = null;
             this.Products = null;
         }
-    }
-}
+    }}

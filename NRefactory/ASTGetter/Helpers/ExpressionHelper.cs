@@ -13,8 +13,15 @@ namespace AST_Getter.Helpers
         {
             if (expression.IsNull)
                 return "emptyExpression()";
-            else
-                return expression.RascalString;
+                
+            return expression.RascalString;
+        }
+        internal static string Get(Expression expression)
+        {
+            if (expression.IsNull)
+                return "emptyExpression()";
+
+            return expression.RascalString;
         }
     }
 }

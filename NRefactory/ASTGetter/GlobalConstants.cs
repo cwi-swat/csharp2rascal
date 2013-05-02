@@ -11,6 +11,8 @@
 
         public const string FirstFileToProcess = @"specificcases\AnonymousMethodCase";
         //public const string FirstFileToProcess = @"Product";
-        
+
+
+        public const bool IncludingLocations = false;
     }
 }
