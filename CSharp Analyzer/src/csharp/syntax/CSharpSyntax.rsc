@@ -2,20 +2,38 @@ module csharp::syntax::CSharpSyntax
 
 public alias CSharpProject = list[CSharpFile];
 
+anno loc AstNode@location;
+anno loc Expression@location;
+anno loc Statement@location;
+anno loc AttributedNode@location;
+anno loc MemberDeclaration@location;
+anno loc VarianceModifier@location;
+anno loc FieldDirection@location;
+anno loc BinaryOperator@location;
+anno loc AssignmentOperator@location;
+anno loc QueryClause@location;
+anno loc Class@location;
+anno loc Modifiers@location;
+anno loc ConstructorInitializer@location;
+anno loc ParameterModifier@location;
+anno loc UnaryOperator@location;
+anno loc QueryOrderingDirection@location;
+
 data CSharpFile = 
-	cSharpFile(str filename, list[AstNode]);
+	cSharpFile(str filename, list[AstNode] contents);
 
 data AstNode = 
 	 	comment(Comment commentType, str content, bool startsLine)
   |  	namespaceDeclaration(str name, str fullName, list[AstNode] identifiers, list[AstNode] members)
+  |  	usingDeclaration(str namespace)
+  |  	usingAliasDeclaration(str \alias, AstType \import) //EDIT: import toegevoegd
+  
   |  	constraint(list[AstType] baseTypes, AstType typeParameter) //Edit: typeparameter is AstNode geworden van str
   |  	attribute(list[Expression] arguments, AstType \type) //EDIT: type toegevoegd
   |  	attributeSection(str attributeTarget, list[AstNode] attributes) //EDIT: AttributeType naar str
   |  	cSharpTokenNode()
-  |  	usingDeclaration(str namespace)
   |  	parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier)
   |  	switchSection(list[AstNode] caseLabels, list[Statement] statements)
-  |  	usingAliasDeclaration(str \alias, AstType \import) //EDIT: import toegevoegd
   |  	typeParameterDeclaration(str name, VarianceModifier variance)
   |  	catchClause(Statement body, str variableName)
   |  	identifier(str name)
@@ -81,23 +99,14 @@ data Expression =
   |  argListExpression(list[Expression] arguments, bool isAccess)  
   ;
 
-data MemberDeclaration = 
- 	 	indexerDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
-  | 	methodDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] constraints, bool isExtensionMethod, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters, AstType \type) //EDIT: type toegevoegd
-  |  	propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
-  |  	fieldDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type)  //EDIT: type toegevoegd
-  |  	eventDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type) //EDIT: type toegevoegd
-  |  	customEventDeclaration(str name, AttributedNode addAccessor, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode removeAccessor)
 
-//wont do, out of scope  
-  |  operatorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers, Operator operatorType, list[AstNode] parameters)
-  ;
 data AstType = 
 		simpleType(str identifier, list[AstType] typeArguments)
   |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
   |  	typePlaceholder()
   |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd
-  |  	primitiveType(str keyword);
+  |  	primitiveType(str keyword)
+  ;
 
 data Statement = 
 		returnStatement(Expression expression)
@@ -105,7 +114,6 @@ data Statement =
   |  	blockStatementPlaceholder(list[Statement] statements)
   |  	switchStatement(Expression expression, list[AstNode] switchSections)
   |  	ifElseStatement(Expression condition, Statement falseStatement, Statement trueStatement)
-  |  	expressionStatement(Expression expression)
   |  	variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type) // EDIT: type toegevoegd
   |  	breakStatement()
   |  	tryCatchStatement(list[AstNode] catchClauses, Statement finallyBlock, Statement tryBlock)
@@ -120,6 +128,7 @@ data Statement =
   |  	blockStatement(list[Statement] statements)
   |  	emptyStatement()
   |  	yieldBreakStatement()
+  |  	expressionStatement(Expression expression)
   |  	yieldStatement(Expression expression)
   |  	unsafeStatement(Statement body)
   |  	fixedStatement(Statement embeddedStatement, list[AstNode] variables)
@@ -129,16 +138,10 @@ data Statement =
   |  labelStatement(str label)
   |  gotoDefaultStatement()
   |  gotoCaseStatement(Expression labelExpression)
-  |  gotoStatement(str label);
+  |  gotoStatement(str label)
+  ;
 
-
-
-
-
-/////////////////////////////////////////////////
-//////////////      Done      ///////////////////    
-/////////////////////////////////////////////////
-
+//done
 data AttributedNode = 
 	 	enumMemberDeclaration(str name, list[AstNode] attributes, Expression initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers)
   |  	accessor(list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers)
@@ -146,8 +149,20 @@ data AttributedNode =
   |  	delegateDeclaration(str name, list[AstNode] attributes, list[AstNode] constraints, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters)
   |  	destructorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers)
   |  	typeDeclaration(str name, list[AstNode] attributes, list[AstType] baseTypes, Class classType, list[AstNode] constraints, list[AttributedNode] members, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] typeParameters)
-  |  	constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializerA, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters)
+  |  	constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters)
   |  	memberDeclaration(MemberDeclaration nodeMemberDeclaration);
+
+data MemberDeclaration = 
+ 	 	indexerDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
+  | 	methodDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] constraints, bool isExtensionMethod, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters, AstType \type) //EDIT: type toegevoegd
+  |  	propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type) //EDIT: type toegevoegd
+  |  	fieldDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type)  //EDIT: type toegevoegd
+  |  	eventDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type) //EDIT: type toegevoegd
+  |  	customEventDeclaration(str name, AttributedNode addAccessor, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode removeAccessor)
+
+//wont do, out of scope  
+  |  operatorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers, Operator operatorType, list[AstNode] parameters)
+  ;
 
 //done
 data VarianceModifier = invariant()
