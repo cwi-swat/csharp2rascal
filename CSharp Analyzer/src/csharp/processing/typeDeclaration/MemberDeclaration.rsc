@@ -3,19 +3,41 @@ module csharp::processing::typeDeclaration::MemberDeclaration
 import csharp::processing::Globals;
 import csharp::syntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::AttributedNode;
-import csharp::processing::typeDeclaration::NodeWithBody;
+import csharp::processing::statement::Block;
+import csharp::processing::typeDeclaration::Main;
+import utils::utils;
 
-public void HandleMemberDeclaration(AstNode parent, MemberDeclaration md)
+import IO;
+
+public void Handle(MemberDeclaration md, AttributedNode typeDeclaration)
 {
-	if(md is indexerDeclaration);
-	else if(md is methodDeclaration)
-		HandleNodeWithBody(md.body);
-	else if(md is propertyDeclaration)
+	visit(md)
 	{
-		HandleAttributedNode(parent, md.getter);
-		HandleAttributedNode(parent, md.setter);
+		case m:indexerDeclaration(_,_,_,_,_,_,_,_):		;
+		case m:methodDeclaration(_,_,_,_,_,_,_,_,_,_):	{mapAssignments = (); mapAttributedNodeDeclarations = (); Handle(m);}
+		case m:propertyDeclaration(_,_,_,_,_,_,_):	    
+		{
+			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
+			mapAssignments = ();
+		   	mapAttributedNodeDeclarations = ();
+			Handle(m);
+		}
+		case m:fieldDeclaration(_,_,_,_,_,_):			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
+  		case m:eventDeclaration(_,_,_,_,_,_):			;
+  		case m:customEventDeclaration(_,_,_,_,_,_):		;
 	}
-	else if(md is fieldDeclaration);		
-	else if(md is eventDeclaration);
-	else if(md is customEventDeclaration);
+}
+
+private void Handle(methodDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] constraints, bool isExtensionMethod, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters, AstType \type))
+{
+	Handle(body, body);
+}
+
+private void Handle(propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type))
+{
+	mapAssignments = ();
+	Handle(getter);
+	
+	mapAssignments = ();
+	Handle(setter);
 }

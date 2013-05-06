@@ -3,6 +3,7 @@ module csharp::processing::Globals
 import csharp::syntax::CSharpSyntax;
 import IO;
 
+public map[AstNode parent, list[AstNode] children] mapFamily = ();
 public rel[CSharpFile file, AstNode using] relFileUsing = {};
 public rel[CSharpFile file, AstNode namespace] relFileNamespace = {};
 public rel[AstNode namespace, AstNode member] relNamespaceAttributedNode = {};
@@ -11,6 +12,7 @@ public rel[AstNode Node, AstNode DependendOn] relDependence = {};
 
 public void InitGlobals()
 {
+	mapFamily = ();
 	relFileUsing = {};
 	relFileNamespace = {};
 	relNamespaceAttributedNode = {};
@@ -56,8 +58,7 @@ public void Read(rel[value keys,value members] _rel, str name)
 
 void Println(value msg, int level)
 {
-	print(GetSpacing(level));
-	println(msg);
+	println("<GetSpacing(level)><msg>");
 }
 
 str GetSpacing(int level)

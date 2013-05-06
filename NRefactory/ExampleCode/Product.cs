@@ -11,7 +11,9 @@ namespace Roslyn.Example_source
     {
         public Product(string name, double price)
         {
-            this.Name = name;
+            var a = 1;
+            a += 2;
+            Name = name;
             this.Price = price;
         }
 
@@ -29,6 +31,7 @@ namespace Roslyn.Example_source
         {
             get
             {
+                var inprop = 2;
                 return IsOnSale ? _price * 0.8 : _price;
             }
             set

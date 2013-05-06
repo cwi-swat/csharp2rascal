@@ -1026,13 +1026,13 @@ namespace AST_Getter.Visitor
         public override void VisitBlockStatement(BlockStatement blockStatementPlaceholder)
         {
             base.VisitBlockStatement(blockStatementPlaceholder);
-            //blockStatementPlaceholder(list[Statement] statements)
+            //blockStatement(list[Statement] statements)
             var attributes = new object[]
             {
                 blockStatementPlaceholder.Statements
             };
 
-            var f = new FormatHelper("blockStatementPlaceholder(", attributes, ")", blockStatementPlaceholder);
+            var f = new FormatHelper("blockStatement(", attributes, ")", blockStatementPlaceholder);
             blockStatementPlaceholder.RascalString = f.S;
         }
 

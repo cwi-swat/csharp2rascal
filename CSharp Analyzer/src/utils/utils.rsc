@@ -2,6 +2,7 @@ module utils::utils
 
 import csharp::syntax::CSharpSyntax;
 import csharp::processing::Globals;
+import csharp::processing::typeDeclaration::Main;
 import List;
 import IO;
 
@@ -41,6 +42,88 @@ public map[Expression name, list[Statement] s] AddToMap(map[Expression name, lis
 
 	return m;
 }
+public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AttributedNode val)
+{
+	return AddToMap(m, key, attributedNode(val));
+}
+
+public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AstNode val)
+{
+	if(key in m)
+		m[key] += [val];
+	else
+		m += (key:[val]);
+		
+	return m;
+}
+
+
+//where has id been declared?
+//from viewpoint of statement s
+
+//todo: handle resolve: memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments) 
+public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstType] typeArguments), Statement s)
+{
+	//first get the node in which the statement is located
+	//ctor / routine / prop
+	parent = GetParent(statement(s));
+	while(!(parent is attributedNode))
+	{
+		parent = GetParent(parent);;
+	}
+	
+	
+	//is it a varDecl?
+	for(key <- mapAttributedNodeDeclarations)
+	{
+		for(dec <- mapAttributedNodeDeclarations[key])
+		{
+			for(var <- dec.nodeStatement.variables)
+			{
+				if(var.name == identifier)
+					return dec;
+			}
+		}
+	}
+
+	//is it a parameter?
+	for(p <- mapParameters)
+	{
+		if(p == identifier)
+			return mapParameters[key];
+	}
+	
+	//is it a field or property?
+	for(key <- mapTypeDeclarations)
+	{
+		for(aNode <- mapTypeDeclarations[key])
+		{
+			dec = aNode.nodeAttributedNode.nodeMemberDeclaration;
+			if(dec.name == identifier)
+				return aNode;
+		}
+	}
+	
+	println("Resolve identifier failed: <identifier>");
+	//throw;	
+}
+
+
+public AstNode GetParent(Statement s) = GetParent(statement(s));
+public AstNode GetParent(AstNode a)
+{
+	//public map[AstNode parent, list[AstNode] children] mapFamily 
+	
+	for(parent <- mapFamily)
+	{
+		for(child <- mapFamily[parent])
+		{
+			if(a == child)
+				return parent;
+		}
+	}
+}
+
 
 public list[Statement] InsideOptionalPath(Expression e, Statement s, map[Expression name, list[Statement] s] mapAssignments, map[str name, list[AstNode] a] mapTypeMemberAssignments)
 {
@@ -74,8 +157,8 @@ public list[Statement] InsideOptionalPath(Expression e, Statement s, map[Express
 						break;
 				}
 				
-				if(isEmpty(relDependence[statement(assignS)]))
-				{;}
+				//if(isEmpty(relDependence[statement(assignS)]))
+				//{;}
 				
 				//check if the assignment with a different dependency (so not the if/switch) was found
 				//or if this assignment does not have any dependency -> different
@@ -83,7 +166,7 @@ public list[Statement] InsideOptionalPath(Expression e, Statement s, map[Express
 						break;
 			}
 			
-			return subS;
+			return [subS];
 		}
 	}
 	

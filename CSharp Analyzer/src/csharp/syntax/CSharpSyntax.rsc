@@ -1,7 +1,5 @@
 module csharp::syntax::CSharpSyntax
 
-public alias CSharpProject = list[CSharpFile];
-
 anno loc AstNode@location;
 anno loc Expression@location;
 anno loc Statement@location;
@@ -18,6 +16,10 @@ anno loc ConstructorInitializer@location;
 anno loc ParameterModifier@location;
 anno loc UnaryOperator@location;
 anno loc QueryOrderingDirection@location;
+
+public alias CSharpProject = list[CSharpFile];
+
+
 
 data CSharpFile = 
 	cSharpFile(str filename, list[AstNode] contents);
@@ -111,7 +113,6 @@ data AstType =
 data Statement = 
 		returnStatement(Expression expression)
   |  	whileStatement(Expression condition, Statement embeddedStatement)
-  |  	blockStatementPlaceholder(list[Statement] statements)
   |  	switchStatement(Expression expression, list[AstNode] switchSections)
   |  	ifElseStatement(Expression condition, Statement falseStatement, Statement trueStatement)
   |  	variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type) // EDIT: type toegevoegd
@@ -149,7 +150,7 @@ data AttributedNode =
   |  	delegateDeclaration(str name, list[AstNode] attributes, list[AstNode] constraints, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters)
   |  	destructorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers)
   |  	typeDeclaration(str name, list[AstNode] attributes, list[AstType] baseTypes, Class classType, list[AstNode] constraints, list[AttributedNode] members, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] typeParameters)
-  |  	constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters)
+  |		constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters)
   |  	memberDeclaration(MemberDeclaration nodeMemberDeclaration);
 
 data MemberDeclaration = 

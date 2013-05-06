@@ -1,46 +1,81 @@
 module csharp::processing::typeDeclaration::Main
-
+ 
 import IO;
 import csharp::syntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::MemberDeclaration;
-import csharp::processing::typeDeclaration::NodeWithBody;
 import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::Globals;
 import utils::utils;
 
-map[str name, list[AstNode] a] mapTypeMemberAssignments = ();
+public map[str name, list[AstNode] a] mapTypeMemberAssignments = ();
+
+//this map keeps track of all the assignments within a block of code
+//and gets reset on a new block
+public map[Expression name, list[Statement] s] mapAssignments = ();
+
+public map[str name, AstNode a] mapParameters = ();
+
+public map[AstNode Node, list[AstNode] decls] mapTypeDeclarations = ();
+public map[AstNode Node, list[AstNode] decls] mapAttributedNodeDeclarations = ();
 
 public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 {
+	mapTypeDeclarations = ();
 	mapTypeMemberAssignments = ();
 	
-	//eerst de fields doorlopen, en bekijken of deze geinitializeerd worden
-	for(member <- typeDeclaration.members)
+
+	//Fill the mapTypeDeclarations	
+	visit(typeDeclaration.members)
 	{
-		if(member is memberDeclaration &&
-		   member.nodeMemberDeclaration is fieldDeclaration)
+		case m:memberDeclaration(_):
 		{
-			field = member.nodeMemberDeclaration;
-			for(variable <- field.variables) //variableInitializer
+			visit(m)
 			{
-				if(!(variable.initializer is emptyExpression))
+				case pd:propertyDeclaration(_,_,_,_,_,_,_):
 				{
-					mapTypeMemberAssignments = AddToMap(mapTypeMemberAssignments, variable.name, attributedNode(member));
+					mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), m);
+				}
+				case fd:fieldDeclaration(_,_,_,_,vars,_):
+				{
+					mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), m);
+					for(v <- vars)
+					{
+						if(!(v.initializer is emptyExpression))
+						{
+							mapTypeMemberAssignments = AddToMap(mapTypeMemberAssignments, v.name, attributedNode(m));
+						}	
+					}
 				}
 			}
 		}
 	}
-	
-	for(member <- typeDeclaration.members)
-	{
-		if(member is accessor ||
-		   member is destructorDeclaration ||
-		   member is constructorDeclaration)
+
+	visit(typeDeclaration.members)
+	{	
+		case m:memberDeclaration(md):
 		{
-			HandleAttributedNode(mapTypeMemberAssignments, member);
+			relAttributedNodeMember[typeDeclaration] = m; 
+			Handle(md, typeDeclaration);
+	  	}
+		case m:destructorDeclaration(_,_,_,_,_):
+		{
+			mapAssignments = ();
+			mapAttributedNodeDeclarations = ();
+			relAttributedNodeMember[typeDeclaration] = m;
+			Handle(m);
+	  	}
+		case m:constructorDeclaration(_,_,_,_,_,_,_):
+		{
+		   	mapAssignments = ();
+		   	mapAttributedNodeDeclarations = ();
+		   	relAttributedNodeMember[typeDeclaration] = m; 
+			Handle(m);
 		}
-		else if(member is memberDeclaration &&
-		   member.nodeMemberDeclaration is methodDeclaration)
-		   HandleNodeWithBody(mapTypeMemberAssignments, member.nodeMemberDeclaration.body);
 	}
+}
+
+public void ResetMaps()
+{
+	mapAssignments = ();
+	mapParameters = ();
 }

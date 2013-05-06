@@ -1,23 +1,26 @@
 module csharp::processing::typeDeclaration::AttributedNode
 
 import csharp::syntax::CSharpSyntax;
-import csharp::processing::typeDeclaration::NodeWithBody;
+import csharp::processing::statement::Block;
+import csharp::processing::typeDeclaration::Main;
+import csharp::processing::statement::Handler;
 
-public void HandleAttributedNode(map[str name, list[AstNode] a] mapTypeMemberAssignments, AttributedNode aNode)
+import IO;
+
+public void Handle(accessor(list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers))
 {
-	
-	if(aNode is enumMemberDeclaration)
-		;
-	
-	else if(aNode is accessor)
-		HandleNodeWithBody(mapTypeMemberAssignments, aNode.body);
+	Handle(body, body);
+}
 
-	else if(aNode is destructorDeclaration)
-		HandleNodeWithBody(mapTypeMemberAssignments, aNode.body);
+public void Handle(constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters))
+{
+	for(p <- parameters)
+		mapParameters += (p.name:p);
 
-	else if(aNode is constructorDeclaration)
-		HandleNodeWithBody(mapTypeMemberAssignments, aNode.body);
+	Handle(body, body);
+}
 
-	else if(aNode is delegateDeclaration)
-		;
+public void Handle(destructorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers))
+{
+	Handle(body, body);
 }
