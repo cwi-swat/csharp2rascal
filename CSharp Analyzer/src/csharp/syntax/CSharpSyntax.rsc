@@ -104,6 +104,7 @@ data Expression =
 
 data AstType = 
 		simpleType(str identifier, list[AstType] typeArguments)
+  |		exactType(str identifier)   //Added type, resolved type including namespace
   |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
   |  	typePlaceholder()
   |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd

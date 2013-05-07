@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AST_Getter.Visitor;
+using AST_Getter;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
 
@@ -10,6 +10,7 @@ namespace AST_Getter.Helpers
     public class FormatHelper
     {
         public String S { get; set; }
+        private AstNode node;
 
         public FormatHelper() { }
         public FormatHelper(string s) { S = s; }
@@ -17,6 +18,8 @@ namespace AST_Getter.Helpers
         public FormatHelper(string start, object[] attributes, string end, AstNode node)
         {
             S = start;
+            this.node = node;
+
             foreach (var attribute in attributes)
             {
                 string str = HandleAttribute((dynamic)attribute);
@@ -68,7 +71,7 @@ namespace AST_Getter.Helpers
         }
         string HandleAttribute(AstType astType)
         {
-            return CommonHelper.Get(astType);
+            return CommonHelper.Get(astType, node);
         }
         string HandleAttribute(Accessor accessor)
         { return CommonHelper.Get(accessor); }

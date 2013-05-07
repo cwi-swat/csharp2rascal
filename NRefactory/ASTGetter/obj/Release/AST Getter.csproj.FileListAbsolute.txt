@@ -12,6 +12,5 @@ C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Release\ICSha
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Release\ICSharpCode.NRefactory.Xml.pdb
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Release\ICSharpCode.NRefactory.Xml.xml
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Release\Mono.Cecil.pdb
-C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Release\AST Getter.csprojResolveAssemblyReference.cache
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Release\AST Getter.exe
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Release\AST Getter.pdb

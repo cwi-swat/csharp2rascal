@@ -3,11 +3,17 @@ using System.IO;
 using System.Linq;
 using AST_Getter.Helpers;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.TypeSystem;
+using AST_Getter.Resolve;
 
 namespace AST_Getter
 {
     internal class Processor
     {
+        static IProjectContent project = new CSharpProjectContent();
+        static ICompilation compilation = null;
+
         public static void Process()
         {
             var files = Directory.GetFiles(GlobalConstants.ExampleCodePath, "*.cs", SearchOption.AllDirectories).ToList();
@@ -17,11 +23,13 @@ namespace AST_Getter
 
             var allFiles = new FormatHelper("[");
 
+            project = project.AddAssemblyReferences(Assemblies.builtInLibs.Value);
+
             foreach (var file in files)
             {
                 if (file.Contains("Temporary") ||
                     file.EndsWith("AssemblyInfo.cs") ||
-                    file.Equals(firsttoproces))
+                    (!(file == files.First()) && file.Equals(firsttoproces)))
                     continue;
 
                 var fileInfo = new FileInfo(file);
@@ -30,10 +38,30 @@ namespace AST_Getter
                 {
                     var parser = new CSharpParser();
                     var syntaxTree = parser.Parse(reader.ReadToEnd());
+                    syntaxTree.FileName = fileInfo.FullName;
+
+                    AddToProjectContent(syntaxTree);
+                }
+            }
+
+            foreach (var file in files)
+            {
+                if (file.Contains("Temporary") ||
+                    file.EndsWith("AssemblyInfo.cs") ||
+                    (!(file == files.First()) && file.Equals(firsttoproces)))
+                    continue;
+
+                var fileInfo = new FileInfo(file);
+
+                using (var reader = File.OpenText(fileInfo.FullName))
+                {
+                    var parser = new CSharpParser();
+                    var syntaxTree = parser.Parse(reader.ReadToEnd());
+                    syntaxTree.FileName = fileInfo.FullName;
 
                     if (!parser.Errors.Any())
                     {
-                        var visitor = new Visitor.Visitor(fileInfo.FullName);
+                        var visitor = new Visitor(fileInfo.FullName, compilation, syntaxTree);
 
                         //visit the entire tree -> entry point
                         visitor.VisitSyntaxTree(syntaxTree);
@@ -77,5 +105,14 @@ namespace AST_Getter
                 System.Diagnostics.Process.Start(GlobalConstants.OutputPath + GlobalConstants.FirstFileToProcess + ".rsc");
 #endif
         }
+
+        private static void AddToProjectContent(SyntaxTree tree)
+        {
+            var unresolvedFile = tree.ToTypeSystem();
+            project = project.AddOrUpdateFiles(unresolvedFile);
+
+            compilation = project.CreateCompilation();
+        }
+
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roslyn.Example_source
+namespace Example_source
 {
     public class Aisle
     {
@@ -17,9 +17,10 @@ namespace Roslyn.Example_source
             this.Products = new List<Product>();
         }
 
-        ~ Aisle()
+        ~Aisle()
         {
             this.Name = null;
             this.Products = null;
         }
-    }}
+    }
+}

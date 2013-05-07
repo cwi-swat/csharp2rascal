@@ -60,18 +60,11 @@ public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNo
 
 //where has id been declared?
 //from viewpoint of statement s
-
-//todo: handle resolve: memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments) 
 public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstType] typeArguments), Statement s)
 {
 	//first get the node in which the statement is located
 	//ctor / routine / prop
-	parent = GetParent(statement(s));
-	while(!(parent is attributedNode))
-	{
-		parent = GetParent(parent);;
-	}
-	
+	parent = FindParentAttributedNode(s);
 	
 	//is it a varDecl?
 	for(key <- mapAttributedNodeDeclarations)
@@ -94,18 +87,40 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 	}
 	
 	//is it a field or property?
+	aNode =	checkMapTypeDeclForId(identifier);
+	if(!(aNode is astNodePlaceholder))
+		return;
+	
+	println("Resolve identifier failed: <identifier>");
+	//throw;	
+}
+
+//where has member been declared?
+//from viewpoint of statement s
+public AstNode ResolveMemberReference(memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments), Statement s)
+{
+	//this = my current class
+	visit(target)
+	{
+		case v:thisReferenceExpression(): return checkMapTypeDeclForId(memberName);
+	}
+	
+	
+	//ClassName = Field/Property from ClassName
+}
+
+AstNode checkMapTypeDeclForId(str id)
+{
 	for(key <- mapTypeDeclarations)
 	{
 		for(aNode <- mapTypeDeclarations[key])
 		{
 			dec = aNode.nodeAttributedNode.nodeMemberDeclaration;
-			if(dec.name == identifier)
+			if(dec.name == id)
 				return aNode;
 		}
 	}
-	
-	println("Resolve identifier failed: <identifier>");
-	//throw;	
+	return astNodePlaceholder();
 }
 
 
@@ -122,6 +137,17 @@ public AstNode GetParent(AstNode a)
 				return parent;
 		}
 	}
+}
+
+public AstNode FindParentAttributedNode(Statement s) = FindParentAttributedNode(statement(s)); 
+public AstNode FindParentAttributedNode(AstNode a)
+{
+	parent = GetParent(a);
+	while(!(parent is attributedNode))
+	{
+		parent = GetParent(parent);;
+	}
+	return parent;
 }
 
 

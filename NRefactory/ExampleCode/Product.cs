@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ExampleCode;
 
-namespace Roslyn.Example_source
+namespace Example_source
 {
     public class Product : Item
     {
@@ -31,7 +31,6 @@ namespace Roslyn.Example_source
         {
             get
             {
-                var inprop = 2;
                 return IsOnSale ? _price * 0.8 : _price;
             }
             set

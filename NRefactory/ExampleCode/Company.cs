@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Roslyn.Example_source;
+using Example_source;
 
 namespace ExampleCode
 {

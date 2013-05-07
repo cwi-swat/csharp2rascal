@@ -1,7 +1,11 @@
 module example
 
-public rel[str file, str namespace] relFileNamespace = {};
-public void InitGlobals()
+data myData = ExampleNode(str name);
+
+public void function(myData d)
 {
-    relFileNamespace = {};
+    visit(d)
+    {
+    	case e:ExampleNode: 	;
+    }
 }

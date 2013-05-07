@@ -5,21 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using AST_Getter.Helpers;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.TypeSystem;
 
-namespace AST_Getter.Visitor
+namespace AST_Getter
 {
     class EmptyCollection { }
     public class Visitor : DepthFirstAstVisitor
     {
         private static readonly EmptyCollection _EmptyCollection = new EmptyCollection();
+        public static CSharpAstResolver resolver;
 
-        public Visitor(string filename)
+        public Visitor(string filename, ICompilation compilation, SyntaxTree syntaxTree)
         {
+            var CsharpResolver = new CSharpResolver(compilation);
+            resolver = new CSharpAstResolver(CsharpResolver, syntaxTree);
+
             LocationHelper.CurrentFilename = filename;
             Output = new FormatHelper("cSharpFile(");
             //double backslashes, the file will be in .rsc so they will count as escapes
             Output.AddWithQuotesAndComma(filename.Replace("\\", "\\\\"));
         }
+
 
         public FormatHelper Output { get; set; }
 

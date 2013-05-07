@@ -15,12 +15,21 @@ public void Handle(blockStatement(list[Statement] statements), Statement s)
 		case st:variableDeclarationStatement(_,_,_):	Handle(st,st);
 		case st:ifElseStatement(_,t,f):					Handle(st,st);
 		case st:switchStatement(_,_):					Handle(st,st);
+		case st:returnStatement(_):						Handle(st,st);
 		case st:expressionStatement(e):					Handle(e,st);
 		//do
 		//while
+		//do while
 		//for
 		//foreach
-		//etc?
+		//trycatch
+		//using
+		//lock?
+		//yield?
+	
+		//unsafe/fixed/checked/unchecked
+		
+		//etc?		
 	}
 }
 //private void DepOnParent(Statement s)

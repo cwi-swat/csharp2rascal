@@ -65,12 +65,8 @@ public void Handle(variableDeclarationStatement(list[Modifiers] modifiers, list[
 {
 	for(variable <- variables)
 	{
-		parent = GetParent(statement(s));
-		while(!(parent is attributedNode))
-		{
-			parent = GetParent(parent);;
-		}
-		
+		parent = FindParentAttributedNode(s);
+				
 		mapAttributedNodeDeclarations = AddToMap(mapAttributedNodeDeclarations, parent, statement(s));
 	
 		left = identifierExpression(variable.name, []);
@@ -97,4 +93,23 @@ public void Handle(switchSection(list[AstNode] caseLabels, list[Statement] state
 {
 	for(st <- statement)
 		Handle(st,st);
+}
+
+
+public void Handle(returnStatement(Expression exp), Statement s)
+{
+	visit(exp)
+	{
+		case v:identifierExpression(id,_):
+		{
+			println(id);
+			aNode = ResolveIdentifier(v, s);
+			AddDependence(s,aNode);
+					
+			parent = FindParentAttributedNode(s);
+			AddDependence(parent, aNode);
+		}
+		//todo add mem ref
+		case v:memberReferenceExpression(_,_,_):		;
+	}
 }

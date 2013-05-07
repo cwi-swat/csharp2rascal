@@ -26,22 +26,27 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 		case assignmentOperatorSubtract():	AddDependence(s, left);
 	}
 	
+	AstNode decl;
 	if(left is identifierExpression)
-	{
 		decl = ResolveIdentifier(left, s);
-		
-		parent = GetParent(statement(s));
-		while(!(parent is attributedNode))
-		{
-			parent = GetParent(parent);;
-		}
-		
-		AddDependence(decl, parent);
-	}
+	else if(left is memberReferenceExpression)
+		decl = ResolveMemberReference(left, s);	
+	
+	parent = FindParentAttributedNode(s);
+	AddDependence(decl, parent);
+	
 	mapAssignments = AddToMap(mapAssignments, left, s);
 	
 	visit(right)
 	{
 		case i:identifierExpression(_,_):	AddDependence(s, i);
+	}
+}
+
+public void Handle(invocationExpression(list[Expression] arguments, Expression target), Statement s)
+{
+	visit(target)
+	{
+		case v:memberReferenceExpression(strMemberName,expTarget,_):		;
 	}
 }

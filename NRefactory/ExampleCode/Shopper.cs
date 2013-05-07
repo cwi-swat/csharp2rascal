@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roslyn.Example_source
+namespace Example_source
 {
     public class Shopper
     {
@@ -13,6 +13,8 @@ namespace Roslyn.Example_source
             this.Name = name;
             this.Credit = 100;
             this.ShoppingCart = new ShoppingCart(this);
+
+            ShoppingCart.AddToShoppingCart(ShoppingCart, new Product("p", 1));
         }
 
         public ShoppingCart ShoppingCart { get; set; }

@@ -4,22 +4,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace AST_Getter.Helpers
 {
     static class CommonHelper
     {
-        public static string Get(AstType astType)
+        public static string Get(AstType astType, AstNode node)
         {
             //todo finish
             var type = "";
             if (astType is SimpleType)
             {
                 var simpleType = astType as SimpleType;
-                type += "simpleType(\"" + simpleType.Identifier + "\",";
-                type += CollectionHelper.Get(simpleType.TypeArguments);
+
+                //try to resolve the node and extract the exactType
+                var result = Visitor.resolver.Resolve(node);
+                if(!result.IsError && !(result.Type.Kind == TypeKind.Unknown))
+                    type += "exactType(\"" + result.Type.FullName + "\"";
+                else
+                {
+                    type += "simpleType(\"" + simpleType.Identifier + "\",";
+                    type += CollectionHelper.Get(simpleType.TypeArguments);
+                }
+                Console.WriteLine();
+                Console.WriteLine(simpleType.Identifier); 
+                Console.WriteLine(type);
             }
-            else if (astType is ComposedType)
+            else if (astType is ComposedType) // voorbeeld: int* p; int[] a;
             {
                 //composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType)
                 var composedType = astType as ComposedType;
@@ -31,7 +43,7 @@ namespace AST_Getter.Helpers
 
                 type += formatter.S;
             }
-            else if (astType is MemberType)
+            else if (astType is MemberType) //usings
             {
                 //memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments)
                 var memberType = astType as MemberType;

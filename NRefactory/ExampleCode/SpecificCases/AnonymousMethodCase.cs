@@ -16,8 +16,6 @@ namespace ExampleCode.SpecificCases
             unsafe
             {
                 int* p;
-                p++;
-
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Roslyn.Example_source
+namespace Example_source
 {
     public class ShoppingCart
     {
@@ -43,6 +43,12 @@ namespace Roslyn.Example_source
         public static void TotalProductsAddedToShoppingCarts(out int total)
         {
             total = _totalProductsAddedToShippingCarts;
+        }
+
+        public static bool AddToShoppingCart(ShoppingCart sc, Product p)
+        {
+            sc.Products.Add(p);
+            return true;
         }
     }
 }
