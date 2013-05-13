@@ -1,4 +1,4 @@
 csharp2rascal
 =============
 
-Experimental tools to read information from Roslyn into Rascal
+Experimental tools to read information from NRefactory into Rascal
