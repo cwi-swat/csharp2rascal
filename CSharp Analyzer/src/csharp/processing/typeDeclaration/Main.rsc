@@ -7,21 +7,25 @@ import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::Globals;
 import utils::utils;
 
-public map[str name, list[AstNode] a] mapTypeMemberAssignments = ();
 public map[AstNode Node, list[AstNode] decls] mapTypeDeclarations = ();
 
 //this map keeps track of all the assignments/parameters within a block of code
 //and gets reset on a new block
 public map[str uniqueName, list[Statement] s] mapAssignments = ();
+
+//this list is for statements like for/foreach/using/etc
+//these statements declare variables which are only usable inside the block
+//however, the same name can be reused in another statement block(if its not inside the same block)
+public list[tuple[Statement block,str varname, Statement assignment]] listLocalAssignments = [];
+
 public map[str name, AstNode a] mapParameters = ();
 
 public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 {
 	mapTypeDeclarations = ();
-	mapTypeMemberAssignments = ();
 	
 
-	//Fill the mapTypeDeclarations & mapTypeMemberAssignments
+	//Fill the mapTypeDeclarations
 	visit(typeDeclaration.members)
 	{
 		case m:memberDeclaration(_):
@@ -35,13 +39,6 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 				case fd:fieldDeclaration(_,_,_,_,vars,_):
 				{
 					mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), m);
-					for(v <- vars)
-					{
-						if(!(v.initializer is emptyExpression))
-						{
-							mapTypeMemberAssignments = AddToMap(mapTypeMemberAssignments, v.name, attributedNode(m));
-						}	
-					}
 				}
 			}
 		}

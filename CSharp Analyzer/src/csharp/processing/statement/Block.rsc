@@ -18,13 +18,10 @@ public void Handle(blockStatement(list[Statement] statements), Statement s)
 		case st:ifElseStatement(_,_,_):					Handle(st,st);
 		case st:switchStatement(_,_):					Handle(st,st);
 		case st:doWhileStatement(_,_):					Handle(st,st);
-		
+		case st:whileStatement(_,_):					Handle(st,st);
+		case st:forStatement(_,_,_,_):					Handle(st,st);
 		case st:returnStatement(_):						Handle(st,st);
 		case st:expressionStatement(_):					Handle(st,st);
-
-		//do while
-		//while
-		//for
 		//foreach
 		//trycatch
 		//using

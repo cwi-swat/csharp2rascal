@@ -8,19 +8,14 @@ import utils::utils;
 
 import IO;
 
+public void Handle(expressionStatement(Expression expression), Statement s)
+{
+	Handle(expression, s);
+}
+
 public void Handle(Expression e, Statement s)
 {
 	return;
-}
-
-public void Handle(expressionStatement(Expression expression), Statement s)
-{
-	visit(expression)
-	{
-		case e:assignmentExpression(_,_,_):		Handle(e,s);
-		case e:invocationExpression(_,_):		Handle(e,s);
-		case ob:objectCreateExpression(_,_,_):	Handle(ob,s);
-	}
 }
 
 public void Handle(assignmentExpression(Expression left, AssignmentOperator operator, Expression right), Statement s)
@@ -28,7 +23,7 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	//left is always identifierExpression or memberReferenceExpression
 	
 	//keep track of the assignments
-	AddNewAssignment(left, s);	
+	AddNewAssignment(left, s);
 	
 	//check the operator, for some this statement is also dependent on the left-side variable
 	visit(operator)
@@ -128,4 +123,13 @@ public void Handle(objectCreateExpression(list[Expression] arguments, Expression
 	AddDependence(s, targetTypeNode);
 	
 	//todo add dependence to the constructor node
+}
+public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator operatorU), Statement s)
+{
+	visit(operatorU)
+	{
+		case op:postIncrement():	AddNewAssignment(expression, s);
+  		case op:postDecrement():	AddNewAssignment(expression, s);
+  		case value x:				println("Unhandeled unaryOperatorExpression with operator: <operatorU>");
+	}
 }

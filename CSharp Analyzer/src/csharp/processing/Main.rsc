@@ -12,7 +12,7 @@ import csharp::processing::astnode::AttributedNode;
 import csharp::syntax::CSharpSyntax;
 import csharp::reader::FileInput;
 
-public void go()
+public void main()
 {
 	InitGlobals();
 	
@@ -69,7 +69,8 @@ void BuildFamily(CSharpProject project)
 		case p:whileStatement(_, s)						: AddToFamily(p, s);
 		case p:usingStatement(s, _)						: AddToFamily(p, s);
 		case p:doWhileStatement(_, s)					: AddToFamily(p, s);
-		case p:forStatement(_, s, _, _)					: AddToFamily(p, s);
+		case p:forStatement(_, s,initializers, _)		:{AddToFamily(p, s);
+														  AddToFamily(p, initializers);}
 		case p:lockStatement(s, _) 						: AddToFamily(p, s);
 		case p:unsafeStatement(s)						: AddToFamily(p, s);
 		case p:fixedStatement(s,_)						: AddToFamily(p, s);

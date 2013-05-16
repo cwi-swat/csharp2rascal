@@ -12,7 +12,6 @@ import List;
 
 import csharp::processing::Globals;
 
-
 public void Handle(Statement s1, Statement s2)
 {
 	println("unhandled statement: <s1>");
@@ -26,27 +25,18 @@ public void Handle(breakStatement(), Statement s)
 	return;
 }
 
-
 public void Handle(ifElseStatement(Expression c, Statement ifBranch, Statement elseBranch), Statement s)
 {
-	visit(c)
-	{
-		case i:identifierExpression(_,_,_):	AddDependence(s,i);
-	}
-
-	//get all the embedded statements
-	statements = GetStatementsFromBranch(ifBranch);
-	statements += GetStatementsFromBranch(elseBranch);
-	
-	//add a dependence to the IfElseStatement
-	for(subS <- statements)
-	{
-		AddDependence(subS, s);
-	}
+	AddDependenceToCondition(condition, s);
+	AddDependenceToBranch(ifBranch, s);
+	AddDependenceToBranch(elseBranch, s);
 }
 
 public void Handle(variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type), Statement s)
 {
+	//check if in listLocalAssignments
+	//if so, skip this code
+	
 	for(variable <- variables)
 	{
 		parent = FindParentAttributedNode(s);
@@ -67,11 +57,8 @@ public void Handle(variableDeclarationStatement(list[Modifiers] modifiers, list[
 
 public void Handle(switchStatement(Expression expression, list[AstNode] switchSections), Statement s)
 {
-	visit(expression)
-	{
-		case i:identifierExpression(_,_,_):		AddDependence(s,i);
-	}
-	
+	AddDependenceToCondition(condition, s);
+		
 	for(section <- switchSections)
 	{ 
 		for(statement <- section.statements)
@@ -116,14 +103,33 @@ public void Handle(returnStatement(Expression exp), Statement s)
 
 public void Handle(doWhileStatement(Expression condition, Statement embeddedStatement), Statement s)
 {
-	visit(condition)
+	AddDependenceToCondition(condition, s);
+	AddDependenceToBranch(embeddedStatement, s);
+}
+public void Handle(whileStatement(Expression condition, Statement embeddedStatement), Statement s)
+{
+	AddDependenceToCondition(condition, s);
+	AddDependenceToBranch(embeddedStatement, s);
+}
+public void Handle(forStatement(Expression condition, Statement embeddedStatement, list[Statement] initializers, list[Statement] iterators), Statement s)
+{
+	visit(initializers)
 	{
-		case i:identifierExpression(_,_,_):	AddDependence(s,i);
-	}
-
-	statements = GetStatementsFromBranch(embeddedStatement);
-	for(subS <- statements)
+		case as:assignmentExpression(left,_,_):	
+			AddNewAssignment(left, s);
+			
+		//gaat nog niet lekker: "k" wordt 3x toegevoegd.
+		case v:variableDeclarationStatement(_,_,_):
+			AddNewLocalAssignment(v, v, s);
+	}	
+	
+	visit(iterators)
 	{
-		AddDependence(subS, s);
+		case i:identifierExpression(name,_,_):		;
 	}
+	for(l <- listLocalAssignments)
+		println(l);
+	//AddDependenceToCondition(condition, s);
+	
+	//AddDependenceToBranch(embeddedStatement, s);
 }

@@ -67,7 +67,6 @@ public void AddDependence(Statement s, AstNode astnode)
 			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression, s);
 			if(uniqueName in mapAssignments)
 				s2 = GetLastListElement(mapAssignments[uniqueName]);
-			//println("s2 <s2>");
 			
 			if(s2 is emptyStatement)
 			{
@@ -102,12 +101,41 @@ private void CheckForOptionalPath(str uniqueName, Statement s2, Statement s)
 	//check if s2 is inside an optional path (if/switch/do/for/etc)
 	//if so, return the statement as a depenceny
 	//also return the last assignment before the if/switch-statement
-	listStatements = InsideOptionalPath(uniqueName, s2, []);
-
+	listStatements = InsideOptionalPath(uniqueName, s, s2, []);
+	
 	if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
 		for(s3 <- listStatements) 
 			relDependence += <statement(s), statement(s3)>;
 	
 	else //its not inside an optional path
 		relDependence += <statement(s), statement(s2)>;
+}
+
+
+public void AddDependenceToCondition(Expression condition, Statement s)
+{
+	visit(condition)
+	{
+		case i:identifierExpression(_,_,_):	AddDependence(s,i);
+	}
+}
+
+public void AddDependenceToBranch(Statement branch, Statement s)
+{
+	list[Statement] lstStatements = [];
+	
+	if(branch is emptyStatement)
+		//The branch is not there, for example an if without else.
+		lstStatements = [];
+			
+	else if(!(branch is blockStatement))
+		//Its a single statement without { and }
+		lstStatements  += branch;
+	
+	else if(!isEmpty(branch.statements))
+		//it's a non-empty set of statements
+		lstStatements = branch.statements;
+		
+	for(subS <- lstStatements)
+		AddDependence(subS, s);
 }

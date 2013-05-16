@@ -4,10 +4,17 @@
     {
         void forCase()
         {
-            for (int i = 0; i < 6; i++)
+            for (int m = 0,k = 0; m < 8; m++)
             {
-                i++;
+
             }
+
+            //int k = 3;
+            //int i = 2;
+            //for (i = 0, k = 6; i < 6 && k > 0; i+= k, k--)
+            //{
+            //    i = k * i;
+            //}
         }
     }
 }

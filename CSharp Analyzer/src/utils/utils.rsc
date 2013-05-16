@@ -153,24 +153,73 @@ public AstNode FindParentAttributedNode(AstNode a)
 	return parent;
 }
 
-public list[Statement] InsideOptionalPath(str uniqueName, Statement s, list[Statement] FoundOptionalStats)
+public list[Statement] InsideOptionalPath(str uniqueName, Statement s, Statement s2, list[Statement] FoundOptionalStats)
 {
+	//PARAMETERS:
 	//uniqueName = identifier we are dependend on
-	//s = statement we have to check for optional path
+	//s  = statement we are currently at with visiting
+	//s2 = statement we have to check for optional path
 	//  -> the last assignment statement for our identifier
+	//FoundOptionalStats = The optional statements we already encountered
 	
+	// BEHAVIOUR:
 	// if its inside an optional path, we will return the statement(if/for/while/etc)
 	// and the last assignment which was not in the found optional path
 	// this last assignment may be in an optional path, and will be checked by this same function(recursively)
 
-	parent = GetParent(s);
-    Statement OptionalStatement = emptyStatement();
+
+	//first check if our current statement is inside some optional path
+	//for example:
+	//b = 0;
+	//while(a)
+	//{  b = 1;
+	//	 if(b==1)
+	//		a = false
+	//}
+	//in this case, the ifstatement depends on while(a) and b=1, Not on b=0! 
+	//this is because b=1 is ALWAYS executed before the ifstatement, therefor is it not in an optional path.
 	
+	Statement CurrentOptionalPath = emptyStatement();
+	parent = GetParent(s);
 	while(!(parent is attributedNode))
 	{
 		stat = parent;
 		if(stat is statement)
 			stat = parent.nodeStatement;
+		//todo test all options
+		if(stat is ifElseStatement ||
+		   stat is forStatement ||
+		   stat is foreachStatement ||
+		   stat is whileStatement ||
+		   stat is doWhileStatement || 
+		   stat is switchStatement)
+	   	{
+	   		CurrentOptionalPath = parent.nodeStatement;
+	   		break;
+		}
+		parent = GetParent(parent);
+	}
+
+
+	//Then check if s2 is inside some optional statement, other than the CurrentOptionalPath
+	Statement OptionalStatement = emptyStatement();
+
+	parent = GetParent(s2);
+	
+	//zolang ik geen attriburedNode vind, 
+	while(!(parent is attributedNode))
+	{
+		stat = parent;
+		if(stat is statement)
+			stat = parent.nodeStatement;
+
+		// als CurrentOptionalPath niet leeg is, moet deze ongelijk zijn aan de parent die ik vind.
+		// als gelijk aan dan geld s2 als assignment in een niet optioneel path(gezien vanaf s)	
+		if(parent is statement &&
+		   (!(CurrentOptionalPath is emptyStatement) && 
+		   CurrentOptionalPath == parent.nodeStatement))
+			break;
+
 		//todo test all options
 		if(stat is ifElseStatement ||
 		   stat is forStatement ||
@@ -188,10 +237,8 @@ public list[Statement] InsideOptionalPath(str uniqueName, Statement s, list[Stat
 	//its not inside an optional path
 	if(OptionalStatement is emptyStatement)
 	{
-		//println("Not inside optionalpath");
 		return FoundOptionalStats;
 	}
-	//println("Inside optional Path: <OptionalStatement>");
 	
 	//expand the already found optionalstatements, so we can skip those in the next recursive call
 	FoundOptionalStats += OptionalStatement;
@@ -231,7 +278,7 @@ public list[Statement] InsideOptionalPath(str uniqueName, Statement s, list[Stat
 		//we have found the assignment before our optional statement
 		//Check if this statement is inside an optional path
 		// return the statements given + the optional path
-		result = InsideOptionalPath(uniqueName, Assignment, FoundOptionalStats);
+		result = InsideOptionalPath(uniqueName, s, Assignment, FoundOptionalStats);
 		
 		//if the FoundOptionalStats has not yet been expanded with an assignment, add the found assignment.
 		if(result == FoundOptionalStats)
@@ -298,6 +345,21 @@ public void AddNewAssignment(Node, s)
 	mapAssignments = AddToMap(mapAssignments, uniqueName, s);
 }
 
+public void AddNewLocalAssignment(variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type), Statement varDecl, Statement s)
+{
+	str uniqueName = "";
+	for(variable <- variables)
+	{
+		if(!(variable.initializer is emptyExpression))
+		{
+			uniqueName = GetUniqueNameForResolvedIdentifier(variable.name, varDecl, s);
+		}
+	}
+	
+	//tuple[Statement block,str varname, Statement assignment]
+	listLocalAssignments += <s, uniqueName,s>;
+}
+
 //namespace.typedeclaration.fieldname/propname
 //namespace.typedeclaration.routinename.varname
 public str GetUniqueNameForIdentifier(ie, s)
@@ -333,7 +395,7 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved, s)
 		case p:propertyDeclaration(_,_,_,_,_,_,_):	aNode = attributedNode(memberDeclaration(p));
 	}
 	
-	//get typedecl
+	//get typedecl 
 	aNode = GetParent(aNode);
 	typeName = aNode.nodeAttributedNode.name;
 	
@@ -342,23 +404,4 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved, s)
 	namespaceName = aNode.fullName;
 	
 	return namespaceName + "." + typeName + "." + uniqueName;
-}
-
-public list[Statement] GetStatementsFromBranch(Statement branch)
-{
-	list[Statement] lstStatements = [];
-	
-	if(branch is emptyStatement)
-		//The branch is not there, for example an if without else.
-		lstStatements = [];
-			
-	else if(!(branch is blockStatement))
-		//Its a single statement without { and }
-		lstStatements  += branch;
-	
-	else if(!isEmpty(branch.statements))
-		//it's a non-empty set of statements
-		lstStatements = branch.statements;
-		
-	return lstStatements;
 }
