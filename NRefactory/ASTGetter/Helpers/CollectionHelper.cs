@@ -14,7 +14,7 @@ namespace AST_Getter.Helpers
             String type = "";
             types.ToList().ForEach(t =>
                 {
-                    type += CommonHelper.Get(t) + ",";
+                    type += CommonHelper.Get(t, t) + ",";
             });
             return "[" + type + "]";
         }

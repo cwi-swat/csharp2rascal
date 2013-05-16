@@ -8,18 +8,22 @@ import csharp::processing::expression::Handler;
 import utils::utils;
 import IO;
 
+import csharp::processing::typeDeclaration::Main;
+
 public void Handle(blockStatement(list[Statement] statements), Statement s)
 {
 	top-down visit(statements)
 	{
 		case st:variableDeclarationStatement(_,_,_):	Handle(st,st);
-		case st:ifElseStatement(_,t,f):					Handle(st,st);
+		case st:ifElseStatement(_,_,_):					Handle(st,st);
 		case st:switchStatement(_,_):					Handle(st,st);
+		case st:doWhileStatement(_,_):					Handle(st,st);
+		
 		case st:returnStatement(_):						Handle(st,st);
-		case st:expressionStatement(e):					Handle(e,st);
-		//do
-		//while
+		case st:expressionStatement(_):					Handle(st,st);
+
 		//do while
+		//while
 		//for
 		//foreach
 		//trycatch
@@ -32,16 +36,3 @@ public void Handle(blockStatement(list[Statement] statements), Statement s)
 		//etc?		
 	}
 }
-//private void DepOnParent(Statement s)
-//{
-//	if(s is blockStatement)
-//		DepOnParent(s.statements);
-//	else
-//		DepOnParent([s]);
-//}
-//
-//private void DepOnParent(list[Statement] statements)
-//{
-//	for(s <- statements)
-//		AddDependence(s, parent(s));
-//}

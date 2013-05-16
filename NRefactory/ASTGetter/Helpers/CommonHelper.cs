@@ -26,10 +26,12 @@ namespace AST_Getter.Helpers
                 {
                     type += "simpleType(\"" + simpleType.Identifier + "\",";
                     type += CollectionHelper.Get(simpleType.TypeArguments);
-                }
-                Console.WriteLine();
-                Console.WriteLine(simpleType.Identifier); 
-                Console.WriteLine(type);
+
+
+                    Console.WriteLine();
+                    Console.WriteLine(simpleType.Identifier);
+                    Console.WriteLine(type);
+                }                
             }
             else if (astType is ComposedType) // voorbeeld: int* p; int[] a;
             {

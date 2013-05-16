@@ -4,6 +4,8 @@ using System.Linq;
 using AST_Getter;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using ICSharpCode.NRefactory.Semantics;
 
 namespace AST_Getter.Helpers
 {
@@ -11,15 +13,30 @@ namespace AST_Getter.Helpers
     {
         public String S { get; set; }
         private AstNode node;
+        private object[] attributes;
+        private string end;
 
         public FormatHelper() { }
         public FormatHelper(string s) { S = s; }
-
+        public FormatHelper(string start, List<object> attributes, string end, AstNode node)
+        {
+            S = start;
+            this.node = node;
+            this.attributes = attributes.ToArray();
+            this.end = end;
+            DoTheWork();
+        }
         public FormatHelper(string start, object[] attributes, string end, AstNode node)
         {
             S = start;
             this.node = node;
+            this.attributes = attributes;
+            this.end = end;
+            DoTheWork();
+        }
 
+        private void DoTheWork()
+        {
             foreach (var attribute in attributes)
             {
                 string str = HandleAttribute((dynamic)attribute);
@@ -78,6 +95,16 @@ namespace AST_Getter.Helpers
         string HandleAttribute(AstNode astNode)
         {
             return CommonHelper.Get(astNode);
+        }
+        string HandleAttribute(ResolveResult result)
+        {
+            var str = "";
+            if (!result.IsError && !(result.Type.Kind == TypeKind.Unknown))
+                str = String.Format("exactType(\"{0}\")", result.Type.FullName);
+            else
+                str = "typePlaceholder()";
+            
+            return str;
         }
 
         #region EnumTranslation

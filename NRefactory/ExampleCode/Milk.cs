@@ -21,6 +21,6 @@ namespace ExampleCode
         public int ExpireDays;
         public string Type;
 
-        internal Company company;
+        public Company company {get;set;}
     }
 }

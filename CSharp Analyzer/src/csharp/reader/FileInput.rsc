@@ -19,7 +19,7 @@ list[str] files =
 //str filename = "Item.rsc";
 //str filename = "Milk.rsc";
 //str filename = "Product.rsc";
-str filename = "Shopper.rsc";
+//str filename = "Shopper.rsc";
 //str filename = "ShoppingCart.rsc";
 //str filename = "Store.rsc";
 //str filename = "specificcases/linq.rsc";
@@ -32,7 +32,7 @@ str filename = "Shopper.rsc";
 //str filename = "specificcases/yieldcase.rsc";
 //str filename = "specificcases/typeparameter.rsc";
 //str filename = "specificcases/AttributeCase.rsc";
-//str filename = "specificcases/EventCase.rsc";
+//str filename = "specificcases/SwitchCase.rsc";
 
 
 public CSharpProject readCSharpProject()

@@ -30,64 +30,84 @@ public void AddDependence(AstNode node1, AstNode node2)
 // which is a local expressionStatement, a parameter or a memberDeclaration(with initializer)
 public void AddDependence(Statement s, AstNode astnode)
 {
-	if(astnode is statement)
-	{
-		relDependence += <statement(s), astnode>;
-		return;
-	}
-	
 	if(astnode is expression)
 	{
-		//get the statement where the id was last assigned
-		s2 = emptyStatement();
-		
-		if(astnode.nodeExpression in mapAssignments)
-			s2 = GetLastListElement(mapAssignments[astnode.nodeExpression]);
-		
-		
-		if(s2 is emptyStatement)
+		if(astnode.nodeExpression is memberReferenceExpression)
 		{
-			//astnode isnt assigned inside the body, check if its a parameter
-			memberName = "";
+			resolved = ResolveMemberReference(astnode.nodeExpression, s);
+			uniqueName = GetUniqueNameForResolvedIdentifier(astnode.nodeExpression.memberName, resolved, s);
+
+			s2 = emptyStatement();
+			if(uniqueName in mapAssignments)
+				s2 = GetLastListElement(mapAssignments[uniqueName]);
 			
-			exp = astnode.nodeExpression;
-			//get name from astnode (identifierExpression / memberReferenceExpression / ??
-			if(exp is identifierExpression)
-				memberName = exp.identifier;
-			if(exp is memberReferenceExpression)
-				memberName = exp.memberName;
-			
-			if(memberName in mapParameters)
+			if(s2 is emptyStatement)
 			{
-				//astnode is a parameter, add to the depMap
-				p = mapParameters[memberName];
-				relDependence += <statement(s), p>;
+				//the member was not assigned inside the body
+				//so it is just dependant on the member itself
+				relDependence += <statement(s), resolved>;
 			}
-			//astnode isnt assigned inside the body and it is not a parameter, check for memberdeclaration assignments.
-			else if(memberName in mapTypeMemberAssignments)
+			else
 			{
-				s2 = GetLastListElement(mapTypeMemberAssignments[memberName]);
-				
-				relDependence += <statement(s), s2>;
+				//we found the last assignment, check if its inside an optional path
+				CheckForOptionalPath(uniqueName, s2, s);
 			}
-			//check if the identifier is "value", in that case were inside an accessor and can ignore the statement
-			else if(memberName == "value")
-				return;
-				
 			return;
 		}
-		
-		
-		//check if s2 is inside an optional path (if/switch)
-		//if so, return the if/switch statement as a depenceny
-		//also return the last assignment before the if/switch-statement
-		listStatements = InsideOptionalPath(astnode.nodeExpression, s2, mapAssignments, mapTypeMemberAssignments);
-		
-		if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
-			for(s3 <- listStatements) 
-				relDependence += <statement(s), statement(s3)>;
-		else
-			relDependence += <statement(s), statement(s2)>;
+		else if(astnode.nodeExpression is identifierExpression)
+		{
+			//the dependence is to an identifier, check where it was last assigned.
+			memberName = astnode.nodeExpression.identifier;
+
+			//check if the identifier is "value", in that case were inside an accessor and can ignore the statement
+			if(memberName == "value")
+				return;
 			
+			s2 = emptyStatement();
+			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression, s);
+			if(uniqueName in mapAssignments)
+				s2 = GetLastListElement(mapAssignments[uniqueName]);
+			//println("s2 <s2>");
+			
+			if(s2 is emptyStatement)
+			{
+				//astnode isnt assigned inside the body, its a parameter
+				if(memberName in mapParameters)
+				{
+					//astnode is a parameter, add to the depMap
+					p = mapParameters[memberName];
+					relDependence += <statement(s), p>;
+				}
+				else
+				{
+					println("unhandled case found in AddDependence! statement= <s>");
+					throw;
+				}
+			}
+			else
+			{
+				//we found the last assignment, check if its inside an optional path
+				CheckForOptionalPath(uniqueName, s2, s);
+			}
+			return;
+		}
 	}
+	
+	//if none of the above:
+	//	nothing complicated, just add the new dependence
+	relDependence += <statement(s), astnode>;
+}
+private void CheckForOptionalPath(str uniqueName, Statement s2, Statement s)
+{
+	//check if s2 is inside an optional path (if/switch/do/for/etc)
+	//if so, return the statement as a depenceny
+	//also return the last assignment before the if/switch-statement
+	listStatements = InsideOptionalPath(uniqueName, s2, []);
+
+	if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
+		for(s3 <- listStatements) 
+			relDependence += <statement(s), statement(s3)>;
+	
+	else //its not inside an optional path
+		relDependence += <statement(s), statement(s2)>;
 }

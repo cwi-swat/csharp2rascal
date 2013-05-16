@@ -3,8 +3,14 @@ using Example_source;
 
 namespace ExampleCode
 {
-    internal class Company
+    public class Company
     {
-        public List<Product> Products { get; set; }
+        public Product Products { get; set; }
+        public string Description;
+
+        public void DoFunction()
+        {
+            return;
+        }
     }
 }

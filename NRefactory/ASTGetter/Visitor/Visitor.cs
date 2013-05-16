@@ -106,14 +106,16 @@ namespace AST_Getter
             //parameterDeclaration(str name, 
             //                     list[AstNode] attributes, 
             //                     Expression defaultExpression, 
-            //                     ParameterModifier parameterModifier)
+            //                     ParameterModifier parameterModifier,
+            //                     AstType \type)
 
             var attributes = new object[]
             {
                 parameterDeclaration.Name,
                 parameterDeclaration.Attributes,
                 parameterDeclaration.DefaultExpression,
-                parameterDeclaration.ParameterModifier
+                parameterDeclaration.ParameterModifier,
+                parameterDeclaration.Type
             };
 
             var f = new FormatHelper("parameterDeclaration(", attributes, ")", parameterDeclaration);
@@ -628,13 +630,16 @@ namespace AST_Getter
         {
             base.VisitIdentifierExpression(identifierExpression);
             //identifierExpression(str identifier, 
-            //                     list[AstType] typeArguments)
+            //                     list[AstType] typeArguments,
+            //                     AstType \type)
             var attributes = new object[]
             {
                 identifierExpression.Identifier,
-                identifierExpression.TypeArguments
-            };
-
+                identifierExpression.TypeArguments,
+            }.ToList();
+            var result = resolver.Resolve(identifierExpression);
+            attributes.Add(result);
+            
             var f = new FormatHelper("identifierExpression(", attributes, ")", identifierExpression);
             identifierExpression.RascalString = f.S;
         }
@@ -668,7 +673,7 @@ namespace AST_Getter
                 objectCreateExpression.Initializer,
                 objectCreateExpression.Type
             };
-
+            
             var f = new FormatHelper("objectCreateExpression(", attributes, ")", objectCreateExpression);
             objectCreateExpression.RascalString = f.S;
         }

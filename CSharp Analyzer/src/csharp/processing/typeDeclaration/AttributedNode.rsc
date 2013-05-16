@@ -7,6 +7,11 @@ import csharp::processing::statement::Handler;
 
 import IO;
 
+public void Handle(noAccessor())
+{
+	return;
+}
+
 public void Handle(accessor(list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers))
 {
 	Handle(body, body);

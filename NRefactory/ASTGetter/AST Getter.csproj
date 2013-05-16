@@ -98,7 +98,12 @@
     <None Include="GeneratedOutput\SpecificCases\yieldCase.rsc" />
     <None Include="GeneratedOutput\Store.rsc" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ExampleCode\ExampleCode.csproj">
+      <Project>{7e8de259-3d85-41fd-be07-a2d05e988a9d}</Project>
+      <Name>ExampleCode</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Notes.txt" />
   </ItemGroup>

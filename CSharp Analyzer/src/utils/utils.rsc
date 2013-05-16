@@ -33,7 +33,7 @@ public map[str name, list[AstNode] a] AddToMap(map[str name, list[AstNode] a] m,
 		
 	return m;
 }
-public map[Expression name, list[Statement] s] AddToMap(map[Expression name, list[Statement] s] m, Expression key, Statement val)
+public map[str name, list[Statement] s] AddToMap(map[str uniqueName, list[Statement] s] m, str key, Statement val)
 {
 	if(key in m)
 		m[key] += [val];
@@ -60,13 +60,10 @@ public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNo
 
 //where has id been declared?
 //from viewpoint of statement s
-public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstType] typeArguments), Statement s)
+public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstType] typeArguments, AstType \type), Statement s)
 {
-	//first get the node in which the statement is located
-	//ctor / routine / prop
-	parent = FindParentAttributedNode(s);
-	
-	//is it a varDecl?
+		
+	//is it a variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type)?
 	for(key <- mapAttributedNodeDeclarations)
 	{
 		for(dec <- mapAttributedNodeDeclarations[key])
@@ -79,37 +76,43 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 		}
 	}
 
-	//is it a parameter?
+	//is it a parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier, AstType \type)?
 	for(p <- mapParameters)
 	{
 		if(p == identifier)
-			return mapParameters[key];
+			return mapParameters[p];
 	}
 	
-	//is it a field or property?
+	//is it a fieldDeclaration(str name, list[AstNode] attributes, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] variables, AstType \type)
+	//	   or propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type)?
 	aNode =	checkMapTypeDeclForId(identifier);
 	if(!(aNode is astNodePlaceholder))
-		return;
+		return aNode;
 	
-	println("Resolve identifier failed: <identifier>");
+	return astNodePlaceholder();
 	//throw;	
 }
 
-//where has member been declared?
+//where has the member ref been declared?
 //from viewpoint of statement s
 public AstNode ResolveMemberReference(memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments), Statement s)
 {
 	//this = my current class
 	visit(target)
 	{
-		case v:thisReferenceExpression(): return checkMapTypeDeclForId(memberName);
+		case t:thisReferenceExpression(): 	return checkMapTypeDeclForId(memberName);
+		case t:identifierExpression(id,_,Type):
+		{
+			Node = GetNodeByExactType(Type);
+			decl = GetNodeMemberByName(Node.nodeAttributedNode, memberName);
+			return decl;
+		} 
 	}
-	
 	
 	//ClassName = Field/Property from ClassName
 }
 
-AstNode checkMapTypeDeclForId(str id)
+private AstNode checkMapTypeDeclForId(str id)
 {
 	for(key <- mapTypeDeclarations)
 	{
@@ -125,10 +128,10 @@ AstNode checkMapTypeDeclForId(str id)
 
 
 public AstNode GetParent(Statement s) = GetParent(statement(s));
+public AstNode GetParent(AttributedNode s) = GetParent(attributedNode(s));
 public AstNode GetParent(AstNode a)
 {
 	//public map[AstNode parent, list[AstNode] children] mapFamily 
-	
 	for(parent <- mapFamily)
 	{
 		for(child <- mapFamily[parent])
@@ -150,52 +153,212 @@ public AstNode FindParentAttributedNode(AstNode a)
 	return parent;
 }
 
-
-public list[Statement] InsideOptionalPath(Expression e, Statement s, map[Expression name, list[Statement] s] mapAssignments, map[str name, list[AstNode] a] mapTypeMemberAssignments)
+public list[Statement] InsideOptionalPath(str uniqueName, Statement s, list[Statement] FoundOptionalStats)
 {
-	//e = identifier we are dependant on
+	//uniqueName = identifier we are dependend on
 	//s = statement we have to check for optional path
 	//  -> the last assignment statement for our identifier
 	
-	for(d <- relDependence[statement(s)])
+	// if its inside an optional path, we will return the statement(if/for/while/etc)
+	// and the last assignment which was not in the found optional path
+	// this last assignment may be in an optional path, and will be checked by this same function(recursively)
+
+	parent = GetParent(s);
+    Statement OptionalStatement = emptyStatement();
+	
+	while(!(parent is attributedNode))
 	{
-		Statement subS = d.nodeStatement;
-		if(subS is ifElseStatement ||
-		   subS is switchSection)
+		stat = parent;
+		if(stat is statement)
+			stat = parent.nodeStatement;
+		//todo test all options
+		if(stat is ifElseStatement ||
+		   stat is forStatement ||
+		   stat is foreachStatement ||
+		   stat is whileStatement ||
+		   stat is doWhileStatement || 
+		   stat is switchStatement)
+	   	{
+	   		OptionalStatement = parent.nodeStatement;
+	   		break;
+		}
+		parent = GetParent(parent);	
+	}
+	
+	//its not inside an optional path
+	if(OptionalStatement is emptyStatement)
+	{
+		//println("Not inside optionalpath");
+		return FoundOptionalStats;
+	}
+	//println("Inside optional Path: <OptionalStatement>");
+	
+	//expand the already found optionalstatements, so we can skip those in the next recursive call
+	FoundOptionalStats += OptionalStatement;
+
+	
+	//loop through the assignments to get the last assignment before our found optional statement(if/for/etc);
+	Statement Assignment = emptyStatement();
+	for(assignS <- reverse(mapAssignments[uniqueName]))
+	{
+		bool foundInOptional = false;
+		parent = GetParent(assignS);
+		while(!(parent is attributedNode))
 		{
-			//the last assignment of e is inside of an optional path
-			//return the if or switch statement as dependency
-			
-			//also add the assignment that was before the optional path as a dependency
-			//because the optional path might not get executed, and the assignment before it will be the last assignment for e
-			Statement Assignment = emptyStatement();
-			
-			for(assignS <- reverse(mapAssignments[e]))
+			if(parent is statement &&
+			   parent.nodeStatement in FoundOptionalStats)
 			{
-				for(d <- relDependence[statement(assignS)])
-				{
-					if(d.nodeStatement != subS)
-					{
-						//this dependency is not the same as the if/switch statement
-						Assignment = d.nodeStatement;
-					}
-					if(!(Assignment is emptyStatement))
-						break;
-				}
-				
-				//if(isEmpty(relDependence[statement(assignS)]))
-				//{;}
-				
-				//check if the assignment with a different dependency (so not the if/switch) was found
-				//or if this assignment does not have any dependency -> different
-				if(!(Assignment is emptyStatement))
-						break;
+				foundInOptional = true;
+				break;
 			}
-			
-			return [subS];
+			parent = GetParent(parent);
+		}
+		if(!foundInOptional)
+		{
+			Assignment = assignS;
+			break;
 		}
 	}
 	
-	//the last assignment was not inside an optional path.
+	if(Assignment is emptyStatement)
+	{
+		//no assignment found outside the optional statement.
+		//So just return the optional statement.
+		return [OptionalStatement];
+	}
+	else
+	{
+		//we have found the assignment before our optional statement
+		//Check if this statement is inside an optional path
+		// return the statements given + the optional path
+		result = InsideOptionalPath(uniqueName, Assignment, FoundOptionalStats);
+		
+		//if the FoundOptionalStats has not yet been expanded with an assignment, add the found assignment.
+		if(result == FoundOptionalStats)
+			result += Assignment;
+		return result;
+	}
 	return [];
+}
+
+public AstNode GetNodeByExactType(exactType(str name))
+{
+	for(ns <- relNamespaceAttributedNode.namespace)
+		for(m <- relNamespaceAttributedNode[ns])
+			if(ns.name + "." + m.nodeAttributedNode.name == name)
+				return m;
+}
+
+public AstNode GetNodeMemberByName(AttributedNode Node, str membername)
+{
+	for(an <- relAttributedNodeMember.Node)
+	{
+		if(an == Node)
+			for(m <- relAttributedNodeMember[an])
+				if(m.nodeMemberDeclaration.name == membername)
+					return attributedNode(m);
+	}				
+	println("Element not found in relAttributedNodeMember: nodename:<nodename>; membername:<membername>");
+}
+
+public AstNode GetNodeByMember(AttributedNode member)
+{
+	for(an <- relAttributedNodeMember.Node)
+	{
+		for(m <- relAttributedNodeMember[an])
+		{
+			if(m == member)
+				return attributedNode(an);
+		}
+	}
+}
+
+public void AddNewAssignment(Node, s)
+{
+	str uniqueName = "";
+	if(Node is identifierExpression)
+		uniqueName = GetUniqueNameForIdentifier(Node, s);
+	else if(Node is memberReferenceExpression)
+	{
+		resolved = ResolveMemberReference(Node, s);
+		uniqueName = GetUniqueNameForResolvedIdentifier(Node.memberName, resolved, s);
+	}
+	else if(Node is variableDeclarationStatement)
+	{
+		for(variable <- Node.variables)
+		{
+			if(!(variable.initializer is emptyExpression))
+			{
+				uniqueName = GetUniqueNameForResolvedIdentifier(variable.name, Node, s);
+			}
+		}
+	}
+	
+	
+	mapAssignments = AddToMap(mapAssignments, uniqueName, s);
+}
+
+//namespace.typedeclaration.fieldname/propname
+//namespace.typedeclaration.routinename.varname
+public str GetUniqueNameForIdentifier(ie, s)
+{
+	uniqueName = ie.identifier;
+	resolved = ResolveIdentifier(ie, s);
+	return GetUniqueNameForResolvedIdentifier(uniqueName, resolved, s);
+}
+public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved, s)
+{
+	AstNode aNode;
+	top-down-break visit(resolved)
+	{
+		case v:variableDeclarationStatement(_,_,_):
+		{
+			//get routinename or constructorname
+			aNode = FindParentAttributedNode(v);
+			if(aNode.nodeAttributedNode is constructorDeclaration)
+				uniqueName = aNode.nodeAttributedNode.name + "." + uniqueName;
+			else //routine
+				uniqueName = aNode.nodeAttributedNode.nodeMemberDeclaration.name + "." + uniqueName;
+		}
+		case p:parameterDeclaration(_,_,_,_,_):
+		{
+			//get routinename or constructorname
+			aNode = FindParentAttributedNode(p);
+			if(aNode.nodeAttributedNode is constructorDeclaration)
+				uniqueName = aNode.nodeAttributedNode.name + "." + uniqueName;
+			else //routine
+				uniqueName = aNode.nodeAttributedNode.nodeMemberDeclaration.name + "." + uniqueName;
+		}
+		case f:fieldDeclaration(_,_,_,_,_,_):		aNode = attributedNode(memberDeclaration(f));
+		case p:propertyDeclaration(_,_,_,_,_,_,_):	aNode = attributedNode(memberDeclaration(p));
+	}
+	
+	//get typedecl
+	aNode = GetParent(aNode);
+	typeName = aNode.nodeAttributedNode.name;
+	
+	//get namespace
+	aNode = GetParent(aNode);
+	namespaceName = aNode.fullName;
+	
+	return namespaceName + "." + typeName + "." + uniqueName;
+}
+
+public list[Statement] GetStatementsFromBranch(Statement branch)
+{
+	list[Statement] lstStatements = [];
+	
+	if(branch is emptyStatement)
+		//The branch is not there, for example an if without else.
+		lstStatements = [];
+			
+	else if(!(branch is blockStatement))
+		//Its a single statement without { and }
+		lstStatements  += branch;
+	
+	else if(!isEmpty(branch.statements))
+		//it's a non-empty set of statements
+		lstStatements = branch.statements;
+		
+	return lstStatements;
 }

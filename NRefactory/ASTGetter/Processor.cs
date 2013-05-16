@@ -16,6 +16,8 @@ namespace AST_Getter
 
         public static void Process()
         {
+            Console.WriteLine("start");
+
             var files = Directory.GetFiles(GlobalConstants.ExampleCodePath, "*.cs", SearchOption.AllDirectories).ToList();
 
             var firsttoproces = GlobalConstants.ExampleCodePath + GlobalConstants.FirstFileToProcess + ".cs";

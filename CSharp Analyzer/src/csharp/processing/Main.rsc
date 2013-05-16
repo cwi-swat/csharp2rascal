@@ -12,29 +12,34 @@ import csharp::processing::astnode::AttributedNode;
 import csharp::syntax::CSharpSyntax;
 import csharp::reader::FileInput;
 
-public void Start()
+public void go()
 {
 	InitGlobals();
 	
 	CSharpProject project = readCSharpProject();
 	BuildFamily(project);
 	
+	
+	for(file <- project)
+	{
+		visit(file)
+		{
+			case c:usingDeclaration(_): 					relFileUsing += <file,c>;
+			case c:namespaceDeclaration(_,_,_,members):
+			{
+				relFileNamespace[file] = c;
+				for(m<-members) relNamespaceAttributedNode[c] = m;
+			}
+		}
+	}
 	for(file <- project)
 	{
 		for(astnode <- file.contents)
 		{
-			if(astnode is usingDeclaration)
+			if(astnode is namespaceDeclaration)
 			{
-				relFileUsing += <file,astnode>;
-			}
-			else if(astnode is namespaceDeclaration)
-			{
-				namespace = astnode;
-				relFileNamespace += <file,namespace>;
-								
-				for(member <- namespace.members)
+				for(member <- astnode.members)
 				{
-					relNamespaceAttributedNode += <namespace,member>;
 					if(member is attributedNode)
 					{
 						HandleAttributedNode(astNodePlaceholder(), member);
@@ -45,6 +50,7 @@ public void Start()
 		}
 	}
 	Read(relDependence, "relDependence");
+	Read(relCalls, "relCalls");
 }
 
  
@@ -56,6 +62,7 @@ void BuildFamily(CSharpProject project)
 	visit(project)
 	{
 		case p:namespaceDeclaration(_,_,_,Ms)			: AddToFamily(p, Ms);
+		case p:switchStatement(_,Ss)					: AddToFamily(p, Ss);
 		case p:switchSection(_,Ss)						: AddToFamily(p, Ss);
 		case p:catchClause(s,_) 						: AddToFamily(p, s);
 		case p:anonymousMethodExpression(s, _,_)		: AddToFamily(p, s);
@@ -70,9 +77,11 @@ void BuildFamily(CSharpProject project)
 		case p:checkedStatement(s)						: AddToFamily(p, s);
 		case p:typeDeclaration(_,_, _,_,_,Ms,_, _,_)	: AddToFamily(p, Ms);
 		case p:accessor(_,s,_,_)						: AddToFamily(p, s);
-		case p:constructorDeclaration(_,_,s,_,_,_,_)	: AddToFamily(p, s);
+		case p:constructorDeclaration(_,_,s,_,_,_,Ps)	:{AddToFamily(p, s);
+														  AddToFamily(p, Ps);}
 		case p:destructorDeclaration(_,_,s,_,_,_,_) 	: AddToFamily(p, s);
-		case p:methodDeclaration(_,_,s,_,_,_,_,_,_,_)	: AddToFamily(p, s);
+		case p:methodDeclaration(_,_,s,_,_,_,_,Ps,_,_)	:{AddToFamily(p, s);
+														  AddToFamily(p, Ps);}
 		case p:blockStatement(s)						: AddToFamily(p, s);
 		case p:ifElseStatement(_, f, t) 				:{AddToFamily(p, t);
 			 											  AddToFamily(p, f);}
@@ -96,6 +105,8 @@ public void AddToFamily(AstNode p, list[AstNode] Cs) {
 
 //overloads to make more types compatible
 public void AddToFamily(MemberDeclaration p, Statement c) 			= AddToFamily(attributedNode(memberDeclaration(p)), statement(c));
+public void AddToFamily(MemberDeclaration p, list[AstNode] c)		= AddToFamily(attributedNode(memberDeclaration(p)), c);
+public void AddToFamily(AttributedNode p, list[AstNode] c)			= AddToFamily(attributedNode(p), c);
 public void AddToFamily(AttributedNode p, AttributedNode c)			= AddToFamily(attributedNode(p), attributedNode(c));
 public void AddToFamily(AttributedNode p, Statement c)				= AddToFamily(attributedNode(p), statement(c));
 public void AddToFamily(Expression p, Statement c)					= AddToFamily(expression(p), statement(c));
@@ -104,6 +115,7 @@ public void AddToFamily(AstNode p, Statement c)						= AddToFamily(p, statement(
 public void AddToFamily(AstNode p, list[Statement] Cs)				= AddToFamily(p, [statement(c) | c <- Cs]);
 public void AddToFamily(Statement p, list[Statement] Cs)			= AddToFamily(statement(p), [statement(c) | c <- Cs]);
 public void AddToFamily(Statement p, list[AttributedNode] Cs)		= AddToFamily(statement(p), [attributedNode(c) | c <- Cs]);
+public void AddToFamily(Statement p, list[AstNode] Cs)				= AddToFamily(statement(p), Cs);
 public void AddToFamily(AttributedNode p, list[AttributedNode] Cs)	= AddToFamily(attributedNode(p), [attributedNode(c) | c <- Cs]);
 public void AddToFamily(AstNode p, AstNode c)						= AddToFamily(p, [c]);
 

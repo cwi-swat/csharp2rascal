@@ -8,15 +8,12 @@ import csharp::processing::Globals;
 import utils::utils;
 
 public map[str name, list[AstNode] a] mapTypeMemberAssignments = ();
-
-//this map keeps track of all the assignments within a block of code
-//and gets reset on a new block
-public map[Expression name, list[Statement] s] mapAssignments = ();
-
-public map[str name, AstNode a] mapParameters = ();
-
 public map[AstNode Node, list[AstNode] decls] mapTypeDeclarations = ();
-public map[AstNode Node, list[AstNode] decls] mapAttributedNodeDeclarations = ();
+
+//this map keeps track of all the assignments/parameters within a block of code
+//and gets reset on a new block
+public map[str uniqueName, list[Statement] s] mapAssignments = ();
+public map[str name, AstNode a] mapParameters = ();
 
 public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 {
@@ -24,7 +21,7 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 	mapTypeMemberAssignments = ();
 	
 
-	//Fill the mapTypeDeclarations	
+	//Fill the mapTypeDeclarations & mapTypeMemberAssignments
 	visit(typeDeclaration.members)
 	{
 		case m:memberDeclaration(_):
@@ -59,15 +56,13 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 	  	}
 		case m:destructorDeclaration(_,_,_,_,_):
 		{
-			mapAssignments = ();
-			mapAttributedNodeDeclarations = ();
+			ResetMaps();
 			relAttributedNodeMember[typeDeclaration] = m;
 			Handle(m);
 	  	}
 		case m:constructorDeclaration(_,_,_,_,_,_,_):
 		{
-		   	mapAssignments = ();
-		   	mapAttributedNodeDeclarations = ();
+			ResetMaps();
 		   	relAttributedNodeMember[typeDeclaration] = m; 
 			Handle(m);
 		}
@@ -78,4 +73,6 @@ public void ResetMaps()
 {
 	mapAssignments = ();
 	mapParameters = ();
+	mapAssignments = ();
+   	mapAttributedNodeDeclarations = ();
 }

@@ -4,28 +4,29 @@
     {
         string Content(int switchOn)
         {
-            string variable;
+            switchOn = 2;
+            string variable = "a";
+            
+            if (switchOn == 3)
+            {
+                variable = "b";
+            }
+
+            if (switchOn == 2)
+            {
+                variable = "c";
+            }
 
             switch (switchOn)       //switch statement
             {
-                                        //switch section
-                case 1:                     //case label
-                case 2:                     //case label
-                    variable = "<3";            //statement
-                    break;                      //statement
-                                        //switch section
-
                 case 3:
                     variable = "3";
                     break;
                 case 4:
                     variable = "4";
                     break;
-                default:
-                    variable = "0";
-                    break;
             }
-
+            
             return variable;
         }
     }

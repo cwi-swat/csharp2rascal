@@ -28,3 +28,13 @@ hierdoor krijg je ongewenst resultaat, de ifstatement wordt als dezelfde beschou
     statement(emptyStatement())
     statement(blockStatement([expressionStatement(assignmentExpression(identifierExpression("b",[])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/Item.cs|(0,0,<26,17>,<26,18>)],assignmentOperatorAssign(),primitiveExpression(2)[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/Item.cs|(0,0,<26,21>,<26,22>)])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/Item.cs|(0,0,<26,17>,<26,22>)])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/Item.cs|(0,0,<26,17>,<26,23>)]])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/Item.cs|(0,0,<25,13>,<27,14>)])
     statement(emptyStatement())
+
+
+=======================
+
+V - public Product product;
+X - public List<Product> products;
+V - public Product product {get;set;}
+
+Probleem bij resolving types, bij fields met een class-defined-type.
+Probleem bestaat niet bij property en field met class-defined-type in subtype. eg. List<Product>.

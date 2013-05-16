@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Editor;
+using ExampleCode.SpecificCases;
 
 namespace AST_Getter
 {

@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace ExampleCode.SpecificCases
 {
-    class DoWhileCase
+    public class DoWhileCase
     {
-        void DoWhile()
+        public void DoWhile()
         {
             var a = 1;
             do
             {
                 a++;
-            } while (a < 5);
-
+                a = 4;
+            }
+            while (a == 2);
         }
     }
 }

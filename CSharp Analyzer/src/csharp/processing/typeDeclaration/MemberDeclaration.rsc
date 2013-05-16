@@ -5,6 +5,7 @@ import csharp::syntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
+import csharp::processing::statement::Handler;
 import utils::utils;
 
 import IO;
@@ -14,12 +15,11 @@ public void Handle(MemberDeclaration md, AttributedNode typeDeclaration)
 	visit(md)
 	{
 		case m:indexerDeclaration(_,_,_,_,_,_,_,_):		;
-		case m:methodDeclaration(_,_,_,_,_,_,_,_,_,_):	{mapAssignments = (); mapAttributedNodeDeclarations = (); Handle(m);}
+		case m:methodDeclaration(_,_,_,_,_,_,_,_,_,_):	{ResetMaps(); Handle(m);}
 		case m:propertyDeclaration(_,_,_,_,_,_,_):	    
 		{
 			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
-			mapAssignments = ();
-		   	mapAttributedNodeDeclarations = ();
+			ResetMaps();
 			Handle(m);
 		}
 		case m:fieldDeclaration(_,_,_,_,_,_):			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
@@ -30,6 +30,9 @@ public void Handle(MemberDeclaration md, AttributedNode typeDeclaration)
 
 private void Handle(methodDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] constraints, bool isExtensionMethod, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters, AstType \type))
 {
+	for(p <- parameters)
+		mapParameters += (p.name:p);
+		
 	Handle(body, body);
 }
 

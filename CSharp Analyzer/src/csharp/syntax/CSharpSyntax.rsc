@@ -34,7 +34,7 @@ data AstNode =
   |  	attribute(list[Expression] arguments, AstType \type) //EDIT: type toegevoegd
   |  	attributeSection(str attributeTarget, list[AstNode] attributes) //EDIT: AttributeType naar str
   |  	cSharpTokenNode()
-  |  	parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier)
+  |  	parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier, AstType \type) //EDIT: added type
   |  	switchSection(list[AstNode] caseLabels, list[Statement] statements)
   |  	typeParameterDeclaration(str name, VarianceModifier variance)
   |  	catchClause(Statement body, str variableName)
@@ -66,7 +66,7 @@ data Expression =
   |  	baseReferenceExpression()
   |  	unaryOperatorExpression(Expression expression, UnaryOperator operatorU)
   |	 	anonymousTypeCreateExpression(list[Expression] Initializers)
-  |  	identifierExpression(str identifier, list[AstType] typeArguments)
+  |  	identifierExpression(str identifier, list[AstType] typeArguments, AstType \type) //added type
   |  	primitiveExpression(value \value)
   |  	expressionPlaceholder()
   |  	objectCreateExpression(list[Expression] arguments, Expression initializer, AstType \type) //EDIT:  type toegevoegd
