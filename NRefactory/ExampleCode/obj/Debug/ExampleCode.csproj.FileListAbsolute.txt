@@ -1,0 +1,4 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\bin\Debug\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\bin\Debug\ExampleCode.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\obj\Debug\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ExampleCode\obj\Debug\ExampleCode.pdb
