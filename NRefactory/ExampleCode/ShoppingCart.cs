@@ -47,7 +47,8 @@ namespace Example_source
 
         public static bool AddToShoppingCart(ShoppingCart sc, Product p)
         {
-            sc.Products.Add(p);
+            //todo chaining
+            //sc.Products.Add(p);
             return true;
         }
     }

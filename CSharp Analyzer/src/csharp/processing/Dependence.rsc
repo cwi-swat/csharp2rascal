@@ -50,7 +50,10 @@ public void AddDependence(Statement s, AstNode astnode)
 			else
 			{
 				//we found the last assignment, check if its inside an optional path
-				CheckForOptionalPath(uniqueName, s2, s);
+				if(s2 is expressionStatement)
+					CheckForOptionalPath(uniqueName, statement(s2), s);
+				else
+					CheckForOptionalPath(uniqueName, s2, s);
 			}
 			return;
 		}

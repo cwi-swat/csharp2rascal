@@ -93,7 +93,10 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 		{
 			//NRefactory cannot resolve all types..
 			//But it does resolve types declared inside the project, so check if this is the case
-			if(!(expTarget.\type is typePlaceholder))
+			if(!(expTarget has \type))
+				println("break");
+			if(  expTarget has \type &&
+			   !(expTarget.\type is typePlaceholder))
 			{
 				callingNode = FindParentAttributedNode(s);
 				callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);

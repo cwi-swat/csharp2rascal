@@ -359,6 +359,7 @@ public AstNode GetNodeMemberByName(AttributedNode Node, str membername)
 {
 	if(an <- relAttributedNodeMember.Node, an == Node, 
 	   m <- relAttributedNodeMember[an],
+	   m has nodeMemberDeclaration,
 	   m.nodeMemberDeclaration.name == membername)
 		return attributedNode(m);
 	else

@@ -28,6 +28,7 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 {
 	mapTypeDeclarations = ();
 	
+	println("beginning with typedecl: <typeDeclaration.name>");
 
 	//Fill the mapTypeDeclarations
 	visit(typeDeclaration.members)

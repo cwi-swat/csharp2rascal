@@ -17,10 +17,11 @@ namespace Example_source
             this.Products = new List<Product>();
         }
 
-        ~Aisle()
-        {
-            this.Name = null;
-            this.Products = null;
-        }
+        //todo destructor
+        //~Aisle()
+        //{
+        //    this.Name = null;
+        //    this.Products = null;
+        //}
     }
 }

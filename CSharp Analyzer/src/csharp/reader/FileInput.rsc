@@ -11,7 +11,7 @@ list[str] files =
 	
 ];
 
-//str filename = "All.rsc";
+str filename = "All.rsc";
 //str filename = "specificcases/UsingAliasCase.rsc";
 //str filename = "Aisle.rsc";
 //str filename = "Company.rsc";
@@ -22,7 +22,7 @@ list[str] files =
 //str filename = "Shopper.rsc";
 //str filename = "ShoppingCart.rsc";
 //str filename = "Store.rsc";
-str filename = "specificcases/linq.rsc";
+//str filename = "specificcases/linq.rsc";
 //str filename = "specificcases/dowhilecase.rsc";
 //str filename = "specificcases/whilecase.rsc";
 //str filename = "specificcases/forcase.rsc";

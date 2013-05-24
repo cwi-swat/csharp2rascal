@@ -22,6 +22,7 @@ namespace ExampleCode.SpecificCases
                 
             }
 
+            //todo groupings
             //var groupings = from element in examples
             //                group element by element into groups
             //                select new
