@@ -8,22 +8,18 @@ import utils::utils;
 
 import IO;
 
-public void Handle(expressionStatement(Expression expression), Statement s)
+public void Handle(Statement s:expressionStatement(Expression expression))
 {
 	Handle(expression, s);
 }
-
 public void Handle(Expression e, Statement s)
 {
+	//all unhandled
 	return;
 }
-
 public void Handle(assignmentExpression(Expression left, AssignmentOperator operator, Expression right), Statement s)
 {
 	//left is always identifierExpression or memberReferenceExpression
-	
-	//keep track of the assignments
-	AddNewAssignment(left, s);
 	
 	//check the operator, for some this statement is also dependent on the left-side variable
 	visit(operator)
@@ -43,14 +39,14 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 			//is it inside an invocationExpression?
 			//Then it will resolve to a method
 			
-			resolved = ResolveMemberReference(m, s);
+			resolved = ResolveMemberReference(m);
 			if(resolved is attributedNode &&
 			   resolved.nodeAttributedNode is memberDeclaration &&
 			   resolved.nodeAttributedNode.nodeMemberDeclaration is methodDeclaration)
 			{
 				targetContainingNode = GetNodeByExactType(target.\type);
 				targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, name);
-					
+				
 				//our assignment depends on the outcome of the function called
 				AddDependence(s, targetNode);
 				
@@ -61,15 +57,19 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 		}
 	}
 	
+	//keep track of the assignments
+	AddNewAssignment(left, s);
+	
+	
 	//add a dependence between the declaration and the parent attributedNode
 	//So for example, a property is dependend on a routine
 	// --> some call to this property cannot be moved above that routine
 	
 	AstNode decl;
 	if(left is identifierExpression)
-		decl = ResolveIdentifier(left, s);
+		decl = ResolveIdentifier(left);
 	else if(left is memberReferenceExpression)
-		decl = ResolveMemberReference(left, s);	
+		decl = ResolveMemberReference(left);	
 
 
 	//don't do this for vars and parameters.
@@ -91,22 +91,32 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 		//memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
 		case v:memberReferenceExpression(strMemberName,expTarget,_):
 		{
-			callingNode = FindParentAttributedNode(s);
-			callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);
-			
-			targetContainingNode = GetNodeByExactType(expTarget.\type);
-			targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
-
-			relCalls[callingNode] = targetNode;
-			relCalls[callingContainingNode] = targetContainingNode;
+			//NRefactory cannot resolve all types..
+			//But it does resolve types declared inside the project, so check if this is the case
+			if(!(expTarget.\type is typePlaceholder))
+			{
+				callingNode = FindParentAttributedNode(s);
+				callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);
+				
+				targetContainingNode = GetNodeByExactType(expTarget.\type);
+				GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
+				targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
+	
+				relCalls[callingNode] = targetNode;
+				relCalls[callingContainingNode] = targetContainingNode;
+				
+				//add dependence
+				AddDependence(s, expTarget);
+			}
 		}
 	}
 
-	//if the argument is given as ref parameter, this will count as an assignment
+	
 	visit(arguments)
 	{
 		case d:directionExpression(exp,dir):
 		{
+			//if the argument is given as ref parameter, this will count as an assignment
 			if(dir is fieldDirectionRef)
 				AddNewAssignment(exp, s);
 		}
@@ -133,3 +143,44 @@ public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator 
   		case value x:				println("Unhandeled unaryOperatorExpression with operator: <operatorU>");
 	}
 }
+public void Handle(e:conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression))
+{
+	Statement s = GetParentStatement(e);
+
+	visit(e)
+	{
+		case i:identifierExpression(_,_):			AddDependence(s,i);
+		case m:memberReferenceExpression(_,_,_):	AddDependence(s,m);
+	}	
+}
+public void Handle(e:queryExpression(list[QueryClause] clauses))
+{
+	Statement s = GetTopMostParentStatement(e);
+	for(clause <- clauses)
+	{
+		visit(clause) 
+		{
+			case c:queryFromClause(_,id)				: listLinqIdentifiers += [<s,GetUniqueNameForResolvedIdentifier(id,s),s>];
+			case c:queryLetClause(_,id)					: listLinqIdentifiers += [<s,GetUniqueNameForResolvedIdentifier(id,s),s>];
+			case c:queryContinuationClause(id,precedingQuery):;
+			case c:queryWhereClause(c):;
+	 		case c:queryGroupClause(key,projection):;
+	  		case c:queryOrderClause(orderings):;
+			case c:querySelectClause(e):;
+			case c:queryJoinClause(equalsExpression,inExpression,intoIdentifier,isGroupJoin,joinIdentifier,onExpression):;
+		}
+	}
+}
+
+//public void Handle(lambdaExpression(AstNode body, list[AstNode] parameters), Statement s)
+//{
+//	visit(parameters)
+//	{
+//		case p:identifierExpression(n,t):;
+//	}
+//
+//	visit(body)
+//	{
+//		case s:statement(st):;
+//	}
+//}

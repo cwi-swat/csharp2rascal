@@ -14,7 +14,7 @@ public void Handle(noAccessor())
 
 public void Handle(accessor(list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers))
 {
-	Handle(body, body);
+	Handle(body);
 }
 
 public void Handle(constructorDeclaration(str name, list[AstNode] attributes, Statement body, AstNode initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters))
@@ -22,10 +22,10 @@ public void Handle(constructorDeclaration(str name, list[AstNode] attributes, St
 	for(p <- parameters)
 		mapParameters += (p.name:p);
 
-	Handle(body, body);
+	Handle(body);
 }
 
 public void Handle(destructorDeclaration(str name, list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers))
 {
-	Handle(body, body);
+	Handle(body);
 }

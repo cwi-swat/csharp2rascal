@@ -22,18 +22,20 @@ list[str] files =
 //str filename = "Shopper.rsc";
 //str filename = "ShoppingCart.rsc";
 //str filename = "Store.rsc";
-//str filename = "specificcases/linq.rsc";
+str filename = "specificcases/linq.rsc";
 //str filename = "specificcases/dowhilecase.rsc";
 //str filename = "specificcases/whilecase.rsc";
-str filename = "specificcases/forcase.rsc";
+//str filename = "specificcases/forcase.rsc";
 //str filename = "specificcases/foreachcase.rsc";
 //str filename = "specificcases/enumCase.rsc";
 //str filename = "specificcases/eventCase.rsc";
 //str filename = "specificcases/fixedUnsafeCheckedUncheckedCase.rsc";
 //str filename = "specificcases/yieldcase.rsc";
-//str filename = "specificcases/typeparameter.rsc";
-//str filename = "specificcases/AttributeCase.rsc";
+//str filename = "specificcases/usingcase.rsc";
+//str filename = "specificcases/TryCatch.rsc";  //todo: test with InsideOptionalPath, bug = assignment in catchclause (return dep myreturn =2)
 //str filename = "specificcases/SwitchCase.rsc";
+//str filename = "specificcases/Lambda.rsc";
+//str filename = "specificcases/ArraySpecifierCase.rsc";
 
 
 public CSharpProject readCSharpProject()

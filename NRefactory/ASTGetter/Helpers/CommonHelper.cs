@@ -41,7 +41,7 @@ namespace AST_Getter.Helpers
                 formatter.AddWithComma(CollectionHelper.Get(composedType.ArraySpecifiers));
                 formatter.AddWithComma(composedType.HasNullableSpecifier.ToString().ToLower());
                 formatter.AddWithComma(composedType.PointerRank.ToString());
-                formatter.Add(Get(composedType.BaseType));
+                formatter.Add(Get(composedType.BaseType, node));
 
                 type += formatter.S;
             }

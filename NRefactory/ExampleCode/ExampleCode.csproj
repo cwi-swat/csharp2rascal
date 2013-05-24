@@ -58,6 +58,7 @@
     <Compile Include="SpecificCases\ForCase.cs" />
     <Compile Include="SpecificCases\ForEachCase.cs" />
     <Compile Include="SpecificCases\IndexerCase.cs" />
+    <Compile Include="SpecificCases\Lambda.cs" />
     <Compile Include="SpecificCases\Linq.cs" />
     <Compile Include="SpecificCases\LockCase.cs" />
     <Compile Include="SpecificCases\SizeOfTypeOfDefaultValueCase.cs" />

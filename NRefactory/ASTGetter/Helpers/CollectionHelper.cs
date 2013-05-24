@@ -12,10 +12,7 @@ namespace AST_Getter.Helpers
         public static string Get(AstNodeCollection<AstType> types)
         {
             String type = "";
-            types.ToList().ForEach(t =>
-                {
-                    type += CommonHelper.Get(t, t) + ",";
-            });
+            types.ToList().ForEach(t => type += CommonHelper.Get(t, t) + ",");
             return "[" + type + "]";
         }
         

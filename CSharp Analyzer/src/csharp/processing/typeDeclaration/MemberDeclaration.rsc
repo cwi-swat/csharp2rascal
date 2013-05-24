@@ -33,7 +33,7 @@ private void Handle(methodDeclaration(str name, list[AstNode] attributes, Statem
 	for(p <- parameters)
 		mapParameters += (p.name:p);
 		
-	Handle(body, body);
+	Handle(body);
 }
 
 private void Handle(propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type))

@@ -15,6 +15,41 @@ namespace Example_source
             a += 2;
             Name = name;
             this.Price = price;
+
+            bool bl = true;
+            bl = this.IsOnSale;
+
+            if (IsOnSale ?
+                false :
+                true)
+            {
+                //sure, this works
+            }
+
+            switch (a == 2 ?
+                    3 :
+                    4)
+            {
+                case 3:
+                    break;
+                //works for switch aswell
+            }
+
+            for (int i = a == 2 ?
+                    3 :
+                    4; i < 1; i++)
+            {
+                //and in for for
+            }
+            var b = new int[] {1,2};
+            var c = new int[] {3,4};
+            foreach (var item in IsOnSale ? b : c)
+            {
+                //ofcourse foreach cant stay behind
+            }
+            //while probably works too, etc...
+
+            var p = new Product(IsOnSale ? "b" : "c", 0);
         }
 
         public void OnSale()

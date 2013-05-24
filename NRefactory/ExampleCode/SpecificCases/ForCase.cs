@@ -4,10 +4,20 @@
     {
         void forCase()
         {
-            for (int m = 0,k = 0; m < 8; m++)
+            var a = "dont know m";
+            for (int m = 1; m < 1; m--)
             {
-
+                for (int i = 0; i < 0; i++)
+                {
+                    a = "known m + i";
+                    m++;
+                    if (m == 1)
+                    { }
+                }
+                a = "Know m";
             }
+
+            a = "don't know m+i";
 
             //int k = 3;
             //int i = 2;

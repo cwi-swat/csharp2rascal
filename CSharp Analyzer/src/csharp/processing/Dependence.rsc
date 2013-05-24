@@ -34,8 +34,8 @@ public void AddDependence(Statement s, AstNode astnode)
 	{
 		if(astnode.nodeExpression is memberReferenceExpression)
 		{
-			resolved = ResolveMemberReference(astnode.nodeExpression, s);
-			uniqueName = GetUniqueNameForResolvedIdentifier(astnode.nodeExpression.memberName, resolved, s);
+			resolved = ResolveMemberReference(astnode.nodeExpression);
+			uniqueName = GetUniqueNameForResolvedIdentifier(astnode.nodeExpression.memberName, resolved);
 
 			s2 = emptyStatement();
 			if(uniqueName in mapAssignments)
@@ -63,12 +63,18 @@ public void AddDependence(Statement s, AstNode astnode)
 			if(memberName == "value")
 				return;
 			
-			s2 = emptyStatement();
-			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression, s);
-			if(uniqueName in mapAssignments)
-				s2 = GetLastListElement(mapAssignments[uniqueName]);
+			AstNode s2 = statement(emptyStatement());
+			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression);
 			
-			if(s2 is emptyStatement)
+			if(uniqueName in mapAssignments)
+				s2 = statement(GetLastListElement(mapAssignments[uniqueName]));
+			//it might be a local-var (for/using/etc)
+			else
+				s2 = GetLastLocalAssignment(memberName);
+			
+			if(	s2 is statement &&
+				s2.nodeStatement is emptyStatement ||
+				s2 is astNodePlaceholder)
 			{
 				//astnode isnt assigned inside the body, its a parameter
 				if(memberName in mapParameters)
@@ -79,8 +85,10 @@ public void AddDependence(Statement s, AstNode astnode)
 				}
 				else
 				{
-					println("unhandled case found in AddDependence! statement= <s>");
-					throw;
+					//has not been assigned in this block, nor is it a parameter.
+					//it is a field/prop, add a dependence to the declaration
+					resolved = ResolveIdentifier(astnode.nodeExpression);
+					relDependence += <statement(s), resolved>;
 				}
 			}
 			else
@@ -96,7 +104,7 @@ public void AddDependence(Statement s, AstNode astnode)
 	//	nothing complicated, just add the new dependence
 	relDependence += <statement(s), astnode>;
 }
-private void CheckForOptionalPath(str uniqueName, Statement s2, Statement s)
+private void CheckForOptionalPath(str uniqueName, AstNode s2, Statement s)
 {
 	//check if s2 is inside an optional path (if/switch/do/for/etc)
 	//if so, return the statement as a depenceny
@@ -105,14 +113,14 @@ private void CheckForOptionalPath(str uniqueName, Statement s2, Statement s)
 	
 	if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
 		for(s3 <- listStatements) 
-			relDependence += <statement(s), statement(s3)>;
+			relDependence += <statement(s), s3>;
 	
 	else //its not inside an optional path
-		relDependence += <statement(s), statement(s2)>;
+		relDependence += <statement(s), s2>;
 }
 
 
-public void AddDependenceToCondition(Expression condition, Statement s)
+public void AddDependenceToIdentifiersInExpression(Expression condition, Statement s)
 {
 	visit(condition)
 	{
@@ -120,7 +128,7 @@ public void AddDependenceToCondition(Expression condition, Statement s)
 	}
 }
 
-public void AddDependenceToBranch(Statement branch, Statement s)
+public void AddDependenceForBranch(Statement branch, Statement s)
 {
 	list[Statement] lstStatements = [];
 	

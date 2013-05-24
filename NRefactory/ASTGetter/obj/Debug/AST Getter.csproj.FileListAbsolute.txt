@@ -49,3 +49,5 @@ C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharp
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ICSharpCode.NRefactory.Xml.xml
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\Mono.Cecil.pdb
 C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\obj\Debug\AST Getter.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\ASTGetter\bin\Debug\ExampleCode.pdb

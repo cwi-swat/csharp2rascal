@@ -10,19 +10,27 @@ namespace ExampleCode.SpecificCases
             var examples = new List<example>();
             var examples2 = new List<example>();
 
+            var a = from l1 in examples
+                    orderby l1.lastname
+                    where l1.firstname == "a"
+                    select l1;
 
+            foreach (var item in from l2 in examples
+                                 orderby l2.firstname
+                                 select l2)
+            {
+                
+            }
 
-            var groupings = from element in examples
-                            group element by element into groups
-                            select new
-                            {
-                                Key = groups.Key,
-                                Count = groups.Count()
-                            };
+            //var groupings = from element in examples
+            //                group element by element into groups
+            //                select new
+            //                {
+            //                    Key = groups.Key,
+            //                    Count = groups.Count()
+            //                };
 
-            var a = from e in examples
-                    orderby e.lastname
-                    select e;
+            
         }
     }
 

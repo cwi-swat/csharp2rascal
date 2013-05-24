@@ -67,6 +67,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="GeneratedOutput\Aisle.rsc" />
+    <None Include="GeneratedOutput\All.rsc" />
     <None Include="GeneratedOutput\Company.rsc" />
     <None Include="GeneratedOutput\ISellable.rsc" />
     <None Include="GeneratedOutput\Item.rsc" />
@@ -86,6 +87,7 @@
     <None Include="GeneratedOutput\SpecificCases\ForCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\ForEachCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\IndexerCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\Lambda.rsc" />
     <None Include="GeneratedOutput\SpecificCases\Linq.rsc" />
     <None Include="GeneratedOutput\SpecificCases\LockCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\SizeOfTypeOfDefaultValueCase.rsc" />
@@ -97,15 +99,16 @@
     <None Include="GeneratedOutput\SpecificCases\WhileCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\yieldCase.rsc" />
     <None Include="GeneratedOutput\Store.rsc" />
+    <None Include="GeneratedOutput\Test.rsc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Notes.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ExampleCode\ExampleCode.csproj">
       <Project>{7e8de259-3d85-41fd-be07-a2d05e988a9d}</Project>
       <Name>ExampleCode</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

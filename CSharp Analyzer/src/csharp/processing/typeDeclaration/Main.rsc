@@ -16,7 +16,11 @@ public map[str uniqueName, list[Statement] s] mapAssignments = ();
 //this list is for statements like for/foreach/using/etc
 //these statements declare variables which are only usable inside the block
 //however, the same name can be reused in another statement block(if its not inside the same block)
-public list[tuple[Statement block,str varname, Statement assignment]] listLocalAssignments = [];
+public list[tuple[AstNode block, str uniqueName, AstNode assignment]] listLocalAssignments = [];
+
+//this list will be pre-defined to identify the linq identifiers when they are used
+//for example in an assignment on the right-hand-side
+public list[tuple[Statement s, str uniqueName, Statement assignment]] listLinqIdentifiers = [];
 
 public map[str name, AstNode a] mapParameters = ();
 
@@ -68,8 +72,31 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 
 public void ResetMaps()
 {
+	listLinqIdentifiers = [];
 	mapAssignments = ();
 	mapParameters = ();
 	mapAssignments = ();
    	mapAttributedNodeDeclarations = ();
+}
+
+public void FilterLocalAssignments(AstNode ast)
+{
+	list[tuple[AstNode block, str uniqueName, AstNode assignment]] filteredList = [];
+	for(as <- listLocalAssignments)
+	{
+		bool isAlive = false;
+		parent = GetParent(ast);
+		while(!(parent is attributedNode))
+		{
+			if(parent == as.block)
+			{
+				isAlive = true;
+				break;
+			}
+			parent = GetParent(parent);
+		}
+		if(isAlive)
+			filteredList += as;
+	}
+	listLocalAssignments = filteredList;	
 }

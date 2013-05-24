@@ -15,9 +15,11 @@ namespace ExampleCode.SpecificCases
         
         void Using()
         {
-            using (var Var = new UsingCase())
+            using (UsingCase Var = new UsingCase(),
+                             Dar = new UsingCase())
             {
-                
+                var a = 1;
+                Var.Using();
             }
         }
     }

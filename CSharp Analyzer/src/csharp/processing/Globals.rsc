@@ -38,6 +38,20 @@ public void ReadRelations()
 	println();
 }
 
+public void Read(list[tuple[Statement block,str uniqueName,Statement assignment]] _list, str name)
+{
+	println();
+	println(name);
+	
+	for(tup <- _list)
+	{
+		Println("\< <tup.block>", 1);
+		Println(", <tup.uniqueName>", 1);
+		Println(", <tup.assignment>", 1);
+		Println("\>", 1);
+	}
+}
+
 public void Read(map[value keys,list[value] members] _map, str name)
 {
 	println();

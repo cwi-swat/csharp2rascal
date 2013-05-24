@@ -742,14 +742,16 @@ namespace AST_Getter
             base.VisitLambdaExpression(lambdaExpression);
             //lambdaExpression(AstNode body, 
             //                 list[AstNode] parameters)
-            var attributes = new object[]
-            {
-                lambdaExpression.Body,
-                lambdaExpression.Parameters
-            };
+            
+            var formatter = new FormatHelper("lambdaExpression(");
+            formatter.AddWithComma(lambdaExpression.Body is Expression
+                        ? "expression(" + ExpressionHelper.Get((Expression)lambdaExpression.Body) + ")"
+                        : "statement(" + StatementHelper.Get((Statement)lambdaExpression.Body) + ")"
+                        );
+            formatter.Add(CollectionHelper.Get(lambdaExpression.Parameters));
+            formatter.Add(")");
 
-            var f = new FormatHelper("lambdaExpression(", attributes, ")", lambdaExpression);
-            lambdaExpression.RascalString = f.S;
+            lambdaExpression.RascalString = formatter.S;
         }
 
         public override void VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression)
@@ -1181,15 +1183,15 @@ namespace AST_Getter
         public override void VisitUsingStatement(UsingStatement usingStatement)
         {
             base.VisitUsingStatement(usingStatement);
-            //usingStatement(Statement embeddedStatement, 
-            //               AstNode resourceAcquisition)
+            //usingStatement(AstNode resourceAcquisition,
+            //               Statement embeddedStatement)
           
             var formatter = new FormatHelper("usingStatement(");
-            formatter.AddWithComma(StatementHelper.Get(usingStatement.EmbeddedStatement));
-            formatter.Add(usingStatement.ResourceAcquisition is Expression
+            formatter.AddWithComma(usingStatement.ResourceAcquisition is Expression
                         ? "expression(" + ExpressionHelper.Get((Expression)usingStatement.ResourceAcquisition) + ")"
-                        : "statement(" + usingStatement.ResourceAcquisition.RascalString + ")"
+                        : "statement(" + StatementHelper.Get((Statement)usingStatement.ResourceAcquisition) + ")"
                         );
+            formatter.Add(StatementHelper.Get(usingStatement.EmbeddedStatement));
             formatter.Add(")");
 
             usingStatement.RascalString = formatter.S;
@@ -1350,9 +1352,9 @@ namespace AST_Getter
             //                  Statement tryBlock)
             var attributes = new object[]
             {
+                tryCatchStatement.TryBlock,
                 tryCatchStatement.CatchClauses,
                 tryCatchStatement.FinallyBlock,
-                tryCatchStatement.TryBlock
             };
 
             var f = new FormatHelper("tryCatchStatement(", attributes, ")", tryCatchStatement);
@@ -1363,11 +1365,13 @@ namespace AST_Getter
         {
             base.VisitCatchClause(catchClause);
             //catchClause(Statement body, 
-            //            str variableName)
-            var attributes = new object[]
+            //            str variableName,
+            //            AstType \type)
+            var attributes = new List<object>()
             {
                 catchClause.Body,
-                catchClause.VariableName
+                catchClause.VariableName,
+                catchClause.Type                
             };
 
             var f = new FormatHelper("catchClause(", attributes, ")", catchClause);

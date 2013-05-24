@@ -10,11 +10,13 @@ namespace ExampleCode.SpecificCases
     {
         void ForEach()
         {
-            var list = Enumerable.Range(1, 10);
+            var list = new int[] { 1, 2, 3, 4 };
             foreach (var i in list)
             {
                 if (i - 5 > 0)
-                    continue;
+                {
+                    var j = i;
+                }
             }
         }
     }

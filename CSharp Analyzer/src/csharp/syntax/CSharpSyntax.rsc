@@ -29,7 +29,6 @@ data AstNode =
   |  	namespaceDeclaration(str name, str fullName, list[AstNode] identifiers, list[AstNode] members)
   |  	usingDeclaration(str namespace)
   |  	usingAliasDeclaration(str \alias, AstType \import) //EDIT: import toegevoegd
-  
   |  	constraint(list[AstType] baseTypes, AstType typeParameter) //Edit: typeparameter is AstNode geworden van str
   |  	attribute(list[Expression] arguments, AstType \type) //EDIT: type toegevoegd
   |  	attributeSection(str attributeTarget, list[AstNode] attributes) //EDIT: AttributeType naar str
@@ -37,7 +36,7 @@ data AstNode =
   |  	parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier, AstType \type) //EDIT: added type
   |  	switchSection(list[AstNode] caseLabels, list[Statement] statements)
   |  	typeParameterDeclaration(str name, VarianceModifier variance)
-  |  	catchClause(Statement body, str variableName)
+  |  	catchClause(Statement body, str variableName, AstType \type) //EDIT added type
   |  	identifier(str name)
   |  	constructorInitializer(list[Expression] arguments, ConstructorInitializer constructorInitializerType)
   |  	variableInitializer(str name, Expression initializer)
@@ -56,61 +55,6 @@ data AstNode =
   |  variablePlaceholder(str name, Expression initializer)
   ;
 
-data Expression = 
-	 	lambdaExpression(AstNode body, list[AstNode] parameters)
-  |  	conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression)
-  |  	binaryOperatorExpression(Expression left, BinaryOperator operator, Expression right)
-  |  	directionExpression(Expression expression, FieldDirection fieldDirection)
-  |  	castExpression(Expression expression, AstType \type) //EDIT: type toegevoegd 
-  |  	parenthesizedExpression(Expression expression)
-  |  	baseReferenceExpression()
-  |  	unaryOperatorExpression(Expression expression, UnaryOperator operatorU)
-  |	 	anonymousTypeCreateExpression(list[Expression] Initializers)
-  |  	identifierExpression(str identifier, list[AstType] typeArguments, AstType \type) //added type
-  |  	primitiveExpression(value \value)
-  |  	expressionPlaceholder()
-  |  	objectCreateExpression(list[Expression] arguments, Expression initializer, AstType \type) //EDIT:  type toegevoegd
-  |  	namedArgumentExpression(Expression expression, str name)
-  |  	namedExpression(Expression expression, str name)
-  |  	memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
-  |  	invocationExpression(list[Expression] arguments, Expression target)
-  |  	assignmentExpression(Expression left, AssignmentOperator operatorA, Expression right)
-  |  	thisReferenceExpression()
-  |  	arrayInitializerExpression(list[Expression] elements)
-  |  	queryExpression(list[QueryClause] clauses)
-  |  	emptyExpression()  //EDIT: nieuw, aangemaakt voor objectCreateExpression, initializer is optioneel.
-  |  	typeOfExpression(AstType \type) //EDIT: type
-  |  	defaultValueExpression(AstType \type) //EDIT: type
-  |  	indexerExpression(list[Expression] arguments, Expression target)
-  |  	arrayCreateExpression(list[AstNode] additionalArraySpecifiers, list[Expression] arguments, Expression initializer)
-  |  	asExpression(Expression expression, AstType \type) //EDIT: type
-  |  	typeReferenceExpression(AstType \type) //EDIT: type toegevoegd
-  |  	anonymousMethodExpression(Statement bodyS, bool hasParameterList, list[AstNode] parameters)
-  |  	uncheckedExpression(Expression expression)
-  | 	isExpression(Expression expression, AstType \type) //EDIT: type
-  |  	checkedExpression(Expression expression)
-  |  	null() 			//EDIT: toegevoegd
-  |  	sizeOfExpression()
-
-//wont do, out of scope
-//pointer is ignored and treated like a normal variable declaration
-  |  stackAllocExpression(Expression countExpression)
-  |  	pointerReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
-
-//wont do, it's hidden ffs. and non-existend in NRefactory(probably the same reason)
-  |  argListExpression(list[Expression] arguments, bool isAccess)  
-  ;
-
-
-data AstType = 
-		simpleType(str identifier, list[AstType] typeArguments)
-  |		exactType(str identifier)   //Added type, resolved type including namespace
-  |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
-  |  	typePlaceholder()
-  |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd
-  |  	primitiveType(str keyword)
-  ;
-
 data Statement = 
 		returnStatement(Expression expression)
   |  	whileStatement(Expression condition, Statement embeddedStatement)
@@ -118,8 +62,8 @@ data Statement =
   |  	ifElseStatement(Expression condition, Statement falseStatement, Statement trueStatement)
   |  	variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type) // EDIT: type toegevoegd
   |  	breakStatement()
-  |  	tryCatchStatement(list[AstNode] catchClauses, Statement finallyBlock, Statement tryBlock)
-  |  	usingStatement(Statement embeddedStatement, AstNode resourceAcquisition)
+  |  	tryCatchStatement(Statement tryBlock, list[AstNode] catchClauses, Statement finallyBlock)
+  |  	usingStatement(AstNode resourceAcquisition, Statement embeddedStatement)	//turned the arguments around, the resources can be used in the embed, so should be handled first(top-down)
   |  	throwStatement(Expression expression)
   |  	doWhileStatement(Expression condition, Statement embeddedStatement)
   |  	continueStatement()
@@ -141,6 +85,63 @@ data Statement =
   |  gotoDefaultStatement()
   |  gotoCaseStatement(Expression labelExpression)
   |  gotoStatement(str label)
+  ;
+
+data Expression = 
+    	conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression)
+  |  	binaryOperatorExpression(Expression left, BinaryOperator operator, Expression right)
+  |  	directionExpression(Expression expression, FieldDirection fieldDirection)
+  |  	castExpression(Expression expression, AstType \type) //EDIT: type toegevoegd 
+  |  	parenthesizedExpression(Expression expression)
+  |  	baseReferenceExpression()
+  |  	unaryOperatorExpression(Expression expression, UnaryOperator operatorU)
+  |  	identifierExpression(str identifier, list[AstType] typeArguments, AstType \type) //added type
+  |  	primitiveExpression(value \value)
+  |  	expressionPlaceholder()
+  |  	objectCreateExpression(list[Expression] arguments, Expression initializer, AstType \type) //EDIT:  type toegevoegd
+  |  	memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
+  |  	invocationExpression(list[Expression] arguments, Expression target)
+  |  	assignmentExpression(Expression left, AssignmentOperator operatorA, Expression right)
+  |  	thisReferenceExpression()
+  |  	arrayInitializerExpression(list[Expression] elements)
+  |  	emptyExpression()  //EDIT: nieuw, aangemaakt voor objectCreateExpression, initializer is optioneel.
+  |  	typeOfExpression(AstType \type) //EDIT: type
+  |  	defaultValueExpression(AstType \type) //EDIT: type
+  |  	arrayCreateExpression(list[AstNode] additionalArraySpecifiers, list[Expression] arguments, Expression initializer)
+  |  	asExpression(Expression expression, AstType \type) //EDIT: type
+  |  	typeReferenceExpression(AstType \type) //EDIT: type toegevoegd
+  |  	uncheckedExpression(Expression expression)
+  | 	isExpression(Expression expression, AstType \type) //EDIT: type
+  |  	checkedExpression(Expression expression)
+  |  	null() 			//EDIT: toegevoegd
+  |  	sizeOfExpression()
+  
+  // handle for dep?
+  |  	anonymousMethodExpression(Statement bodyS, bool hasParameterList, list[AstNode] parameters)
+  |	 	anonymousTypeCreateExpression(list[Expression] Initializers)
+  |  	indexerExpression(list[Expression] arguments, Expression target)
+  |  	queryExpression(list[QueryClause] clauses)
+  |  	namedArgumentExpression(Expression expression, str name)
+  |  	namedExpression(Expression expression, str name)
+  |	 	lambdaExpression(AstNode body, list[AstNode] parameters)
+   
+//wont do, out of scope
+//pointer is ignored and treated like a normal variable declaration
+  |  stackAllocExpression(Expression countExpression)
+  |  	pointerReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
+
+//wont do, it's hidden ffs. and non-existend in NRefactory(probably the same reason)
+  |  argListExpression(list[Expression] arguments, bool isAccess)  
+  ;
+
+
+data AstType = 
+		simpleType(str identifier, list[AstType] typeArguments)
+  |		exactType(str identifier)   //Added type, resolved type including namespace
+  |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
+  |  	typePlaceholder()
+  |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd
+  |  	primitiveType(str keyword)
   ;
 
 //done
