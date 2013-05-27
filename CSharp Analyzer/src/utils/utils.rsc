@@ -6,6 +6,7 @@ import csharp::processing::typeDeclaration::Main;
 import List;
 import IO;
 import String;
+import utils::locationIncluder;
 
 public Statement GetLastListElement(list[Statement] _list)
 {
@@ -49,20 +50,36 @@ public map[str, list[Statement]] AddToMap(map[str, list[Statement]] m, str key, 
 
 	return m;
 }
-public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AttributedNode val)
-{
-	return AddToMap(m, key, attributedNode(val));
-}
 
+public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AttributedNode val)
+	= AddToMap(m, key, AttributedNodeLoc(val));
 public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AstNode val)
 {
 	if(key in m)
 		m[key] += [val];
 	else
 		m += (key:[val]);
+	
+	return m;
+}
+
+public map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] AddToTupleMap(map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] m, AstNode key, AttributedNode val) 
+	= AddToTupleMap(m, key, AttributedNodeLoc(val));
+public map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] AddToTupleMap(map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] m, AstNode key, Statement val) 
+	= AddToTupleMap(m,key, StatementLoc(val));
+public map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] AddToTupleMap(map[tuple[AstNode, loc], list[tuple[AstNode,loc]]] m, AstNode key, AstNode val)
+{
+	tupKey = <key,key@location>;
+	if(tupKey in m)
+		m[tupKey] += [<val,val@location>];
+	else
+		m += (tupKey:[<val,val@location>]);
 		
 	return m;
 }
+
+
+
 
 
 //where has id been declared?
@@ -72,10 +89,12 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 		
 	//is it a variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type)?
 	if(key <- mapAttributedNodeDeclarations, 
-	   dec <- mapAttributedNodeDeclarations[key], 
-	   var <- dec.nodeStatement.variables,
+	   dec <- mapAttributedNodeDeclarations[key],
+	   dec.Node has nodeStatement,
+	   dec.Node.nodeStatement has variables,
+	   var <- dec.Node.nodeStatement.variables,
 	   var.name == identifier)
-		return dec;
+		return dec.Node;
 		
 
 	//is it a parameterDeclaration(str name, list[AstNode] attributes, Expression defaultExpression, ParameterModifier parameterModifier, AstType \type)?
@@ -98,13 +117,13 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 		   as.block is expression)
 			return as.block;
 		else
-			return statement(as.block);
+			return StatementLoc(as.block);
 	}
 	
 	//is it a linq identifier?
 	if(tup <- listLinqIdentifiers,
 	   endsWith(tup.uniqueName, identifier))
-		return statement(tup.s);
+		return StatementLoc(tup.s);
 			
 	throw "Resolve identifier failed: <identifier>";	
 }
@@ -136,8 +155,8 @@ private AstNode checkMapTypeDeclForId(str id)
 		return astNodePlaceholder();
 }
 
-public Statement GetTopMostParentStatement(Expression e) = GetTopMostParentStatement(expression(e));
-public Statement GetTopMostParentStatement(Statement s) = GetTopMostParentStatement(statement(s));
+public Statement GetTopMostParentStatement(Expression e) = GetTopMostParentStatement(ExpressionLoc(e));
+public Statement GetTopMostParentStatement(Statement s) = GetTopMostParentStatement(StatementLoc(s));
 public Statement GetTopMostParentStatement(AstNode ast)
 {
 	AstNode TopMost;
@@ -173,13 +192,13 @@ public Statement GetParentStatement(Expression e)
 	return parent.nodeStatement;
 }
 
-public AstNode GetParent(Expression e) = GetParent(expression(e));
-public AstNode GetParent(Statement s) = GetParent(statement(s));
-public AstNode GetParent(AttributedNode s) = GetParent(attributedNode(s));
+public AstNode GetParent(Expression e) = GetParent(ExpressionLoc(e));
+public AstNode GetParent(Statement s) = GetParent(StatementLoc(s));
+public AstNode GetParent(AttributedNode s) = GetParent(AttributedNodeLoc(s));
 public AstNode GetParent(AstNode a)
 {
-	if(parent <- mapFamily, child <- mapFamily[parent], a == child)
-		return parent;
+	if(parent <- mapFamily, child <- mapFamily[parent], a == child.Node)
+		return parent.Node;
 	else
 	{
 		println(a);
@@ -187,7 +206,7 @@ public AstNode GetParent(AstNode a)
 	}
 }
 
-public AstNode FindParentAttributedNode(Statement s) = FindParentAttributedNode(statement(s));
+public AstNode FindParentAttributedNode(Statement s) = FindParentAttributedNode(StatementLoc(s));
 public AstNode FindParentAttributedNode(AstNode a)
 {
 	parent = GetParent(a);
@@ -277,7 +296,7 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 		   stat is switchStatement ||
 		   stat is catchClause)
 	   	{
-	   		OptionalStatement = statement(stat);
+	   		OptionalStatement = StatementLoc(stat);
 	   		break;
 		}
 		parent = GetParent(parent);	
@@ -297,7 +316,7 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 	AstNode Assignment = astNodePlaceholder();
 	list[AstNode] Assignments = [];
 	if(uniqueName in mapAssignments)
-		Assignments = reverse([statement(as) | as <- mapAssignments[uniqueName]]);
+		Assignments = reverse([StatementLoc(as) | as <- mapAssignments[uniqueName]]);
 	else
 		Assignments = reverse([as.assignment | as <- listLocalAssignments, as.uniqueName == uniqueName]);
 		
@@ -347,29 +366,29 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 
 public AstNode GetNodeByExactType(exactType(str name))
 {
-	if(ns <- relNamespaceAttributedNode.namespace, 
-	   m <- relNamespaceAttributedNode[ns],
-	   ns.fullName + "." + m.nodeAttributedNode.name == name)
-		return m;
+	if(from <- relNamespaceAttributedNode.from, 
+	   to <- relNamespaceAttributedNode[from],
+	   from.namespace.fullName + "." + to.member.nodeAttributedNode.name == name)
+		return to.member;
 	else
 		throw "name not found <name>";
 }
 
 public AstNode GetNodeMemberByName(AttributedNode Node, str membername)
 {
-	if(an <- relAttributedNodeMember.Node, an == Node, 
-	   m <- relAttributedNodeMember[an],
-	   m has nodeMemberDeclaration,
-	   m.nodeMemberDeclaration.name == membername)
-		return attributedNode(m);
+	if(an <- relAttributedNodeMember, an.from.Node == Node, 
+	   m <- relAttributedNodeMember[an.from],
+	   m.member has nodeMemberDeclaration,
+	   m.member.nodeMemberDeclaration.name == membername)
+		return AttributedNodeLoc(m.member);
 	else
 		throw "Element not found in relAttributedNodeMember: node:<Node>; membername:<membername>";
 }
 
 public AstNode GetNodeByMember(AttributedNode member)
 {
-	if (an <- relAttributedNodeMember.Node, m <- relAttributedNodeMember[an], m == member)
-		return attributedNode(an);
+	if (an <- relAttributedNodeMember, m <- relAttributedNodeMember[an.from], m.member == member)
+		return AttributedNodeLoc(an.from.Node);
 	else
 		throw "Member not found: <member>";	
 }
@@ -391,7 +410,7 @@ public void AddNewAssignment(Node, Statement s)
 
 	//check if it is a local-var 
 	if(!(GetLastLocalAssignment(uniqueName) is astNodePlaceholder))
-		AddLocalAssignment(uniqueName, statement(s)); 
+		AddLocalAssignment(uniqueName, StatementLoc(s)); 
 	else
 		mapAssignments = AddToMap(mapAssignments, uniqueName, s);
 }
@@ -403,7 +422,7 @@ public void AddLocalAssignment(Statement decl:variableDeclarationStatement(list[
 	for(variable <- variables, !(variable.initializer is emptyExpression))
 	{
 		uniqueName = GetUniqueNameForResolvedIdentifier(variable.name, decl);
-		AddLocalAssignment(statement(s), uniqueName, statement(s));
+		AddLocalAssignment(StatementLoc(s), uniqueName, StatementLoc(s));
 	}
 }
 public void AddLocalAssignment(str name, AstNode a)
@@ -458,15 +477,15 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved)
 		else //routine
 			uniqueName = aNode.nodeAttributedNode.nodeMemberDeclaration.name + "." + uniqueName;
 	}
-	void HandleVisit(Statement s) = HandleVisit(statement(s));
+	void HandleVisit(Statement s) = HandleVisit(StatementLoc(s));
 
 	AstNode aNode = astNodePlaceholder();
 	top-down-break visit(resolved)
 	{
 		case v:variableDeclarationStatement(_,_,_):	HandleVisit(v);
 		case p:parameterDeclaration(_,_,_,_,_):		HandleVisit(p);
-		case f:fieldDeclaration(_,_,_,_,_,_):		aNode = attributedNode(memberDeclaration(f));
-		case p:propertyDeclaration(_,_,_,_,_,_,_):	aNode = attributedNode(memberDeclaration(p));
+		case f:fieldDeclaration(_,_,_,_,_,_):		aNode = AttributedNodeLoc(MemberDeclarationLoc(f));
+		case p:propertyDeclaration(_,_,_,_,_,_,_):	aNode = AttributedNodeLoc(MemberDeclarationLoc(p));
 		case f:forStatement(_,_,_,_):				HandleVisit(f);
 		case f:foreachStatement(_,_,_):				HandleVisit(f);
 		case c:catchClause(_, variableName, _):		HandleVisit(c);
@@ -493,4 +512,9 @@ public AstNode GetLastLocalAssignment(identifier)
 		return astNodePlaceholder();
 	else
 		return GetLastListElement(listAssignments);
+}
+
+public bool HasLocation(AstNode Node)
+{
+	return (Node@location)?;
 }

@@ -1,21 +1,13 @@
 module csharp::syntax::CSharpSyntax
 
+anno loc CSharpFile@location;
 anno loc AstNode@location;
 anno loc Expression@location;
 anno loc Statement@location;
 anno loc AttributedNode@location;
 anno loc MemberDeclaration@location;
-anno loc VarianceModifier@location;
-anno loc FieldDirection@location;
-anno loc BinaryOperator@location;
-anno loc AssignmentOperator@location;
 anno loc QueryClause@location;
-anno loc Class@location;
-anno loc Modifiers@location;
 anno loc ConstructorInitializer@location;
-anno loc ParameterModifier@location;
-anno loc UnaryOperator@location;
-anno loc QueryOrderingDirection@location;
 
 public alias CSharpProject = list[CSharpFile];
 

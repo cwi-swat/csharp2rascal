@@ -12,7 +12,7 @@ namespace AST_Getter.Helpers
         internal static string Get<T>(T statement) where T : Statement
         {
             if (statement.IsNull)
-                return "emptyStatement()";
+                return "emptyStatement()" + LocationHelper.EmptyLocation;
             else
                 return statement.RascalString;
         }

@@ -6,6 +6,7 @@ import csharp::processing::typeDeclaration::MemberDeclaration;
 import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::Globals;
 import utils::utils;
+import utils::locationIncluder;
 
 public map[AstNode Node, list[AstNode] decls] mapTypeDeclarations = ();
 
@@ -39,11 +40,11 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 			{
 				case pd:propertyDeclaration(_,_,_,_,_,_,_):
 				{
-					mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), m);
+					mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), m);
 				}
 				case fd:fieldDeclaration(_,_,_,_,vars,_):
 				{
-					mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), m);
+					mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), m);
 				}
 			}
 		}
@@ -53,19 +54,19 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 	{	
 		case m:memberDeclaration(md):
 		{
-			relAttributedNodeMember[typeDeclaration] = m; 
+			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>; 
 			Handle(md, typeDeclaration);
 	  	}
 		case m:destructorDeclaration(_,_,_,_,_):
 		{
 			ResetMaps();
-			relAttributedNodeMember[typeDeclaration] = m;
+			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
 			Handle(m);
 	  	}
 		case m:constructorDeclaration(_,_,_,_,_,_,_):
 		{
 			ResetMaps();
-		   	relAttributedNodeMember[typeDeclaration] = m; 
+		   	relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
 			Handle(m);
 		}
 	}

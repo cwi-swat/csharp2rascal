@@ -13,6 +13,6 @@
         //public const string FirstFileToProcess = @"Product";
 
 
-        public const bool IncludingLocations = false;
+        public const bool IncludingLocations = true;
     }
 }

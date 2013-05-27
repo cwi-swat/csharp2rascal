@@ -74,7 +74,7 @@ namespace AST_Getter.Helpers
         internal static string Get(Accessor accessor)
         {
             if (accessor.IsNull)
-                return "noAccessor()";
+                return "noAccessor()" + LocationHelper.EmptyLocation;
                 
             return accessor.RascalString;
         }
@@ -82,12 +82,12 @@ namespace AST_Getter.Helpers
         internal static string Get<T>(T astNode) where T : AstNode
         {
             if (astNode.IsNull)
-                return "astNodePlaceholder()";
+                return "astNodePlaceholder()" + LocationHelper.EmptyLocation;
 
             if (astNode is Expression)
-                return "expression(" + astNode.RascalString + ")";
+                return "expression(" + astNode.RascalString + ")" + LocationHelper.Get(astNode);
             if (astNode is Statement)
-                return "statement(" + astNode.RascalString + ")";
+                return "statement(" + astNode.RascalString + ")" + LocationHelper.Get(astNode);
 
 
             return astNode.RascalString;

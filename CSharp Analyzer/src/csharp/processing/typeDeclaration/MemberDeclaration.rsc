@@ -6,6 +6,7 @@ import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::statement::Handler;
+import utils::locationIncluder;
 import utils::utils;
 
 import IO;
@@ -18,11 +19,11 @@ public void Handle(MemberDeclaration md, AttributedNode typeDeclaration)
 		case m:methodDeclaration(_,_,_,_,_,_,_,_,_,_):	{ResetMaps(); Handle(m);}
 		case m:propertyDeclaration(_,_,_,_,_,_,_):	    
 		{
-			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
+			mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), AttributedNodeLoc(MemberDeclarationLoc(m)));
 			ResetMaps();
 			Handle(m);
 		}
-		case m:fieldDeclaration(_,_,_,_,_,_):			mapTypeDeclarations = AddToMap(mapTypeDeclarations, attributedNode(typeDeclaration), attributedNode(memberDeclaration(m)));
+		case m:fieldDeclaration(_,_,_,_,_,_):			mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), AttributedNodeLoc(MemberDeclarationLoc(m)));
   		case m:eventDeclaration(_,_,_,_,_,_):			;
   		case m:customEventDeclaration(_,_,_,_,_,_):		;
 	}

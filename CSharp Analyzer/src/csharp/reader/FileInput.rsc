@@ -12,6 +12,7 @@ list[str] files =
 ];
 
 str filename = "All.rsc";
+//str filename = "test.rsc";
 //str filename = "specificcases/UsingAliasCase.rsc";
 //str filename = "Aisle.rsc";
 //str filename = "Company.rsc";

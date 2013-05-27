@@ -42,6 +42,7 @@ namespace AST_Getter
             base.VisitSyntaxTree(syntaxTree);
 
             Output.Add("])");
+            Output.Add(LocationHelper.Get(syntaxTree));
         }
 
         #endregion Root, CSharpFile
@@ -251,7 +252,7 @@ namespace AST_Getter
 
             var f = new FormatHelper("typeDeclaration(", attributes, ")", typeDeclaration);
 
-            typeDeclaration.RascalString = "attributedNode(" + f.S + ")";
+            typeDeclaration.RascalString = "attributedNode(" + f.S + ")" + LocationHelper.Get(typeDeclaration);
         }
 
         public override void VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration)
@@ -420,7 +421,7 @@ namespace AST_Getter
 
             var f = new FormatHelper("methodDeclaration(", attributes, ")", methodDeclaration);
 
-            methodDeclaration.RascalString = "memberDeclaration(" + f.S + ")";
+            methodDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(methodDeclaration);
         }
 
         public override void VisitFieldDeclaration(FieldDeclaration fieldDeclaration)
@@ -445,7 +446,7 @@ namespace AST_Getter
             };
 
             var f = new FormatHelper("fieldDeclaration(", attributes, ")", fieldDeclaration);
-            fieldDeclaration.RascalString = "memberDeclaration(" + f.S + ")";
+            fieldDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(fieldDeclaration);
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration)
@@ -470,7 +471,7 @@ namespace AST_Getter
             };
 
             var f = new FormatHelper("propertyDeclaration(", attributes, ")", propertyDeclaration);
-            propertyDeclaration.RascalString = "memberDeclaration(" + f.S + ")";
+            propertyDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(propertyDeclaration);
         }
 
         public override void VisitEventDeclaration(EventDeclaration eventDeclaration)
@@ -493,7 +494,7 @@ namespace AST_Getter
             };
 
             var f = new FormatHelper("eventDeclaration(", attributes, ")", eventDeclaration);
-            eventDeclaration.RascalString = "memberDeclaration(" + f.S + ")"; ;
+            eventDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(eventDeclaration);
         }
 
         public override void VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration)
@@ -521,7 +522,7 @@ namespace AST_Getter
             };
 
             var f = new FormatHelper("indexerDeclaration(", attributes, ")", indexerDeclaration);
-            indexerDeclaration.RascalString = "memberDeclaration(" + f.S + ")";
+            indexerDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(indexerDeclaration);
         }
 
         public override void VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration)
@@ -545,7 +546,7 @@ namespace AST_Getter
             };
 
             var f = new FormatHelper("customEventDeclaration(", attributes, ")", customEventDeclaration);
-            customEventDeclaration.RascalString = "memberDeclaration(" + f.S + ")";
+            customEventDeclaration.RascalString = "memberDeclaration(" + f.S + ")" + LocationHelper.Get(customEventDeclaration);
         }
 
         #endregion MemberDeclaration
@@ -745,11 +746,12 @@ namespace AST_Getter
             
             var formatter = new FormatHelper("lambdaExpression(");
             formatter.AddWithComma(lambdaExpression.Body is Expression
-                        ? "expression(" + ExpressionHelper.Get((Expression)lambdaExpression.Body) + ")"
-                        : "statement(" + StatementHelper.Get((Statement)lambdaExpression.Body) + ")"
+                        ? "expression(" + ExpressionHelper.Get((Expression)lambdaExpression.Body) + ")" + LocationHelper.Get(lambdaExpression.Body)
+                        : "statement(" + StatementHelper.Get((Statement)lambdaExpression.Body) + ")" + LocationHelper.Get(lambdaExpression.Body)
                         );
             formatter.Add(CollectionHelper.Get(lambdaExpression.Parameters));
             formatter.Add(")");
+            formatter.Add(LocationHelper.Get(lambdaExpression));
 
             lambdaExpression.RascalString = formatter.S;
         }
@@ -1188,11 +1190,12 @@ namespace AST_Getter
           
             var formatter = new FormatHelper("usingStatement(");
             formatter.AddWithComma(usingStatement.ResourceAcquisition is Expression
-                        ? "expression(" + ExpressionHelper.Get((Expression)usingStatement.ResourceAcquisition) + ")"
-                        : "statement(" + StatementHelper.Get((Statement)usingStatement.ResourceAcquisition) + ")"
+                        ? "expression(" + ExpressionHelper.Get((Expression)usingStatement.ResourceAcquisition) + ")" + LocationHelper.Get(usingStatement.ResourceAcquisition)
+                        : "statement(" + StatementHelper.Get((Statement)usingStatement.ResourceAcquisition) + ")" + LocationHelper.Get(usingStatement.ResourceAcquisition)
                         );
             formatter.Add(StatementHelper.Get(usingStatement.EmbeddedStatement));
             formatter.Add(")");
+            formatter.Add(LocationHelper.Get(usingStatement));
 
             usingStatement.RascalString = formatter.S;
         }

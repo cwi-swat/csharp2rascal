@@ -11,6 +11,7 @@ import csharp::processing::Globals;
 import csharp::processing::astnode::AttributedNode;
 import csharp::syntax::CSharpSyntax;
 import csharp::reader::FileInput;
+import utils::locationIncluder;
 
 public void main()
 {
@@ -23,11 +24,11 @@ public void main()
 	{
 		visit(file)
 		{
-			case c:usingDeclaration(_): 					relFileUsing += <file,c>;
+			case c:usingDeclaration(_): 					relFileUsing += <<file,file@location>,<c,c@location>>;
 			case c:namespaceDeclaration(_,_,_,members):
 			{
-				relFileNamespace[file] = c;
-				for(m<-members) relNamespaceAttributedNode[c] = m;
+				relFileNamespace[<file,file@location>] = <c,c@location>;
+				for(m<-members)	relNamespaceAttributedNode[<c,c@location>] = <m,m@location>;
 			}
 		}
 	}
@@ -178,42 +179,48 @@ void BuildFamily(CSharpProject project)
 // stackoverflow exception can occur if not.
 // --> empty list has to resolve to this function, not an overload.
 public void AddToFamily(AstNode p, list[AstNode] Cs) {
-	if(p in mapFamily)
-		mapFamily[p] += Cs;
+	if(!(p@location)?)
+		println("p=<p>");
+	if(c<- Cs,
+	   !(c@location)?)
+		println("c=<c>");
+	
+	if(<p,p@location> in mapFamily)
+		mapFamily[<p,p@location>] += [<c,c@location> | c <- Cs];
 	else
-	    mapFamily += (p:Cs);
+	    mapFamily += (<p,p@location>:[<c,c@location> | c <- Cs]);
 }
 
 
 //overloads to make more types compatible
 
-public void AddToFamily(Expression p, Expression c)					= AddToFamily(expression(p), expression(c));
-public void AddToFamily(Expression p, Statement c)					= AddToFamily(expression(p), statement(c));
-public void AddToFamily(Expression p, list[QueryClause] Cs)			= AddToFamily(expression(p), [queryClause(c) | c <- Cs]);
-public void AddToFamily(Expression p, list[Expression] Cs)			= AddToFamily(expression(p), [expression(c) | c <- Cs]);
-public void AddToFamily(Expression p, list[Statement] Cs)			= AddToFamily(expression(p), [statement(c) | c <- Cs]);
+public void AddToFamily(Expression p, Expression c)					= AddToFamily(ExpressionLoc(p), ExpressionLoc(c));
+public void AddToFamily(Expression p, Statement c)					= AddToFamily(ExpressionLoc(p), StatementLoc(c));
+public void AddToFamily(Expression p, list[QueryClause] Cs)			= AddToFamily(ExpressionLoc(p), [QueryClauseLoc(c) | c <- Cs]);
+public void AddToFamily(Expression p, list[Expression] Cs)			= AddToFamily(ExpressionLoc(p), [ExpressionLoc(c) | c <- Cs]);
+public void AddToFamily(Expression p, list[Statement] Cs)			= AddToFamily(ExpressionLoc(p), [StatementLoc(c) | c <- Cs]);
 
-public void AddToFamily(Statement p, Expression c)					= AddToFamily(statement(p), expression(c));
-public void AddToFamily(Statement p, Statement c)					= AddToFamily(statement(p), statement(c));
-public void AddToFamily(Statement p, AstNode c)						= AddToFamily(statement(p), c);
-public void AddToFamily(Statement p, list[AstNode] Cs)				= AddToFamily(statement(p), Cs);
-public void AddToFamily(Statement p, list[Statement] Cs)			= AddToFamily(statement(p), [statement(c) | c <- Cs]);
-public void AddToFamily(Statement p, list[AttributedNode] Cs)		= AddToFamily(statement(p), [attributedNode(c) | c <- Cs]);
+public void AddToFamily(Statement p, Expression c)					= AddToFamily(StatementLoc(p), ExpressionLoc(c));
+public void AddToFamily(Statement p, Statement c)					= AddToFamily(StatementLoc(p), StatementLoc(c));
+public void AddToFamily(Statement p, AstNode c)						= AddToFamily(StatementLoc(p), c);
+public void AddToFamily(Statement p, list[AstNode] Cs)				= AddToFamily(StatementLoc(p), Cs);
+public void AddToFamily(Statement p, list[Statement] Cs)			= AddToFamily(StatementLoc(p), [StatementLoc(c) | c <- Cs]);
+public void AddToFamily(Statement p, list[AttributedNode] Cs)		= AddToFamily(StatementLoc(p), [AttributedNodeLoc(c) | c <- Cs]);
 
-public void AddToFamily(MemberDeclaration p, AttributedNode c)		= AddToFamily(attributedNode(memberDeclaration(p)), attributedNode(c));
-public void AddToFamily(MemberDeclaration p, Statement c) 			= AddToFamily(attributedNode(memberDeclaration(p)), statement(c));
-public void AddToFamily(MemberDeclaration p, list[AstNode] c)		= AddToFamily(attributedNode(memberDeclaration(p)), c);
+public void AddToFamily(MemberDeclaration p, AttributedNode c)		= AddToFamily(AttributedNodeLoc(MemberDeclarationLoc(p)), AttributedNodeLoc(c));
+public void AddToFamily(MemberDeclaration p, Statement c) 			= AddToFamily(AttributedNodeLoc(MemberDeclarationLoc(p)), StatementLoc(c));
+public void AddToFamily(MemberDeclaration p, list[AstNode] c)		= AddToFamily(AttributedNodeLoc(MemberDeclarationLoc(p)), c);
 
-public void AddToFamily(AttributedNode p, list[AstNode] c)			= AddToFamily(attributedNode(p), c);
-public void AddToFamily(AttributedNode p, AttributedNode c)			= AddToFamily(attributedNode(p), attributedNode(c));
-public void AddToFamily(AttributedNode p, Statement c)				= AddToFamily(attributedNode(p), statement(c));
-public void AddToFamily(AttributedNode p, list[AttributedNode] Cs)	= AddToFamily(attributedNode(p), [attributedNode(c) | c <- Cs]);
+public void AddToFamily(AttributedNode p, list[AstNode] c)			= AddToFamily(AttributedNodeLoc(p), c);
+public void AddToFamily(AttributedNode p, AttributedNode c)			= AddToFamily(AttributedNodeLoc(p), AttributedNodeLoc(c));
+public void AddToFamily(AttributedNode p, Statement c)				= AddToFamily(AttributedNodeLoc(p), StatementLoc(c));
+public void AddToFamily(AttributedNode p, list[AttributedNode] Cs)	= AddToFamily(AttributedNodeLoc(p), [AttributedNodeLoc(c) | c <- Cs]);
 
-public void AddToFamily(QueryClause p, Expression c)				= AddToFamily(queryClause(p), expression(c));
-public void AddToFamily(QueryClause p, list[AstNode] Cs)			= AddToFamily(queryClause(p), Cs);
+public void AddToFamily(QueryClause p, Expression c)				= AddToFamily(QueryClauseLoc(p), ExpressionLoc(c));
+public void AddToFamily(QueryClause p, list[AstNode] Cs)			= AddToFamily(QueryClauseLoc(p), Cs);
 
-public void AddToFamily(AstNode p, list[Statement] Cs)				= AddToFamily(p, [statement(c) | c <- Cs]);
-public void AddToFamily(AstNode p, Expression c)					= AddToFamily(p, expression(c));
-public void AddToFamily(AstNode p, Statement c)						= AddToFamily(p, statement(c));
+public void AddToFamily(AstNode p, list[Statement] Cs)				= AddToFamily(p, [StatementLoc(c) | c <- Cs]);
+public void AddToFamily(AstNode p, Expression c)					= AddToFamily(p, ExpressionLoc(c));
+public void AddToFamily(AstNode p, Statement c)						= AddToFamily(p, StatementLoc(c));
 public void AddToFamily(AstNode parent, AstNode child)				= AddToFamily(parent, [child]);
 

@@ -6,6 +6,7 @@ import csharp::processing::Dependence;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::expression::Handler;
 import utils::utils;
+import utils::locationIncluder;
 
 import IO;
 import List;
@@ -40,7 +41,7 @@ public void Handle(Statement s:variableDeclarationStatement(list[Modifiers] modi
 	{
 		parent = FindParentAttributedNode(s);
 				
-		mapAttributedNodeDeclarations = AddToMap(mapAttributedNodeDeclarations, parent, statement(s));
+		mapAttributedNodeDeclarations = AddToTupleMap(mapAttributedNodeDeclarations, parent, s);
 	
 		if(!(variable.initializer is emptyExpression))
 		{
@@ -136,7 +137,7 @@ public void Handle(Statement s:foreachStatement(Statement embeddedStatement, Exp
 	AddDependenceToIdentifiersInExpression(inExpression, s);
 	
 	uniqueName = GetUniqueNameForResolvedIdentifier(variableName, s);
-	AddLocalAssignment(statement(s), uniqueName, statement(s));
+	AddLocalAssignment(StatementLoc(s), uniqueName, StatementLoc(s));
 	
 	AddDependenceForBranch(embeddedStatement, s);
 }

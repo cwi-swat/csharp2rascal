@@ -5,17 +5,16 @@ import IO;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::Globals;
 import csharp::syntax::CSharpSyntax;
-//import csharp::processing::astnode::MemberDeclaration;
-//import csharp::processing::astnode::NodeWithBody;
+import utils::locationIncluder;
 
 public void HandleAttributedNode(AttributedNode aNode, AttributedNode bNode) {
-	HandleAttributedNode(attributedNode(aNode), attributedNode(bNode));	
+	HandleAttributedNode(AttributedNodeLoc(aNode), AttributedNodeLoc(bNode));	
 }
 public void HandleAttributedNode(AttributedNode aNode, AstNode astnode){
-	HandleAttributedNode(attributedNode(aNode), astnode);	
+	HandleAttributedNode(AttributedNodeLoc(aNode), astnode);	
 }
 public void HandleAttributedNode(AstNode astnode, AttributedNode aNode){
-	HandleAttributedNode(astnode, attributedNode(aNode));	
+	HandleAttributedNode(astnode, AttributedNodeLoc(aNode));	
 }
 
 public void HandleAttributedNode(AstNode parent, AstNode astnode)

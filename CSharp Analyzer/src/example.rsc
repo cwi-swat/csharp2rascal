@@ -1,11 +1,16 @@
 module example
 
+import IO;
+
 data myData = ExampleNode(str name);
 
-public void function(myData d)
+public void main()
 {
-    visit(d)
-    {
-    	case e:ExampleNode: 	;
-    }
+	int i = 1;
+	myData d = ExampleNode("1");
+	
+	visit(d)
+	{
+		case i:ExampleNode(_): println("will not execute");
+	}
 }

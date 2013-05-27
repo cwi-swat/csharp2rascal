@@ -69,7 +69,7 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	if(left is identifierExpression)
 		decl = ResolveIdentifier(left);
 	else if(left is memberReferenceExpression)
-		decl = ResolveMemberReference(left);	
+		decl = ResolveMemberReference(left);
 
 
 	//don't do this for vars and parameters.
@@ -105,8 +105,8 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 				GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
 				targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
 	
-				relCalls[callingNode] = targetNode;
-				relCalls[callingContainingNode] = targetContainingNode;
+				relCalls[<callingNode,callingNode@location>] = <targetNode,targetNode@location>;
+				relCalls[<callingContainingNode,callingContainingNode@location>] = <targetContainingNode,targetContainingNode@location>;
 				
 				//add dependence
 				AddDependence(s, expTarget);

@@ -9,8 +9,8 @@ namespace Example_source
 {
     public class TestClass
     {
-        public string Description { get; set; }
         internal static string StaticField;
+        public string Description { get; set; }
         private string Name;
 
         public TestClass(string Name)

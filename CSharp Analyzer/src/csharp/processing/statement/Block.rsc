@@ -6,6 +6,7 @@ import csharp::processing::Dependence;
 import csharp::processing::Globals;
 import csharp::processing::expression::Handler;
 import utils::utils;
+import utils::locationIncluder;
 import IO;
 
 import csharp::processing::typeDeclaration::Main;
@@ -51,11 +52,11 @@ public void FilterAndHandle(AstNode ast)
 }
 public void FilterAndHandle(Statement st)
 {
-	FilterLocalAssignments(statement(st));
+	FilterLocalAssignments(StatementLoc(st));
 	Handle(st);
 }
 public void FilterAndHandle(Expression e)
 {
-	FilterLocalAssignments(expression(e));
+	FilterLocalAssignments(ExpressionLoc(e));
 	Handle(e);
 }

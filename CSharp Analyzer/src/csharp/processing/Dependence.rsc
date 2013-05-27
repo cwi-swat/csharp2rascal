@@ -9,21 +9,21 @@ import csharp::syntax::CSharpSyntax;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
 import utils::utils;
-
+import utils::locationIncluder;
 
 public void AddDependence(Statement s, Expression e)
 {
-	AddDependence(s, expression(e));
+	AddDependence(s, ExpressionLoc(e));
 }
 
 public void AddDependence(Statement s, Statement s2)
 {
-	AddDependence(s, statement(s2));
+	AddDependence(s, StatementLoc(s2));
 }
 
 public void AddDependence(AstNode node1, AstNode node2)
 {
-	relDependence += <node1,node2>;
+	relDependence += <<node1,node1@location>,<node2,node2@location>>;
 }
 
 // Statement s is dependent on the last assignment of Astnode astnode
@@ -45,13 +45,13 @@ public void AddDependence(Statement s, AstNode astnode)
 			{
 				//the member was not assigned inside the body
 				//so it is just dependant on the member itself
-				relDependence += <statement(s), resolved>;
+				ExtendRelDependence(s, resolved);
 			}
 			else
 			{
 				//we found the last assignment, check if its inside an optional path
 				if(s2 is expressionStatement)
-					CheckForOptionalPath(uniqueName, statement(s2), s);
+					CheckForOptionalPath(uniqueName, StatementLoc(s2), s);
 				else
 					CheckForOptionalPath(uniqueName, s2, s);
 			}
@@ -70,7 +70,7 @@ public void AddDependence(Statement s, AstNode astnode)
 			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression);
 			
 			if(uniqueName in mapAssignments)
-				s2 = statement(GetLastListElement(mapAssignments[uniqueName]));
+				s2 = StatementLoc(GetLastListElement(mapAssignments[uniqueName]));
 			//it might be a local-var (for/using/etc)
 			else
 				s2 = GetLastLocalAssignment(memberName);
@@ -84,14 +84,14 @@ public void AddDependence(Statement s, AstNode astnode)
 				{
 					//astnode is a parameter, add to the depMap
 					p = mapParameters[memberName];
-					relDependence += <statement(s), p>;
+					ExtendRelDependence(s,p);
 				}
 				else
 				{
 					//has not been assigned in this block, nor is it a parameter.
 					//it is a field/prop, add a dependence to the declaration
 					resolved = ResolveIdentifier(astnode.nodeExpression);
-					relDependence += <statement(s), resolved>;
+					ExtendRelDependence(s,resolved);
 				}
 			}
 			else
@@ -105,7 +105,7 @@ public void AddDependence(Statement s, AstNode astnode)
 	
 	//if none of the above:
 	//	nothing complicated, just add the new dependence
-	relDependence += <statement(s), astnode>;
+	ExtendRelDependence(s,astnode);
 }
 private void CheckForOptionalPath(str uniqueName, AstNode s2, Statement s)
 {
@@ -115,11 +115,9 @@ private void CheckForOptionalPath(str uniqueName, AstNode s2, Statement s)
 	listStatements = InsideOptionalPath(uniqueName, s, s2, []);
 	
 	if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
-		for(s3 <- listStatements) 
-			relDependence += <statement(s), s3>;
-	
+		ExtendRelDependence(s,listStatements);
 	else //its not inside an optional path
-		relDependence += <statement(s), s2>;
+		ExtendRelDependence(s,s2);
 }
 
 
@@ -149,4 +147,13 @@ public void AddDependenceForBranch(Statement branch, Statement s)
 		
 	for(subS <- lstStatements)
 		AddDependence(subS, s);
+}
+
+void ExtendRelDependence(Statement from, list[AstNode] tos) 	= ExtendRelDependence(StatementLoc(from), tos);
+void ExtendRelDependence(Statement from, Statement to) 			= ExtendRelDependence(StatementLoc(from), [StatementLoc(to)]);
+void ExtendRelDependence(AstNode from, Statement to)			= ExtendRelDependence(from, [StatementLoc(to)]);
+void ExtendRelDependence(Statement from, AstNode to)			= ExtendRelDependence(StatementLoc(from), [to]);
+void ExtendRelDependence(AstNode from, list[AstNode] tos)
+{
+	for(to<-tos) relDependence += <<from,from@location>, <to,to@location>>;
 }

@@ -25,8 +25,10 @@ namespace AST_Getter.Helpers
                                          node.EndLocation.Line,
                                          node.EndLocation.Column);
 
-            return String.Format("[{0}={1}]{2}", strLocation, location, Environment.NewLine );
+            return String.Format("[{0}={1}]{2}", strLocation, location, Environment.NewLine);
 
         }
+
+        public static string EmptyLocation = string.Format("[{0}=|file:///|(0,0,<0,0>,<0,0>)]", strLocation);
     }
 }

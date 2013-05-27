@@ -12,14 +12,14 @@ namespace AST_Getter.Helpers
         internal static string Get<T>(T expression) where T : Expression
         {
             if (expression.IsNull)
-                return "emptyExpression()";
+                return "emptyExpression()" + LocationHelper.EmptyLocation;
                 
             return expression.RascalString;
         }
         internal static string Get(Expression expression)
         {
             if (expression.IsNull)
-                return "emptyExpression()";
+                return "emptyExpression()" + LocationHelper.EmptyLocation;
 
             return expression.RascalString;
         }

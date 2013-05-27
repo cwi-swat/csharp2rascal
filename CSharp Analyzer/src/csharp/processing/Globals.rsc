@@ -3,17 +3,17 @@ module csharp::processing::Globals
 import csharp::syntax::CSharpSyntax;
 import IO;
 
-public map[AstNode parent, list[AstNode] children] mapFamily = ();
-public map[AstNode Node, list[AstNode] decls] mapAttributedNodeDeclarations = ();
+public map[tuple[AstNode Node,loc l] key, list[tuple[AstNode Node,loc l]] children] mapFamily = ();
+public map[tuple[AstNode Node,loc l] key, list[tuple[AstNode Node,loc l]] decls] mapAttributedNodeDeclarations = ();
 
-public rel[CSharpFile file, AstNode using] relFileUsing = {};
-public rel[CSharpFile file, AstNode namespace] relFileNamespace = {};
-public rel[AstNode namespace, AstNode member] relNamespaceAttributedNode = {};
-public rel[AttributedNode Node, AttributedNode members] relAttributedNodeMember = {};
-public rel[AstNode Node, AstNode DependendOn] relDependence = {};
+public rel[tuple[CSharpFile file,loc l] from, tuple[AstNode using,loc l] to] relFileUsing = {};
+public rel[tuple[CSharpFile file,loc l] from, tuple[AstNode namespace,loc l] to] relFileNamespace = {};
+public rel[tuple[AstNode namespace,loc l] from, tuple[AstNode member,loc l] to] relNamespaceAttributedNode = {};
+public rel[tuple[AttributedNode Node,loc l] from, tuple[AttributedNode member,loc l] to] relAttributedNodeMember = {};
+public rel[tuple[AstNode Node,loc l] from, tuple[AstNode DependendOn,loc l] to] relDependence = {};
 
 //contains function to function and class to class
-public rel[AstNode Caller, AstNode Called] relCalls = {};
+public rel[tuple[AstNode Caller,loc l], tuple[AstNode Called,loc l]] relCalls = {};
 
 public void InitGlobals()
 {
@@ -51,7 +51,17 @@ public void Read(list[tuple[Statement block,str uniqueName,Statement assignment]
 		Println("\>", 1);
 	}
 }
-
+public void Read(map[tuple[AstNode Node,loc l] keys, list[tuple[AstNode Node,loc l]] children] _map, str name)
+{
+	println();
+	println(name);
+	
+	for(key <- _map.keys)
+	{
+		Println(key, 1);
+		for(m <- _map[key]) Println(m,2);
+	}
+}
 public void Read(map[value keys,list[value] members] _map, str name)
 {
 	println();
