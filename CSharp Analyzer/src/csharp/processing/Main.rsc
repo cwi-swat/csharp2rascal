@@ -11,20 +11,25 @@ import csharp::processing::Globals;
 import csharp::processing::astnode::AttributedNode;
 import csharp::syntax::CSharpSyntax;
 import csharp::reader::FileInput;
-import utils::locationIncluder;
+import csharp::processing::utils::locationIncluder;
 
+public CSharpProject Project = readCSharpProject();
 public void main()
+{
+	StartAnalyzing();
+}
+public void StartAnalyzing()
 {
 	InitGlobals();
 	
-	CSharpProject project = readCSharpProject();
-	BuildFamily(project);
+	BuildFamily(Project);
 	
-	for(file <- project)
+	for(file <- Project)
 	{
 		visit(file)
 		{
-			case c:usingDeclaration(_): 					relFileUsing += <<file,file@location>,<c,c@location>>;
+			case c:usingDeclaration(_): 
+				relFileUsing += <<file,file@location>,<c,c@location>>;
 			case c:namespaceDeclaration(_,_,_,members):
 			{
 				relFileNamespace[<file,file@location>] = <c,c@location>;
@@ -32,25 +37,15 @@ public void main()
 			}
 		}
 	}
-	for(file <- project)
-	{
-		for(astnode <- file.contents)
-		{
-			if(astnode is namespaceDeclaration)
-			{
-				for(member <- astnode.members)
-				{
-					if(member is attributedNode)
-					{
-						HandleAttributedNode(astNodePlaceholder(), member);
-					}
-				}
-				
-			}
-		}
-	}
-	Read(relDependence, "relDependence");
-	Read(relCalls, "relCalls");
+	for(file <- Project,
+	   astnode <- file.contents,
+	   astnode is namespaceDeclaration,
+	   member <- astnode.members,
+	   member is attributedNode)
+		HandleAttributedNode(member);
+	
+	//Read(relDependence, "relDependence");
+	//Read(relCalls, "relCalls");
 }
 
  

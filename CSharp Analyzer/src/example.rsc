@@ -6,11 +6,11 @@ data myData = ExampleNode(str name);
 
 public void main()
 {
-	int i = 1;
-	myData d = ExampleNode("1");
-	
-	visit(d)
+	lst = [1..10];
+	for(i <- lst)
 	{
-		case i:ExampleNode(_): println("will not execute");
+		println(i);
+		lst = [1..20];
 	}
+	println(lst);
 }

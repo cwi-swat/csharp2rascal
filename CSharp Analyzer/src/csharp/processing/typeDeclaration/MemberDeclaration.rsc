@@ -6,8 +6,8 @@ import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::statement::Handler;
-import utils::locationIncluder;
-import utils::utils;
+import csharp::processing::utils::locationIncluder;
+import csharp::processing::utils::utils;
 
 import IO;
 

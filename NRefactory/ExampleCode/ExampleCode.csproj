@@ -40,6 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aisle.cs" />
+    <Compile Include="Case1.cs" />
+    <Compile Include="Case2.cs" />
+    <Compile Include="Case3.cs" />
+    <Compile Include="Case4.cs" />
     <Compile Include="Company.cs" />
     <Compile Include="ISellable.cs" />
     <Compile Include="Item.cs" />
@@ -58,7 +62,7 @@
     <Compile Include="SpecificCases\ForCase.cs" />
     <Compile Include="SpecificCases\ForEachCase.cs" />
     <Compile Include="SpecificCases\Todo\IndexerCase.cs" />
-    <Compile Include="SpecificCases\Excluded\Lambda.cs" />
+    <Compile Include="SpecificCases\Todo\Lambda.cs" />
     <Compile Include="SpecificCases\Linq.cs" />
     <Compile Include="SpecificCases\Todo\LockCase.cs" />
     <Compile Include="SpecificCases\Todo\SizeOfTypeOfDefaultValueCase.cs" />
@@ -71,7 +75,9 @@
     <Compile Include="SpecificCases\Todo\yieldCase.cs" />
     <Compile Include="SpecificCases\CastCase.cs" />
     <Compile Include="Store.cs" />
-    <Compile Include="Test.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SpecificCases\Excluded\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

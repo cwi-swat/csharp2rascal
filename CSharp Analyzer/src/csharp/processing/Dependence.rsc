@@ -8,8 +8,8 @@ import csharp::processing::Globals;
 import csharp::syntax::CSharpSyntax;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
-import utils::utils;
-import utils::locationIncluder;
+import csharp::processing::utils::utils;
+import csharp::processing::utils::locationIncluder;
 
 public void AddDependence(Statement s, Expression e)
 {
@@ -19,6 +19,11 @@ public void AddDependence(Statement s, Expression e)
 public void AddDependence(Statement s, Statement s2)
 {
 	AddDependence(s, StatementLoc(s2));
+}
+
+public void AddDependence(AstNode n, Statement s)
+{
+	relDependence += <<n,n@location>,<StatementLoc(s),s@location>>;
 }
 
 public void AddDependence(AstNode node1, AstNode node2)

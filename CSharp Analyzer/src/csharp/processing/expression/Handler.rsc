@@ -4,7 +4,7 @@ import csharp::syntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::Dependence;
 import csharp::processing::Globals;
-import utils::utils;
+import csharp::processing::utils::utils;
 
 import IO;
 
@@ -60,19 +60,21 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	//keep track of the assignments
 	AddNewAssignment(left, s);
 	
-	
-	//add a dependence between the declaration and the parent attributedNode
-	//So for example, a property is dependend on a routine
-	// --> some call to this property cannot be moved above that routine
-	
 	AstNode decl;
 	if(left is identifierExpression)
 		decl = ResolveIdentifier(left);
 	else if(left is memberReferenceExpression)
 		decl = ResolveMemberReference(left);
 
-
-	//don't do this for vars and parameters.
+	//every assignment on a local-var is dependend on the declaration of that var.
+	if(decl is statement &&
+	   decl.nodeStatement is variableDeclarationStatement)
+		AddDependence(s, decl);
+	
+	//add a dependence between the declaration and the parent attributedNode
+	//So for example, a property is dependend on a routine
+	// --> some call to this property cannot be moved above that routine
+	//but don't do this for parameters and local-vars.
 	if(decl is parameterDeclaration ||
 	   (decl is statement &&
 	   decl.nodeStatement is variableDeclarationStatement))
@@ -86,34 +88,51 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 	//invocationExpression:
 	// instance.function(); --> relCalls extend
 	// class.function();    --> relCalls extend
-	visit(target)
+	AstNode targetContainingNode = astNodePlaceholder();
+	str strMemberName = "";
+	Expression expTarget = expressionPlaceholder();
+	top-down-break visit(target)
 	{
-		//memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
-		case v:memberReferenceExpression(strMemberName,expTarget,_):
+		case v:identifierExpression(name,_,_):
 		{
+			strMemberName = name;
+			targetContainingNode = FindParentTypeDeclNode(s);
+		}
+		//memberReferenceExpression(str memberName, Expression target, list[AstType] typeArguments)
+		case v:memberReferenceExpression(name,t,_):
+		{
+			expTarget = t;
+			strMemberName = name;
 			//NRefactory cannot resolve all types..
 			//But it does resolve types declared inside the project, so check if this is the case
-			if(!(expTarget has \type))
-				println("break");
+			//eg. IEnumerable.Range(1,10) will not be resolved.
 			if(  expTarget has \type &&
 			   !(expTarget.\type is typePlaceholder))
 			{
-				callingNode = FindParentAttributedNode(s);
-				callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);
-				
 				targetContainingNode = GetNodeByExactType(expTarget.\type);
-				GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
-				targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
-	
-				relCalls[<callingNode,callingNode@location>] = <targetNode,targetNode@location>;
-				relCalls[<callingContainingNode,callingContainingNode@location>] = <targetContainingNode,targetContainingNode@location>;
-				
-				//add dependence
-				AddDependence(s, expTarget);
+			}
+			elseif(expTarget is thisReferenceExpression)
+			{
+				targetContainingNode = FindParentTypeDeclNode(s);
 			}
 		}
 	}
 
+	callingNode = FindParentAttributedNode(s);
+	callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);
+
+	GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
+	targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, strMemberName);
+
+	relCalls[<callingNode,callingNode@location>] = <targetNode,targetNode@location>;
+	relCalls[<callingContainingNode,callingContainingNode@location>] = <targetContainingNode,targetContainingNode@location>;
+	
+	//add dependence
+	AddDependence(targetNode, s);
+	if(expTarget != expressionPlaceholder())
+	{
+		AddDependence(s, expTarget);
+	}
 	
 	visit(arguments)
 	{
@@ -139,6 +158,15 @@ public void Handle(objectCreateExpression(list[Expression] arguments, Expression
 }
 public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator operatorU), Statement s)
 {
+	//depends on the declaration, it has to be declared before this statement can be executed.
+	AstNode decl;
+	if(expression is identifierExpression)
+	{
+		decl = ResolveIdentifier(expression);
+		if(decl is statement && decl.nodeStatement is variableDeclarationStatement)
+			AddDependence(s, decl);
+	}	
+	
 	visit(operatorU)
 	{
 		case op:postIncrement():	AddNewAssignment(expression, s);

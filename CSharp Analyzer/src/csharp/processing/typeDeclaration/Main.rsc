@@ -5,8 +5,8 @@ import csharp::syntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::MemberDeclaration;
 import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::Globals;
-import utils::utils;
-import utils::locationIncluder;
+import csharp::processing::utils::utils;
+import csharp::processing::utils::locationIncluder;
 
 public map[AstNode Node, list[AstNode] decls] mapTypeDeclarations = ();
 
@@ -31,11 +31,12 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 	
 	println("beginning with typedecl: <typeDeclaration.name>");
 
-	//Fill the mapTypeDeclarations
+	//Fill the mapTypeDeclarations / relAttributedNodeMember
 	visit(typeDeclaration.members)
 	{
 		case m:memberDeclaration(_):
 		{
+			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
 			visit(m)
 			{
 				case pd:propertyDeclaration(_,_,_,_,_,_,_):
@@ -48,27 +49,17 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 				}
 			}
 		}
+		case m:destructorDeclaration(_,_,_,_,_):		relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
+		case m:constructorDeclaration(_,_,_,_,_,_,_):	relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
 	}
 
 	visit(typeDeclaration.members)
 	{	
-		case m:memberDeclaration(md):
-		{
-			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>; 
-			Handle(md, typeDeclaration);
-	  	}
-		case m:destructorDeclaration(_,_,_,_,_):
-		{
-			ResetMaps();
-			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
-			Handle(m);
-	  	}
-		case m:constructorDeclaration(_,_,_,_,_,_,_):
-		{
-			ResetMaps();
-		   	relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
-			Handle(m);
-		}
+		case m:memberDeclaration(md):					 Handle(md, typeDeclaration);
+		case m:destructorDeclaration(_,_,_,_,_):		{ResetMaps();
+														 Handle(m);}
+		case m:constructorDeclaration(_,_,_,_,_,_,_):	{ResetMaps();
+														 Handle(m);}
 	}
 }
 

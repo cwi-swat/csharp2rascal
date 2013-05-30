@@ -5,8 +5,8 @@ import csharp::processing::statement::Block;
 import csharp::processing::Dependence;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::expression::Handler;
-import utils::utils;
-import utils::locationIncluder;
+import csharp::processing::utils::utils;
+import csharp::processing::utils::locationIncluder;
 
 import IO;
 import List;

@@ -1,4 +1,4 @@
-module utils::locationIncluder
+module csharp::processing::utils::locationIncluder
 
 import csharp::syntax::CSharpSyntax;
 import IO;

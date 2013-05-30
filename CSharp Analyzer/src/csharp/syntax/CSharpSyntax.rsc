@@ -216,8 +216,8 @@ data QueryClause = queryContinuationClause(str identifier, Expression precedingQ
   |  queryJoinClause(Expression equalsExpression, Expression inExpression, str intoIdentifier, bool isGroupJoin, str joinIdentifier, Expression onExpression);
   
 //done?
-data Class = delegate() //EDIT: deze staat niet in de NRefactory enum
-  |  interface()
+data Class = 
+     interface()
   |  \module()			//EDIT: deze staat niet in de NRefactory enum
   |  class()
   |  enum()

@@ -1,4 +1,4 @@
-module utils::utils
+module csharp::processing::utils::utils
 
 import csharp::syntax::CSharpSyntax;
 import csharp::processing::Globals;
@@ -6,7 +6,7 @@ import csharp::processing::typeDeclaration::Main;
 import List;
 import IO;
 import String;
-import utils::locationIncluder;
+import csharp::processing::utils::locationIncluder;
 
 public Statement GetLastListElement(list[Statement] _list)
 {
@@ -197,13 +197,24 @@ public AstNode GetParent(Statement s) = GetParent(StatementLoc(s));
 public AstNode GetParent(AttributedNode s) = GetParent(AttributedNodeLoc(s));
 public AstNode GetParent(AstNode a)
 {
-	if(parent <- mapFamily, child <- mapFamily[parent], a == child.Node)
-		return parent.Node;
-	else
+	for(parent <- mapFamily)
 	{
-		println(a);
-		throw "Parent not found for <a>";
+		for(child <- mapFamily[parent])
+		{
+			if(<a,a@location> == child)
+				return parent.Node;
+		}
 	}
+	println(a);
+	throw "Parent not found for <a>";
+
+	//if(parent <- mapFamily, child <- mapFamily[parent], a == child.Node)
+	//	return parent.Node;
+	//else
+	//{
+	//	println(a);
+	//	throw "Parent not found for <a>";
+	//}
 }
 
 public AstNode FindParentAttributedNode(Statement s) = FindParentAttributedNode(StatementLoc(s));
@@ -211,6 +222,18 @@ public AstNode FindParentAttributedNode(AstNode a)
 {
 	parent = GetParent(a);
 	while(!(parent is attributedNode))
+	{
+		parent = GetParent(parent);;
+	}
+	return parent;
+}
+
+public AstNode FindParentTypeDeclNode(Statement s) = FindParentTypeDeclNode(StatementLoc(s));
+public AstNode FindParentTypeDeclNode(AstNode a)
+{
+	parent = GetParent(a);
+	while(!(parent is attributedNode &&
+			parent.nodeAttributedNode is typeDeclaration))
 	{
 		parent = GetParent(parent);;
 	}
@@ -376,13 +399,26 @@ public AstNode GetNodeByExactType(exactType(str name))
 
 public AstNode GetNodeMemberByName(AttributedNode Node, str membername)
 {
-	if(an <- relAttributedNodeMember, an.from.Node == Node, 
-	   m <- relAttributedNodeMember[an.from],
-	   m.member has nodeMemberDeclaration,
-	   m.member.nodeMemberDeclaration.name == membername)
-		return AttributedNodeLoc(m.member);
-	else
-		throw "Element not found in relAttributedNodeMember: node:<Node>; membername:<membername>";
+	for(an <- relAttributedNodeMember)
+	{
+		if(an.from.Node == Node)
+		{ 
+	   		for(m <- relAttributedNodeMember[an.from])
+	   		{
+	   			b = relAttributedNodeMember[an.from];
+	   			if(m.member has nodeMemberDeclaration)
+	   			{
+	   				if(m.member.nodeMemberDeclaration.name == membername)
+	   				{
+						return AttributedNodeLoc(m.member);
+					}
+				}
+			}
+		}
+	}
+	a = relAttributedNodeMember;
+	
+	throw "Element not found in relAttributedNodeMember: node:<Node>; membername:<membername>";
 }
 
 public AstNode GetNodeByMember(AttributedNode member)
