@@ -1,6 +1,6 @@
 module csharp::processing::typeDeclaration::AttributedNode
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::statement::Handler;

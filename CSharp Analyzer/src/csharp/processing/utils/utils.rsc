@@ -1,6 +1,6 @@
 module csharp::processing::utils::utils
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::Globals;
 import csharp::processing::typeDeclaration::Main;
 import List;
@@ -124,8 +124,9 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 	if(tup <- listLinqIdentifiers,
 	   endsWith(tup.uniqueName, identifier))
 		return StatementLoc(tup.s);
-			
-	throw "Resolve identifier failed: <identifier>";	
+	
+	a=0;
+	throw "Resolve identifier failed: <identifier>";
 }
 
 //where has the member ref been declared?
@@ -185,9 +186,14 @@ public Statement GetTopMostParentStatement(AstNode ast)
 public Statement GetParentStatement(Expression e)
 {
 	AstNode parent = GetParent(e);
+	if(parent == astNodePlaceholder())
+		return emptyStatement();
+		
 	while(!(parent is statement))
 	{
-		parent = GetParent(parent);;
+		parent = GetParent(parent);
+		if(parent == astNodePlaceholder())
+			return parent;
 	}
 	return parent.nodeStatement;
 }
@@ -205,6 +211,7 @@ public AstNode GetParent(AstNode a)
 				return parent.Node;
 		}
 	}
+	return astNodePlaceholder();
 	println(a);
 	throw "Parent not found for <a>";
 

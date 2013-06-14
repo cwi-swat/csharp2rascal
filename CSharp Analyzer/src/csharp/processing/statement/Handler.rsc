@@ -1,6 +1,6 @@
 module csharp::processing::statement::Handler
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::statement::Block;
 import csharp::processing::Dependence;
 import csharp::processing::typeDeclaration::Main;
@@ -26,7 +26,7 @@ public void Handle(breakStatement())
 	return;
 }
 
-public void Handle(Statement s:ifElseStatement(Expression c, Statement ifBranch, Statement elseBranch))
+public void Handle(Statement s:ifElseStatement(Expression c, Statement elseBranch, Statement ifBranch))
 {
 	AddDependenceToIdentifiersInExpression(c, s);
 	AddDependenceForBranch(ifBranch, s);
@@ -65,8 +65,8 @@ public void Handle(Statement s:switchStatement(Expression expression, list[AstNo
 {
 	AddDependenceToIdentifiersInExpression(expression, s);
 		
-	for(section <- switchSections, statement <- section.statements)
-		AddDependence(statement, s);
+	for(section <- switchSections)//, statement <- section.statements)
+		AddDependenceForBranch(statement, section);
 	
 }
 

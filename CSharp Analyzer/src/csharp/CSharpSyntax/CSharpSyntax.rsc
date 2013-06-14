@@ -1,4 +1,4 @@
-module csharp::syntax::CSharpSyntax
+module csharp::CSharpSyntax::CSharpSyntax
 
 anno loc CSharpFile@location;
 anno loc AstNode@location;
@@ -10,8 +10,6 @@ anno loc QueryClause@location;
 anno loc ConstructorInitializer@location;
 
 public alias CSharpProject = list[CSharpFile];
-
-
 
 data CSharpFile = 
 	cSharpFile(str filename, list[AstNode] contents);
@@ -133,12 +131,12 @@ data AstType =
   |  	composedType(list[AstNode] arraySpecifiers, bool hasNullableSpecifier, int pointerRank, AstType baseType) //EDIT: baseType toegevoegd
   |  	typePlaceholder()
   |  	memberType(bool isDoubleColon, str memberName, AstType Target,  list[AstType] typeArguments) //EDIT: Target toegevoegd
-  |  	primitiveType(str keyword)
+  |  	primitiveType(str \keyword)
   ;
 
 //done
 data AttributedNode = 
-	 	enumMemberDeclaration(str name, list[AstNode] attributes, Expression initializer, list[AstNode] modifierTokens, list[Modifiers] modifiers)
+	 	enumMemberDeclaration(str name, list[AstNode] attributes, Expression initializerA, list[AstNode] modifierTokens, list[Modifiers] modifiers)
   |  	accessor(list[AstNode] attributes, Statement body, list[AstNode] modifierTokens, list[Modifiers] modifiers)
   |  	noAccessor() //EDIT toegevoegd, beide accessors zijn niet verplicht
   |  	delegateDeclaration(str name, list[AstNode] attributes, list[AstNode] constraints, list[AstNode] modifierTokens, list[Modifiers] modifiers, list[AstNode] parameters, list[AstNode] typeParameters)

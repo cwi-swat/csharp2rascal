@@ -2,20 +2,28 @@ module csharp::analyzing::Main
 
 import csharp::processing::Main;
 import csharp::processing::Globals;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::analyzing::Analyze;
+import csharp::analyzing::try2::IndependentStats;
+
 import Set;
 import IO;
 import String;
+
  
 str TestFile = "Case2.cs";
 
 public void main() {main(false);}
-public void main(bool calcDeps)
+public void main(bool forceCalc)
 {
-	if(isEmpty(relDependence) || calcDeps)
-		StartAnalyzing();
+	if(isEmpty(relDependence) || forceCalc)
+		StartProcessing();
 	
+	relIndepStats = GetIndependentStats();
+}
+	
+void mainOne()
+{	
 	for(file <- Project,
 	   endsWith(file.filename,TestFile),
 	   astnode <- file.contents,
@@ -45,4 +53,4 @@ public void separator(m)
 	println();
 	println("---------------------------------------------");
 	println(" block = <m>");
-}
+}  

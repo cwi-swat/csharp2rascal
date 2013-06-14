@@ -1,6 +1,6 @@
 module csharp::processing::expression::Handler
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::Dependence;
 import csharp::processing::Globals;
@@ -82,12 +82,27 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 
 	parent = FindParentAttributedNode(s);
 	AddDependence(decl, parent);
+	AddDependence(decl, s);
 }
+
+public void Handle(e:invocationExpression(_,_))
+{
+	Statement s = GetParentStatement(e);
+	if(s == emptyStatement())
+		return;
+	
+	Handle(e,s);
+}
+
 public void Handle(invocationExpression(list[Expression] arguments, Expression target), Statement s)
 {
 	//invocationExpression:
 	// instance.function(); --> relCalls extend
 	// class.function();    --> relCalls extend
+	//....or...
+	//function();
+	//<something>function()<somethingelse>
+	
 	AstNode targetContainingNode = astNodePlaceholder();
 	str strMemberName = "";
 	Expression expTarget = expressionPlaceholder();
@@ -129,10 +144,15 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 	
 	//add dependence
 	AddDependence(targetNode, s);
-	if(expTarget != expressionPlaceholder())
-	{
-		AddDependence(s, expTarget);
-	}
+	
+	//added the following like so "var a = function();" works like a depends on function.
+	AddDependence(s, targetNode);
+	
+	//not sure why it has to depend on exptarget, commented out....
+	//if(expTarget != expressionPlaceholder())
+	//{
+	//	AddDependence(s, expTarget);
+	//}
 	
 	visit(arguments)
 	{

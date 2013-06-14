@@ -5,7 +5,7 @@ import List;
 
 import csharp::processing::statement::Handler;
 import csharp::processing::Globals;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::statement::Block;
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::utils::utils;
@@ -33,6 +33,9 @@ public void AddDependence(AstNode node1, AstNode node2)
 
 // Statement s is dependent on the last assignment of Astnode astnode
 // which is a local expressionStatement, a parameter or a memberDeclaration(with initializer)
+public void AddDependence(Statement s, list[Statement] statements) = AddDependence(s, [StatementLoc(s) | s<-statements]); 
+public void AddDependence(Statement s, list[AstNode] astnodes) { for(ast<-astnodes) AddDependence(s, ast); }
+
 public void AddDependence(Statement s, AstNode astnode)
 {
 	if(astnode is expression)
@@ -64,6 +67,12 @@ public void AddDependence(Statement s, AstNode astnode)
 		}
 		else if(astnode.nodeExpression is identifierExpression)
 		{
+			//it can be a invocationexpression
+			AstNode parent = GetParent(astnode);
+			if(parent is expression &&
+			   parent.nodeExpression is invocationExpression)
+			   return; //this is handled in the invocationExpression Handle-method
+		
 			//the dependence is to an identifier, check where it was last assigned.
 			memberName = astnode.nodeExpression.identifier;
 
@@ -136,6 +145,18 @@ public void AddDependenceToIdentifiersInExpression(Expression condition, Stateme
 
 public void AddDependenceForBranch(Statement branch, Statement s)
 {
+	//the statements depend on the branch-statement and
+	//the branch-statement depends on all the dependencies of its statements
+	// --> the dependencies of the statements have to be executed before the branch-statement can be executed.
+	for(subS <- GetStatementsFromBranch(branch))
+	{
+		AddDependence(subS, s);
+		AddDependence(s, subS);
+	}
+}
+
+list[Statement] GetStatementsFromBranch(Statement branch)
+{
 	list[Statement] lstStatements = [];
 	
 	if(branch is emptyStatement)
@@ -150,8 +171,7 @@ public void AddDependenceForBranch(Statement branch, Statement s)
 		//it's a non-empty set of statements
 		lstStatements = branch.statements;
 		
-	for(subS <- lstStatements)
-		AddDependence(subS, s);
+	return lstStatements;
 }
 
 void ExtendRelDependence(Statement from, list[AstNode] tos) 	= ExtendRelDependence(StatementLoc(from), tos);

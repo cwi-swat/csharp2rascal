@@ -1,6 +1,6 @@
 module csharp::reader::FileInput
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import ValueIO;
 
 
@@ -11,7 +11,8 @@ list[str] files =
 	
 ];
 
-str filename = "All.rsc";
+str filename = "Case2.rsc"; 
+//str filename = "All.rsc";
 //str filename = "test.rsc";
 //str filename = "specificcases/UsingAliasCase.rsc";
 //str filename = "Aisle.rsc";

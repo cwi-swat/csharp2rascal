@@ -1,6 +1,6 @@
 module csharp::processing::utils::locationIncluder
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import IO;
 
 void CheckForAnnotation(Node)
@@ -28,6 +28,11 @@ public AstNode ExpressionLoc(Expression Node)
 {
 	CheckForAnnotation(Node);
 	return expression(Node)[@location=Node@location];
+}
+public Statement ExpressionStatementLoc(Expression Node)
+{
+	CheckForAnnotation(Node);
+	return expressionStatement(Node)[@location=Node@location];
 }
 
 public AttributedNode MemberDeclarationLoc(MemberDeclaration Node)

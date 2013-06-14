@@ -1,7 +1,7 @@
 module csharp::analyzing::slices::Block
 
 import List;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::Globals;
 import csharp::processing::utils::locationIncluder;
 

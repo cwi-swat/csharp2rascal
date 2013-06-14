@@ -1,7 +1,7 @@
 module csharp::processing::typeDeclaration::Main
  
 import IO;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::typeDeclaration::MemberDeclaration;
 import csharp::processing::typeDeclaration::AttributedNode;
 import csharp::processing::Globals;

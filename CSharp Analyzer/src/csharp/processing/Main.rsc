@@ -9,16 +9,18 @@ import lang::java::jdt::Java;
 
 import csharp::processing::Globals;
 import csharp::processing::astnode::AttributedNode;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::reader::FileInput;
 import csharp::processing::utils::locationIncluder;
 
 public CSharpProject Project = readCSharpProject();
 public void main()
 {
-	StartAnalyzing();
+	StartProcessing();
+	
+	Read(relDependence, "relDependence");
 }
-public void StartAnalyzing()
+public void StartProcessing()
 {
 	InitGlobals();
 	
@@ -44,7 +46,7 @@ public void StartAnalyzing()
 	   member is attributedNode)
 		HandleAttributedNode(member);
 	
-	//Read(relDependence, "relDependence");
+	
 	//Read(relCalls, "relCalls");
 }
 
@@ -218,4 +220,3 @@ public void AddToFamily(AstNode p, list[Statement] Cs)				= AddToFamily(p, [Stat
 public void AddToFamily(AstNode p, Expression c)					= AddToFamily(p, ExpressionLoc(c));
 public void AddToFamily(AstNode p, Statement c)						= AddToFamily(p, StatementLoc(c));
 public void AddToFamily(AstNode parent, AstNode child)				= AddToFamily(parent, [child]);
-

@@ -4,7 +4,7 @@ import IO;
 
 import csharp::processing::typeDeclaration::Main;
 import csharp::processing::Globals;
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::utils::locationIncluder;
 
 public void HandleAttributedNode(AstNode astnode)

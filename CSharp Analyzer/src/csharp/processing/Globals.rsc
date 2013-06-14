@@ -1,6 +1,6 @@
 module csharp::processing::Globals
 
-import csharp::syntax::CSharpSyntax;
+import csharp::CSharpSyntax::CSharpSyntax;
 import IO;
 
 public map[tuple[AstNode Node,loc l] key, list[tuple[AstNode Node,loc l]] children] mapFamily = ();
@@ -96,6 +96,19 @@ public void Read(rel[value keys,value members] _rel, str name)
 		println();
 	}
 }
+
+public void Read(rel[tuple[AstNode Node,loc l] keys, tuple[AstNode Node,loc l] children] _rel, str name)
+{
+	println();
+	println(name);
+	
+	for(key <- _rel.keys)
+	{
+		Println(key, 1);
+		for(r <- _rel[key]) Println(r,2);
+	}
+}
+
 
 void Println(value msg, int level)
 {
