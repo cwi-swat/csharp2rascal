@@ -4,14 +4,21 @@ import csharp::CSharpSyntax::CSharpSyntax;
 import ValueIO;
 
 
-public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/|;
+//public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/ExampleCode/|;
+public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/ExampleCode/|;
 
 list[str] files = 
 [
 	
 ];
 
-str filename = "Case2.rsc"; 
+
+//str filename = "OptimalParalellizable.rsc";
+//str filename = "Circular.rsc";
+//str filename = "Indirect.rsc";
+//str filename = "SubPathExample.rsc";
+str filename = "Case2.rsc";
+//str filename = "Product.rsc";  
 //str filename = "All.rsc";
 //str filename = "test.rsc";
 //str filename = "specificcases/UsingAliasCase.rsc";

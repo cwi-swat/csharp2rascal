@@ -37,17 +37,7 @@ public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 		case m:memberDeclaration(_):
 		{
 			relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
-			visit(m)
-			{
-				case pd:propertyDeclaration(_,_,_,_,_,_,_):
-				{
-					mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), m);
-				}
-				case fd:fieldDeclaration(_,_,_,_,vars,_):
-				{
-					mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), m);
-				}
-			}
+			mapTypeDeclarations = AddToMap(mapTypeDeclarations, AttributedNodeLoc(typeDeclaration), m);
 		}
 		case m:destructorDeclaration(_,_,_,_,_):		relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;
 		case m:constructorDeclaration(_,_,_,_,_,_,_):	relAttributedNodeMember[<typeDeclaration,typeDeclaration@location>] = <m,m@location>;

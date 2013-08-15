@@ -1,4 +1,4 @@
-module csharp::analyzing::slices::Sub
+ module csharp::analyzing::slices::Sub
 
 import Map;
 import Set;
@@ -14,9 +14,11 @@ public map[tuple[int,tuple[AstNode,loc]], list[tuple[AstNode,loc]]] FindSubSlice
 	mapSubSlices = ();
 	astStatements = [StatementLoc(s)|s<-statements];
 	
+	relDeps = GetDependences();
+	Read(relDeps, "relTrans");
 	for(ast<-astStatements)
 	{
-		deps = GetDependences(ast);
+		deps = relDeps[<ast,ast@location>];
 		
 		if(isEmpty(mapSubSlices) ||
 		   isEmpty(deps))
@@ -28,6 +30,11 @@ public map[tuple[int,tuple[AstNode,loc]], list[tuple[AstNode,loc]]] FindSubSlice
 		
 		//get all the slices in which one of the deps is either the key or exists in the content
 		//and return all those keys
+		
+		dbgdeps = relDependence[<ast,ast@location>];
+		//dbg2 = relDependence[dbgdeps[0]];
+		//dbg3 = relDependence[dbgdeps[1]];
+		
 		slices = GetSlicesByDeps(deps);
 		
 		
@@ -64,8 +71,9 @@ list[tuple[int intKey,tuple[AstNode Node,loc l] astKey]] GetSlicesByDeps(rel[Ast
 	list[tuple[int intKey,tuple[AstNode Node,loc l] astKey]] foundSlices = [];
 	for(key		<-	mapSubSlices,		//tuple key
 		d 		<-	deps,				//dep in deps
-		d in mapSubSlices[key] ||		//dep is found in the slice
-		d == key.astKey)				//dep is the key
+		(d in mapSubSlices[key] ||		//dep is found in the slice
+		d == key.astKey) &&				//dep is the key
+		!(key in foundSlices))			//count each slice ones
 	{
 		foundSlices += key;
 	}

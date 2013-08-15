@@ -40,10 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aisle.cs" />
+    <Compile Include="BasicTest.cs" />
     <Compile Include="Case1.cs" />
     <Compile Include="Case2.cs" />
     <Compile Include="Case3.cs" />
     <Compile Include="Case4.cs" />
+    <Compile Include="Circular.cs" />
     <Compile Include="Company.cs" />
     <Compile Include="ISellable.cs" />
     <Compile Include="Item.cs" />
@@ -75,6 +77,7 @@
     <Compile Include="SpecificCases\Todo\yieldCase.cs" />
     <Compile Include="SpecificCases\CastCase.cs" />
     <Compile Include="Store.cs" />
+    <Compile Include="Indirect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="SpecificCases\Excluded\" />

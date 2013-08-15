@@ -65,7 +65,7 @@ public void Handle(Statement s:switchStatement(Expression expression, list[AstNo
 {
 	AddDependenceToIdentifiersInExpression(expression, s);
 		
-	for(section <- switchSections)//, statement <- section.statements)
+	for(section <- switchSections, statement <- section.statements)
 		AddDependenceForBranch(statement, section);
 	
 }
@@ -78,10 +78,10 @@ public void Handle(Statement s:returnStatement(Expression exp))
 		{
 			AddDependence(s,v);
 		
-			//check if the identifier is a field or a property
-			//if so, add a dependence between the parent attributed node and the field/prop
+			//check if the identifier is a field, property or functioncall
+			//if so, add a dependence between the parent attributed node and the field/prop/function
 			//don't do this for local fields or parameters
-			resolved = ResolveIdentifier(v); 
+			resolved = ResolveIdentifier(v);
 			if( resolved is attributedNode &&
 				resolved.nodeAttributedNode is memberDeclaration &&
 			   (resolved.nodeAttributedNode.nodeMemberDeclaration is fieldDeclaration ||
@@ -94,13 +94,18 @@ public void Handle(Statement s:returnStatement(Expression exp))
 		case v:memberReferenceExpression(_,_,_):
 		{
 			//the return statement used a memberreference,
-			//add a dependence to the declaration of the prop/field/(function?)
+			//add a dependence to the declaration of the prop/field/function
 			resolved  = ResolveMemberReference(v);
-			AddDependence(s, resolved);
 			
-			//the parent of the statement also depends on the prop/field/(function?)
-			parent = FindParentAttributedNode(s);
-			AddDependence(parent, resolved);
+			//this is not correct:
+			if(resolved != astNodePlaceholder())
+			{
+				AddDependence(s, resolved);
+				
+				//the parent of the statement also depends on the prop/field/function
+				parent = FindParentAttributedNode(s);
+				AddDependence(parent, resolved);
+			}
 		}
 	}
 }

@@ -10,20 +10,19 @@ import Set;
 import IO;
 import String;
 
- 
-str TestFile = "Case2.cs";
-
-public void main() {main(false);}
+public void main() = main(false);
 public void main(bool forceCalc)
 {
 	if(isEmpty(relDependence) || forceCalc)
 		StartProcessing();
 	
-	relIndepStats = GetIndependentStats();
+	Read(relDependence, "relDeps");
+	mainOne();
 }
 	
 void mainOne()
 {	
+	str TestFile = "Case2.cs";	
 	for(file <- Project,
 	   endsWith(file.filename,TestFile),
 	   astnode <- file.contents,
@@ -53,4 +52,9 @@ public void separator(m)
 	println();
 	println("---------------------------------------------");
 	println(" block = <m>");
-}  
+}
+
+public void mainTwo()
+{
+	relIndepStats = GetIndependentStats();
+}

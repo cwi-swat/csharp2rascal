@@ -8,8 +8,8 @@ namespace ExampleCode
 {
     class Case2
     {
-        int field1 = 1;
-        int field2 = 2;
+        int field1 = 1;                 //S0.1
+        int field2 = 2;                 //S0.2
 
         public Case2()
         {
@@ -17,11 +17,11 @@ namespace ExampleCode
             var b = 2;                  //S2        No Dep
             if (b == 2)                 //S3        S2
             {
-                field2 = 2;             //          S3
+                field2 = 2;             //S3.1      S3
             }
             if (a == 1 && b == 2)       //S4        S1, S2
             {
-                field1 = 2;             //          S4
+                field1 = 2;             //S4.1      S4
             }
             var c = field1;             //S5        S4, field1
             var d = field2;             //S6        S3, field2
@@ -30,28 +30,28 @@ namespace ExampleCode
             var g = field3;             //S9        field3
             var h = f + g;              //S10       S8,S9
 
-            _field4 = 4;                //S11       No Dep
-            var i = field4();           //S12       S11, indirect
+            //_field4 = 4;                //S11       No Dep
+            //var i = field4();           //S12       S11, indirect
 
-            _field4 = 1;
-            setField4();                //S13       No Dep
-            var j = field4();           //S14       field4(), _field4, (setField4), S13
+            //_field4 = 1;
+            //setField4();                //S13       No Dep
+            //var j = field4();           //S14       field4(), _field4, (setField4), S13
             
-            var TESTFIELDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD = a;
+            //var TESTFIELDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD = a;
         }
 
         int field3 = 3;
-        int _field4;
+        //int _field4;
 
-        public bool setField4()
-        {
-            _field4 = 5;
-            return true;
-        }
-        int field4()
-        {
-            return _field4; 
-        }
+        //public bool setField4()
+        //{
+        //    _field4 = 5;
+        //    return true;
+        //}
+        //int field4()
+        //{
+        //    return _field4; 
+        //}
 
         
         //public int Test() 

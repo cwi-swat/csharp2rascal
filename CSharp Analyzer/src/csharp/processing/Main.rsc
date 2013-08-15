@@ -117,6 +117,7 @@ void BuildFamily(CSharpProject project)
 		case p:variableInitializer(_,i)					: AddToFamily(p, i);
 		case p:throwStatement(e)						: AddToFamily(p, e);
 		case p:returnStatement(e)						: AddToFamily(p, e);
+		case p:expressionStatement(e)					: AddToFamily(p, e);
 		case p:expression(e)							: AddToFamily(p, e);
 		case p:statement(s)								: AddToFamily(p, s);
 

@@ -69,9 +69,12 @@
     <None Include="GeneratedOutput\Aisle.rsc" />
     <None Include="GeneratedOutput\All.rsc" />
     <None Include="GeneratedOutput\Case1.rsc" />
+    <None Include="GeneratedOutput\Case2.rsc" />
     <None Include="GeneratedOutput\Case3.rsc" />
     <None Include="GeneratedOutput\Case4.rsc" />
+    <None Include="GeneratedOutput\Circular.rsc" />
     <None Include="GeneratedOutput\Company.rsc" />
+    <None Include="GeneratedOutput\Indirect.rsc" />
     <None Include="GeneratedOutput\ISellable.rsc" />
     <None Include="GeneratedOutput\Item.rsc" />
     <None Include="GeneratedOutput\Milk.rsc" />

@@ -45,12 +45,19 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 			   resolved.nodeAttributedNode.nodeMemberDeclaration is methodDeclaration)
 			{
 				targetContainingNode = GetNodeByExactType(target.\type);
-				targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, name);
 				
-				//our assignment depends on the outcome of the function called
-				AddDependence(s, targetNode);
-				
-				//the rest of the invocation handling is inside of its own function
+				//if the type is unknown, it is probably from an external library and 
+				//will not contain dependencies to places inside the project
+				//or so we presume.
+				if(targetContainingNode != astNodePlaceholder())
+				{
+					targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, name);
+					
+					//our assignment depends on the outcome of the function called
+					AddDependence(s, targetNode);
+					
+					//the rest of the invocation handling is inside of its own function
+				}
 			}
 			else
 				AddDependence(s, m); //our assignment depends on the member-ref used on the right
@@ -63,12 +70,22 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	AstNode decl;
 	if(left is identifierExpression)
 		decl = ResolveIdentifier(left);
+	else if(left is indexerExpression)
+		decl = ResolveIdentifier(left.target);
 	else if(left is memberReferenceExpression)
 		decl = ResolveMemberReference(left);
 
-	//every assignment on a local-var is dependend on the declaration of that var.
-	if(decl is statement &&
-	   decl.nodeStatement is variableDeclarationStatement)
+	//decl is nothing, skip
+	if(decl == astNodePlaceholder())
+		return;
+
+	//every assignment on a prop/field/local var is dependend on the declaration of that var
+	if((decl is statement &&
+	   decl.nodeStatement is variableDeclarationStatement) ||
+	   decl is attributedNode &&
+	   decl.nodeAttributedNode is memberDeclaration &&
+	   (decl.nodeAttributedNode.nodeMemberDeclaration is fieldDeclaration ||
+	   decl.nodeAttributedNode.nodeMemberDeclaration is propertyDeclaration))
 		AddDependence(s, decl);
 	
 	//add a dependence between the declaration and the parent attributedNode
@@ -80,9 +97,22 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	   decl.nodeStatement is variableDeclarationStatement))
 	   return;
 
+	
 	parent = FindParentAttributedNode(s);
+	
+	//the declaration depends on the containing attrbuted node(parent)
+	//because the declaration is set inside this parent
 	AddDependence(decl, parent);
+	
+	//The declaration depends on the assignment of that declaration
 	AddDependence(decl, s);
+	
+	//if the declaration is a field or property, the parent depends on it, and in turn on any reads or writes of it.
+	if(decl is attributedNode &&
+	   decl.nodeAttributedNode is memberDeclaration &&
+	   (decl.nodeAttributedNode.nodeMemberDeclaration is fieldDeclaration ||
+	   decl.nodeAttributedNode.nodeMemberDeclaration is propertyDeclaration))
+		AddDependence(parent, decl);
 }
 
 public void Handle(e:invocationExpression(_,_))
@@ -121,8 +151,9 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 			//NRefactory cannot resolve all types..
 			//But it does resolve types declared inside the project, so check if this is the case
 			//eg. IEnumerable.Range(1,10) will not be resolved.
-			if(  expTarget has \type &&
-			   !(expTarget.\type is typePlaceholder))
+			
+			if(expTarget has \type &&
+			   (expTarget.\type is exactType))
 			{
 				targetContainingNode = GetNodeByExactType(expTarget.\type);
 			}
@@ -132,7 +163,9 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 			}
 		}
 	}
-
+	if(targetContainingNode == astNodePlaceholder())
+		return;
+		
 	callingNode = FindParentAttributedNode(s);
 	callingContainingNode = GetNodeByMember(callingNode.nodeAttributedNode);
 
@@ -172,8 +205,13 @@ public void Handle(objectCreateExpression(list[Expression] arguments, Expression
 	}
 	
 	targetTypeNode = GetNodeByExactType(\type);
-	AddDependence(s, targetTypeNode);
 	
+	//if the type is unknown, it is probably from an external library and 
+	//will not contain dependencies to places inside the project
+	//or so we presume.
+	if(targetContainingNode != astNodePlaceholder())
+		AddDependence(s, targetTypeNode);
+		
 	//todo add dependence to the constructor node
 }
 public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator operatorU), Statement s)
@@ -222,16 +260,3 @@ public void Handle(e:queryExpression(list[QueryClause] clauses))
 		}
 	}
 }
-
-//public void Handle(lambdaExpression(AstNode body, list[AstNode] parameters), Statement s)
-//{
-//	visit(parameters)
-//	{
-//		case p:identifierExpression(n,t):;
-//	}
-//
-//	visit(body)
-//	{
-//		case s:statement(st):;
-//	}
-//}

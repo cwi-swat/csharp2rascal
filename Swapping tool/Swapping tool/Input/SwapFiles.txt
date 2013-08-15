@@ -1,0 +1,8 @@
+﻿D:\Projecten\Swapping tool\ExampleProg\Program.cs|7,8
+-D:\Projecten\Swapping tool\ExampleProg\Program.cs|8,9
+D:\Projecten\Swapping tool\ExampleProg\Program.cs|8,9
+-D:\Projecten\Swapping tool\ExampleProg\Program.cs|9,13
+D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|7,8
+-D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|8,9
+D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|10,20
+-D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|20,21

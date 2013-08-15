@@ -9,6 +9,7 @@ import csharp::CSharpSyntax::CSharpSyntax;
 import csharp::processing::Main;
 import csharp::processing::utils::utils;
 import csharp::processing::utils::locationIncluder;
+import csharp::analyzing::dependence::collector;
 
 public void main()
 {
@@ -19,11 +20,11 @@ public rel[tuple[AstNode, loc],tuple[AstNode, loc]] GetIndependentStats()
 {
 	relPossible = GetAllPossibilities();
 	
-	Read(relPossible, "possible");
+	Read(relPossible, "possible parallel");
 	
 	relValid = ValidatePossibilities(relPossible);
 	
-	Read(relValid, "valid");
+	Read(relValid, "possible swapping");
 	
 	return relValid;
 
@@ -33,20 +34,22 @@ public rel[tuple[AstNode, loc],tuple[AstNode, loc]] GetAllPossibilities()
 	rel[tuple[AstNode, loc],tuple[AstNode, loc]] relIndependentStats = {}; 
 	StartProcessing();	
 	
-	//all statements with in any dependence(all statements)
-	setAll = carrier(relDependence);
+	//Read(relDependence, "relDependence");
 	
-	Read(relDependence, "relDependence");
 	//Transitive closure + self to self
 	relDeps = relDependence*;
 	
+	//But why do this?!
 	//Add both ways (x -> y, then y -> x)
 	for(d <- relDeps, !(<d.to,d.from> in relDeps))
 	{
 		relDeps += <d.to,d.from>;
 	}
 	
-	Read(relDeps, "deps");
+	//Read(relDeps, "deps");
+	
+	//all statements with in any dependence(all statements)
+	setAll = carrier(relDependence);
 	
 	//alle mogelijke volgordes van statements
 	relAlles = (setAll * setAll);

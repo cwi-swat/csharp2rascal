@@ -9,13 +9,14 @@ import csharp::analyzing::dependence::collector;
 
 public list[list[tuple[AstNode,loc]]] FindIndependentSlices(list[Statement] statements)
 {
+	relDeps = GetDependences();
     map[AstNode Node,list[tuple[AstNode,loc]] Nodes] mapSlices = ();
 	for(ast <- [StatementLoc(s) | s<-statements])
 	{
 		//First get all the dependencies for this statement.
 		//if the statement has any child statements, also return those dependencies
 		// and also all parent-dependencies (?)
-		deps = GetDependences(ast);
+		deps = relDeps[<ast,ast@location>];
 		
 		if(isEmpty(deps) || isEmpty(mapSlices)) //new slice
 			mapSlices += (ast:[<ast,ast@location>]);

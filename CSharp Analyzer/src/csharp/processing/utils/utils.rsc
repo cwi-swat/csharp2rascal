@@ -125,6 +125,8 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 	   endsWith(tup.uniqueName, identifier))
 		return StatementLoc(tup.s);
 	
+	//is it an invocation expression?
+	
 	a=0;
 	throw "Resolve identifier failed: <identifier>";
 }
@@ -140,6 +142,17 @@ public AstNode ResolveMemberReference(memberReferenceExpression(str memberName, 
 		case t:identifierExpression(id,_,Type):
 		{
 			Node = GetNodeByExactType(Type);
+			
+			//if the type is unknown, it is probably from an external library and 
+			//will not contain dependencies to places inside the project
+			//or so we presume.
+			if(Node == astNodePlaceholder() ||
+			   //also skip the enums, not supported yet
+			   Node has nodeAttributedNode &&
+			   Node.nodeAttributedNode has classType &&
+			   Node.nodeAttributedNode.classType == enum())
+				return astNodePlaceholder();
+			
 			decl = GetNodeMemberByName(Node.nodeAttributedNode, memberName);
 			return decl;
 		} 
@@ -148,6 +161,7 @@ public AstNode ResolveMemberReference(memberReferenceExpression(str memberName, 
 
 private AstNode checkMapTypeDeclForId(str id)
 {
+	dbg = mapTypeDeclarations;
 	if(key <- mapTypeDeclarations,
 	   aNode <- mapTypeDeclarations[key],
 	   aNode.nodeAttributedNode.nodeMemberDeclaration.name == id)
@@ -192,8 +206,9 @@ public Statement GetParentStatement(Expression e)
 	while(!(parent is statement))
 	{
 		parent = GetParent(parent);
-		if(parent == astNodePlaceholder())
-			return parent;
+		if(parent == astNodePlaceholder()){
+			return emptyStatement();
+		}
 	}
 	return parent.nodeStatement;
 }
@@ -393,7 +408,10 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 	}
 	return [];
 }
-
+public AstNode GetNodeByExactType(AstType \type)
+{
+	return astNodePlaceholder();
+}
 public AstNode GetNodeByExactType(exactType(str name))
 {
 	if(from <- relNamespaceAttributedNode.from, 
@@ -401,7 +419,7 @@ public AstNode GetNodeByExactType(exactType(str name))
 	   from.namespace.fullName + "." + to.member.nodeAttributedNode.name == name)
 		return to.member;
 	else
-		throw "name not found <name>";
+		return astNodePlaceholder();
 }
 
 public AstNode GetNodeMemberByName(AttributedNode Node, str membername)
@@ -444,12 +462,20 @@ public void AddNewAssignment(Node, Statement s)
 	else if(Node is memberReferenceExpression)
 	{
 		resolved = ResolveMemberReference(Node);
+		
+		//could not be resolved, skip
+		if(resolved == astNodePlaceholder())
+			return;
+		
 		uniqueName = GetUniqueNameForResolvedIdentifier(Node.memberName, resolved);
 	}
 	else if(Node is variableDeclarationStatement,
 			variable <- Node.variables,
 		    !(variable.initializer is emptyExpression))
 		uniqueName = GetUniqueNameForResolvedIdentifier(variable.name, Node);
+	else if(Node is indexerExpression)
+		uniqueName = GetUniqueNameForResolvedIdentifier(Node.target.identifier, Node);
+
 
 	//check if it is a local-var 
 	if(!(GetLastLocalAssignment(uniqueName) is astNodePlaceholder))
@@ -517,11 +543,17 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved)
 		aNode = FindParentAttributedNode(a);
 		if(aNode.nodeAttributedNode is constructorDeclaration)
 			uniqueName = aNode.nodeAttributedNode.name + "." + uniqueName;
+		else if(aNode.nodeAttributedNode is accessor)
+		{
+			aNode = GetParent(aNode);
+			uniqueName = aNode.nodeAttributedNode.nodeMemberDeclaration.name + ".getter." + uniqueName;
+		}
 		else //routine
 			uniqueName = aNode.nodeAttributedNode.nodeMemberDeclaration.name + "." + uniqueName;
 	}
 	void HandleVisit(Statement s) = HandleVisit(StatementLoc(s));
-
+	void HandleVisit(Expression e) = HandleVisit(ExpressionLoc(e));
+	
 	AstNode aNode = astNodePlaceholder();
 	top-down-break visit(resolved)
 	{
@@ -532,10 +564,14 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved)
 		case f:forStatement(_,_,_,_):				HandleVisit(f);
 		case f:foreachStatement(_,_,_):				HandleVisit(f);
 		case c:catchClause(_, variableName, _):		HandleVisit(c);
+		case i:indexerExpression(_,_):				HandleVisit(i);
 	}
 		
 	if(aNode is astNodePlaceholder)
+	{
+	a=1;
 		throw "aNode is not initialized for uniqueName <uniqueName> with resolved <resolved>";
+	}
 	//get typedecl 
 	aNode = GetParent(aNode);
 	typeName = aNode.nodeAttributedNode.name;
