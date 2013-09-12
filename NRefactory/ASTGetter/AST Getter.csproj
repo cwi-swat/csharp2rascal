@@ -68,6 +68,7 @@
     <None Include="App.config" />
     <None Include="GeneratedOutput\Aisle.rsc" />
     <None Include="GeneratedOutput\All.rsc" />
+    <None Include="GeneratedOutput\BasicTest.rsc" />
     <None Include="GeneratedOutput\Case1.rsc" />
     <None Include="GeneratedOutput\Case2.rsc" />
     <None Include="GeneratedOutput\Case3.rsc" />
@@ -79,7 +80,6 @@
     <None Include="GeneratedOutput\Item.rsc" />
     <None Include="GeneratedOutput\Milk.rsc" />
     <None Include="GeneratedOutput\Product.rsc" />
-    <None Include="GeneratedOutput\Properties\AssemblyInfo.rsc" />
     <None Include="GeneratedOutput\Shopper.rsc" />
     <None Include="GeneratedOutput\ShoppingCart.rsc" />
     <None Include="GeneratedOutput\SpecificCases\AnonymousMethodCase.rsc" />
