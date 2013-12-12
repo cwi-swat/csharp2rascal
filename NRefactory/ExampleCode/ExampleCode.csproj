@@ -47,6 +47,10 @@
     <Compile Include="Case4.cs" />
     <Compile Include="Circular.cs" />
     <Compile Include="Company.cs" />
+    <Compile Include="EvaluationTests\Joe.cs" />
+    <Compile Include="EvaluationTests\Test1.cs" />
+    <Compile Include="EvaluationTests\Test2.cs" />
+    <Compile Include="EvaluationTests\Test3.cs" />
     <Compile Include="ISellable.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Milk.cs" />
@@ -54,6 +58,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shopper.cs" />
     <Compile Include="ShoppingCart.cs" />
+    <Compile Include="SpecificCases\ParameterDirection.cs" />
     <Compile Include="SpecificCases\Todo\AnonymousMethodCase.cs" />
     <Compile Include="SpecificCases\ArraySpecifierCase.cs" />
     <Compile Include="SpecificCases\Todo\AttributeCase.cs" />

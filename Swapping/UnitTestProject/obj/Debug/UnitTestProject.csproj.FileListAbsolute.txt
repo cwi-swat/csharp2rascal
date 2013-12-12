@@ -1,0 +1,6 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\bin\Debug\UnitTestProject.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\bin\Debug\UnitTestProject.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\obj\Debug\UnitTestProject.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\obj\Debug\UnitTestProject.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\obj\Debug\UnitTestProject.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\UnitTestProject\bin\Debug\Tests\Test 1\Original\SwapFile2.txt

@@ -17,7 +17,8 @@ public void main(bool forceCalc)
 		StartProcessing();
 	
 	Read(relDependence, "relDeps");
-	mainOne();
+	
+	mainTwo();
 }
 	
 void mainOne()

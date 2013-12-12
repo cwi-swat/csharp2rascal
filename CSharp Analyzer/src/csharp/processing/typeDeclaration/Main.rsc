@@ -21,9 +21,15 @@ public list[tuple[AstNode block, str uniqueName, AstNode assignment]] listLocalA
 
 //this list will be pre-defined to identify the linq identifiers when they are used
 //for example in an assignment on the right-hand-side
+//TODO Linq is not yet handled.
 public list[tuple[Statement s, str uniqueName, Statement assignment]] listLinqIdentifiers = [];
 
+//Keep track of the current parameters.
 public map[str name, AstNode a] mapParameters = ();
+
+//Keep track of all read operations on all variables.
+//when we assign a variable, it depends on the last read on that variable so we wont make these parallel later on.
+public map[str uniquename, list[tuple[AstNode ast, loc l]] s] mapReads = ();
 
 public void HandleTypeDeclaration(AttributedNode typeDeclaration)
 {
@@ -58,7 +64,7 @@ public void ResetMaps()
 	listLinqIdentifiers = [];
 	mapAssignments = ();
 	mapParameters = ();
-	mapAssignments = ();
+	mapReads = ();
    	mapAttributedNodeDeclarations = ();
 }
 

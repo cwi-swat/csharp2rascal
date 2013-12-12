@@ -14,10 +14,15 @@ namespace Swapping_tool
         public string Filepath { get; set; }
         public string FileName { get; set; }
         public List<SwapLine> AvailableSwaps { get; set; }
+        public SwapLine UntillSwapLine { get; set; }
 
         public SwapLine(string line)
         {
-            Filepath = line.Split('|').First();
+            if ( line.StartsWith("/") )
+                Filepath = line.Split('|').First().Replace("/","\\").Replace("\\C\\","C:\\");
+            else
+                Filepath = line.Split('|').First();
+                
             FileName = Filepath.Substring(Filepath.LastIndexOf("\\") + 1);
             From = int.Parse(line.Split('|').Last().Split(',').First());
             To = int.Parse(line.Split('|').Last().Split(',').Last());
@@ -31,12 +36,16 @@ namespace Swapping_tool
         public void Process()
         {
             var fileLines = File.ReadAllLines(Filepath).ToList();
-            var i = 1;
+            
+            string outputpath = Constants.OutputPath + "Original\\";
+            Directory.CreateDirectory(outputpath);
+            File.Copy(Filepath, outputpath + FileName, true);
 
-            foreach (var swapLine in AvailableSwaps)
+            var i = 1;
+            foreach ( var swapLine in AvailableSwaps )
             {
                 var filepath = String.Format(Constants.OutputPath + FileName + " - {0}\\", i);
-                while (Directory.Exists(filepath))
+                while ( Directory.Exists(filepath) )
                 {
                     i++;
                     filepath = String.Format(Constants.OutputPath + FileName + " - {0}\\", i);
@@ -44,13 +53,18 @@ namespace Swapping_tool
                 Directory.CreateDirectory(filepath);
 
                 var filename = filepath + FileName;
-                CreateSwappedFile(fileLines, filename, swapLine.From, swapLine.To);
+                CreateSwappedFile(fileLines, filename, swapLine.From, swapLine.To, UntillSwapLine, i);
                 i++;
             }
         }
 
-        private void CreateSwappedFile(List<string> fileLines, string filename, int from, int to)
+        private void CreateSwappedFile(List<string> fileLines, string filename, int from, int to, SwapLine Untill, int namespaceExtention)
         {
+            if ( Untill != null )
+            {
+                to = Untill.To;
+            }
+
             //add all before our line
             var newfileLines = fileLines.Take(From - 1).ToList();
 
@@ -67,9 +81,12 @@ namespace Swapping_tool
             newfileLines.AddRange(fileLines.Range(to - 1, fileLines.Count));
 
             var newFile = File.CreateText(filename);
-            foreach (var line in newfileLines)
+            foreach ( var line in newfileLines )
             {
-                newFile.WriteLine(line);
+                var _line = line;
+                if ( _line == newfileLines.First() )
+                    _line += namespaceExtention;
+                newFile.WriteLine(_line);
             }
             newFile.Close();
             newFile.Dispose();

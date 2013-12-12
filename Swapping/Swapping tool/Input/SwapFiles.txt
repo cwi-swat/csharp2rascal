@@ -1,8 +1,13 @@
-﻿D:\Projecten\Swapping tool\ExampleProg\Program.cs|7,8
--D:\Projecten\Swapping tool\ExampleProg\Program.cs|8,9
-D:\Projecten\Swapping tool\ExampleProg\Program.cs|8,9
--D:\Projecten\Swapping tool\ExampleProg\Program.cs|9,13
-D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|7,8
--D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|8,9
-D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|10,20
--D:\Projecten\Swapping tool\ExampleProg\ExampleClass.cs|20,21
+﻿/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|108,109
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|110,113
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|110,113
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153
+/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153

@@ -1,0 +1,6 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\obj\Debug\ExampleProg.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\bin\Debug\ExampleProg.exe.config
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\bin\Debug\ExampleProg.exe
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\bin\Debug\ExampleProg.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\obj\Debug\ExampleProg.exe
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\ExampleProg\obj\Debug\ExampleProg.pdb

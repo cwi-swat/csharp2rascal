@@ -5,19 +5,20 @@ import ValueIO;
 
 
 //public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/ExampleCode/|;
-public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/ExampleCode/|;
+public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/EvaluationTests/|;
+//public loc folderPath = |file:///C:/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ASTGetter/GeneratedOutput/SpecificCases/|;
 
-list[str] files = 
-[
-	
-];
+//str filename = "Test1.rsc";
+//str filename = "Test3.rsc";
+//str filename = "Test3.rsc";
+str filename = "Joe.rsc";
 
-
+//str filename = "ParameterDirection.rsc";
 //str filename = "OptimalParalellizable.rsc";
 //str filename = "Circular.rsc";
 //str filename = "Indirect.rsc";
 //str filename = "SubPathExample.rsc";
-str filename = "Case2.rsc";
+//str filename = "Case2.rsc";
 //str filename = "Product.rsc";  
 //str filename = "All.rsc";
 //str filename = "test.rsc";
@@ -54,13 +55,4 @@ public CSharpProject readCSharpProject()
 public CSharpProject readCSharpProject(loc file)
 {
 	return readTextValueFile(#CSharpProject, file);
-}
-
-public bool parseAllFiles()
-{
-	for(file <- files)
-	{
-		readCSharpProject(folderPath + "All.rsc");
-	}
-	return true;
 }

@@ -35,13 +35,17 @@ private void Handle(methodDeclaration(str name, list[AstNode] attributes, Statem
 		mapParameters += (p.name:p);
 		
 	Handle(body);
+	
+	Read(mapReads, "mapReads");
 }
 
 private void Handle(propertyDeclaration(str name, list[AstNode] attributes, AttributedNode getter, list[AstNode] modifierTokens, list[Modifiers] modifiers, AttributedNode setter, AstType \type))
 {
 	mapAssignments = ();
+	mapReads = ();
 	Handle(getter);
 	
 	mapAssignments = ();
+	mapReads = ();
 	Handle(setter);
 }

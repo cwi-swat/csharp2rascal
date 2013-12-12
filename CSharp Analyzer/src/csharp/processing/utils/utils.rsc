@@ -16,6 +16,14 @@ public Statement GetLastListElement(list[Statement] _list)
 	return head(reverse(_list));
 }
 
+public AstNode GetLastListElement(list[tuple[AstNode a, loc l]] _list)
+{
+	if(isEmpty(_list))
+		return astNodePlaceholder();
+
+	return head(reverse(_list)).a;
+}
+
 public AstNode GetLastListElement(list[AstNode] _list)
 {
 	if(isEmpty(_list))
@@ -30,6 +38,39 @@ public tuple[Statement, str, Statement] GetLastListElement(list[tuple[Statement,
 		return <emptyStatement(),"",emptyStatement()>;
 
 	return head(reverse(_list));
+}
+public void AddToReadMap(Expression e, Statement s) = AddToReadMap([e], s);
+public void AddToReadMap(list[Expression] Es, Statement s)
+{
+	map[str uniquename, list[tuple[AstNode, loc]] s] ExpandMap(Map, str key, Statement statement)
+	{
+		val = StatementLoc(statement);
+		if(key in Map)
+			Map[key] += [<val,val@location>];
+		else
+			Map += (key:[<val,val@location>]);
+			
+		return Map;
+	}
+
+
+	//Add all reads of any identifier or memberreference to mapReads
+	visit(Es)
+	{
+		case i:identifierExpression(_,_,_):
+		{
+			str uniquename = GetUniqueNameForIdentifier(i);
+			mapReads = ExpandMap(mapReads, uniquename, s);
+		}
+		case m:memberReferenceExpression(membername,_,_): 	
+		{
+			AstNode resolved = ResolveMemberReference(m);
+			//get name from resolved?
+			//or name from m?
+			str uniquename = GetUniqueNameForResolvedIdentifier(membername, resolved);
+			mapReads = ExpandMap(mapReads, uniquename, s);
+		}
+	}
 }
 
 public map[str, list[AstNode]] AddToMap(map[str, list[AstNode]] m, str key, AstNode val)
@@ -52,7 +93,9 @@ public map[str, list[Statement]] AddToMap(map[str, list[Statement]] m, str key, 
 }
 
 public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AttributedNode val)
-	= AddToMap(m, key, AttributedNodeLoc(val));
+{	
+	return AddToMap(m, key, AttributedNodeLoc(val));	
+}
 public map[AstNode, list[AstNode]] AddToMap(map[AstNode, list[AstNode]] m, AstNode key, AstNode val)
 {
 	if(key in m)
@@ -127,7 +170,7 @@ public AstNode ResolveIdentifier(identifierExpression(str identifier, list[AstTy
 	
 	//is it an invocation expression?
 	
-	a=0;
+	breakpoint=0;
 	throw "Resolve identifier failed: <identifier>";
 }
 
@@ -262,7 +305,7 @@ public AstNode FindParentTypeDeclNode(AstNode a)
 	return parent;
 }
 
-public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2, list[AstNode] FoundOptionalStats)
+public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2, list[AstNode] FoundOptionalStats, bool isReadOperation)
 {
 	//PARAMETERS:
 	//uniqueName = identifier we are dependend on
@@ -358,18 +401,32 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 
 	
 	//loop through the assignments to get the last assignment before our found optional statement(if/for/etc);
-	AstNode Assignment = astNodePlaceholder();
-	list[AstNode] Assignments = [];
-	if(uniqueName in mapAssignments)
-		Assignments = reverse([StatementLoc(as) | as <- mapAssignments[uniqueName]]);
+	AstNode UsedInStatement = astNodePlaceholder();
+	list[AstNode] UsedInStatements = [];
+	
+	if(isReadOperation)
+	{
+		if(uniqueName in mapReads)
+			UsedInStatements = reverse([as.ast | as <- mapReads[uniqueName]]);
+		else
+		{
+			breakpoint = 1;  //todo check if this is even possible? //20-11
+			UsedInStatements = reverse([as.assignment | as <- listLocalAssignments, as.uniqueName == uniqueName]);
+		}
+	}
 	else
-		Assignments = reverse([as.assignment | as <- listLocalAssignments, as.uniqueName == uniqueName]);
-		
-	//list[tuple[Statement block, str uniqueName, Statement assignment]] listLocalAssignments 	
-	for(assignS <- Assignments)
+	{
+		if(uniqueName in mapAssignments)
+			UsedInStatements = reverse([StatementLoc(as) | as <- mapAssignments[uniqueName]]);
+		else
+			UsedInStatements = reverse([as.assignment | as <- listLocalAssignments, as.uniqueName == uniqueName]);
+	}
+	
+	//list[tuple[Statement block, str uniqueName, Statement assignment]] listLocalAssignments
+	for(statement <- UsedInStatements)
 	{
 		bool foundInOptional = false;
-		parent = GetParent(assignS);
+		parent = GetParent(statement);
 		while(!(parent is attributedNode))
 		{
 			if((parent is statement &&
@@ -383,30 +440,39 @@ public list[AstNode] InsideOptionalPath(str uniqueName, Statement s, AstNode s2,
 		}
 		if(!foundInOptional)
 		{
-			Assignment = assignS;
+			UsedInStatement = statement;
 			break;
 		}
 	}
 	
-	if(Assignment is astNodePlaceholder)
+	if(UsedInStatement is astNodePlaceholder)
 	{
-		//no assignment found outside the optional statement.
+		//no UsedInStatements found outside the optional statement.
 		//So just return the optional statement.
-		return [OptionalStatement];
+		//return [OptionalStatement];
+		
+		//edit: dont know why the original statement is excluded?
+		//--> added it.
+		return [OptionalStatement, s2]; //19-11
+		
 	}
 	else
 	{
 		//we have found the assignment before our optional statement
 		//Check if this statement is inside an optional path
 		// return the statements given + the optional path
-		result = InsideOptionalPath(uniqueName, s, Assignment, FoundOptionalStats);
+		
+		//Add the statement that's in the optional path to the list.
+		//So it will be added as dependency later
+		FoundOptionalStats += s2;
+		
+		result = InsideOptionalPath(uniqueName, s, UsedInStatement, FoundOptionalStats, isReadOperation);
 		
 		//if the FoundOptionalStats has not yet been expanded with an assignment, add the found assignment.
 		if(result == FoundOptionalStats)
-			result += Assignment;
+			result += UsedInStatements;
 		return result;
 	}
-	return [];
 }
 public AstNode GetNodeByExactType(AstType \type)
 {
@@ -414,10 +480,15 @@ public AstNode GetNodeByExactType(AstType \type)
 }
 public AstNode GetNodeByExactType(exactType(str name))
 {
+	//for(from <- relNamespaceAttributedNode.from, 
+	//   to <- relNamespaceAttributedNode[from])
+	//   println(
+
 	if(from <- relNamespaceAttributedNode.from, 
 	   to <- relNamespaceAttributedNode[from],
-	   from.namespace.fullName + "." + to.member.nodeAttributedNode.name == name)
-		return to.member;
+	   //from.namespace.fullName + "." + to.member.nodeAttributedNode.name == name) name == name) 
+	   startsWith(name, from.namespace.fullName + "." + to.member.nodeAttributedNode.name)) //19-11
+	    return to.member;
 	else
 		return astNodePlaceholder();
 }
@@ -512,7 +583,8 @@ public void AddLocalAssignment(str name, AstNode a)
 public AstNode ResolveLocalAssignmentByUniqueName(str uniqueName)
 {
 	debuglist = listLocalAssignments;
-	if(as <- listLocalAssignments, as.uniqueName == uniqueName)
+	if(as <- listLocalAssignments, 
+	   as.uniqueName == uniqueName)
 		return as.block;
 	else
 	{
@@ -569,7 +641,7 @@ public str GetUniqueNameForResolvedIdentifier(uniqueName, resolved)
 		
 	if(aNode is astNodePlaceholder)
 	{
-	a=1;
+		a=1;
 		throw "aNode is not initialized for uniqueName <uniqueName> with resolved <resolved>";
 	}
 	//get typedecl 

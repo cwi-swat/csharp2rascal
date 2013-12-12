@@ -75,6 +75,7 @@
     <None Include="GeneratedOutput\Case4.rsc" />
     <None Include="GeneratedOutput\Circular.rsc" />
     <None Include="GeneratedOutput\Company.rsc" />
+    <None Include="GeneratedOutput\EvaluationTests\Test1.rsc" />
     <None Include="GeneratedOutput\Indirect.rsc" />
     <None Include="GeneratedOutput\ISellable.rsc" />
     <None Include="GeneratedOutput\Item.rsc" />
@@ -96,6 +97,7 @@
     <None Include="GeneratedOutput\SpecificCases\Lambda.rsc" />
     <None Include="GeneratedOutput\SpecificCases\Linq.rsc" />
     <None Include="GeneratedOutput\SpecificCases\LockCase.rsc" />
+    <None Include="GeneratedOutput\SpecificCases\ParameterDirection.rsc" />
     <None Include="GeneratedOutput\SpecificCases\SizeOfTypeOfDefaultValueCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\SwitchCase.rsc" />
     <None Include="GeneratedOutput\SpecificCases\TryCatch.rsc" />

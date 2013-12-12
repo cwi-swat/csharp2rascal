@@ -1,0 +1,7 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\bin\Release\UnitTestProject.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\bin\Release\UnitTestProject.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\obj\Release\UnitTestProject.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\obj\Release\UnitTestProject.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\obj\Release\UnitTestProject.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\bin\Release\ExampleCode.dll
+C:\Uitvoering\Workspace\git\csharp2rascal\NRefactory\UnitTestProject\bin\Release\ExampleCode.pdb

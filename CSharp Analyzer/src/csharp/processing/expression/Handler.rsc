@@ -5,6 +5,7 @@ import csharp::processing::typeDeclaration::Main;
 import csharp::processing::Dependence;
 import csharp::processing::Globals;
 import csharp::processing::utils::utils;
+import csharp::processing::utils::locationIncluder;
 
 import IO;
 
@@ -19,7 +20,16 @@ public void Handle(Expression e, Statement s)
 }
 public void Handle(assignmentExpression(Expression left, AssignmentOperator operator, Expression right), Statement s)
 {
-	//left is always identifierExpression or memberReferenceExpression
+	AddToReadMap(right, s);
+
+	//Add a dependence to the last assignment of our target
+	if(left is memberReferenceExpression)
+		AddDependence(s, left.target);
+	else
+		AddDependence(s, left);
+		 	
+ 	//Also add a dependence to the last read operation of our to be assigned variable (identifier or memberRef)
+	AddDependence(s, ExpressionLoc(left), true);
 	
 	//check the operator, for some this statement is also dependent on the left-side variable
 	visit(operator)
@@ -33,34 +43,47 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 
 	top-down visit(right)
 	{
-		case i:identifierExpression(_,_,_):					AddDependence(s, i); //our assignment depends on any identifier used on the right
-		case m:memberReferenceExpression(name,target,_):	
-		{		
+		case i:identifierExpression(_,_,_):	
+		{
+			//our assignment depends on any identifier used on the right
+			//first add dependence to the last assignment
+			AddDependence(s, i); 
+		}
+		case m:memberReferenceExpression(name,target,_):
+		{
 			//is it inside an invocationExpression?
 			//Then it will resolve to a method
 			
-			resolved = ResolveMemberReference(m);
-			if(resolved is attributedNode &&
-			   resolved.nodeAttributedNode is memberDeclaration &&
-			   resolved.nodeAttributedNode.nodeMemberDeclaration is methodDeclaration)
-			{
-				targetContainingNode = GetNodeByExactType(target.\type);
-				
-				//if the type is unknown, it is probably from an external library and 
-				//will not contain dependencies to places inside the project
-				//or so we presume.
-				if(targetContainingNode != astNodePlaceholder())
+			if(!(m has target &&
+			     m.target is typeReferenceExpression))
+		   	{
+			
+				resolved = ResolveMemberReference(m);
+				if(resolved is attributedNode &&
+				   resolved.nodeAttributedNode is memberDeclaration &&
+				   resolved.nodeAttributedNode.nodeMemberDeclaration is methodDeclaration)
 				{
-					targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, name);
 					
-					//our assignment depends on the outcome of the function called
-					AddDependence(s, targetNode);
-					
-					//the rest of the invocation handling is inside of its own function
+					//if the type is unknown, it is probably from an external library and 
+					//will not contain dependencies to places inside the project
+					//or so we presume.
+					if(target has \type)
+					{
+						targetContainingNode = GetNodeByExactType(target.\type);
+									
+						if(targetContainingNode != astNodePlaceholder())
+						{
+							targetNode = GetNodeMemberByName(targetContainingNode.nodeAttributedNode, name);
+							
+							//our assignment depends on the outcome of the member called(e.g. property or field).
+							AddDependence(s, targetNode);
+							//the rest of the invocation handling is inside of its own function
+						}
+					}
 				}
+				else
+					AddDependence(s, m); //our assignment depends on the member-ref used on the right
 			}
-			else
-				AddDependence(s, m); //our assignment depends on the member-ref used on the right
 		}
 	}
 	
@@ -86,7 +109,9 @@ public void Handle(assignmentExpression(Expression left, AssignmentOperator oper
 	   decl.nodeAttributedNode is memberDeclaration &&
 	   (decl.nodeAttributedNode.nodeMemberDeclaration is fieldDeclaration ||
 	   decl.nodeAttributedNode.nodeMemberDeclaration is propertyDeclaration))
+	{
 		AddDependence(s, decl);
+	}
 	
 	//add a dependence between the declaration and the parent attributedNode
 	//So for example, a property is dependend on a routine
@@ -181,27 +206,72 @@ public void Handle(invocationExpression(list[Expression] arguments, Expression t
 	//added the following like so "var a = function();" works like a depends on function.
 	AddDependence(s, targetNode);
 	
-	//not sure why it has to depend on exptarget, commented out....
-	//if(expTarget != expressionPlaceholder())
-	//{
-	//	AddDependence(s, expTarget);
-	//}
+	//This is needed so this kind of thing works:
+	//S1 var a = new Person()
+	//S2 a.Sleep();
+	//S2 has to depend on S1, an invocation also depends on the instance
+	if(expTarget != expressionPlaceholder())
+	{
+		AddDependence(s, expTarget);  //19-11
+		
+		//the target instance may be used inside the function call..
+		AddToReadMap(expTarget, s);
+		
+		//todo: inside the function all of the properties of the instance could be changed too!
+	}
 	
 	visit(arguments)
 	{
+		//invocation expression uses the arguments, so depend on the last assignments
+		//always do this for all arguments used
+		case i:identifierExpression(_,_,_):
+		{
+			AddDependence(s, i);  //19-11
+		}
+		//if the arguments have an directionexpression, also do this:
 		case d:directionExpression(exp,dir):
 		{
-			//if the argument is given as ref parameter, this will count as an assignment
-			if(dir is fieldDirectionRef)
+			//if the argument is given as ref or out parameter, this will count as an assignment
+			if(dir is fieldDirectionRef ||
+			   dir is fieldDirectionOut)
+			{
+				//add as an assignment
 				AddNewAssignment(exp, s);
-		}
+				
+				//if it counts an an assignment, it also depends on the last read operation.
+				AddDependence(s, ExpressionLoc(exp), true);
+			}
+		}		
 	}
+	
+ 	//uses the arguments in the function call
+ 	AddToReadMap(arguments, s);
 }
 public void Handle(objectCreateExpression(list[Expression] arguments, Expression initializer, AstType \type), Statement s)
 {
+	breakpoint =1;
 	visit(arguments)
 	{
-		case i:identifierExpression(_,_,_):		AddDependence(s,i);
+		//invocation expression uses the arguments, so depend on the last assignments
+		//always do this for all arguments used
+		case i:identifierExpression(_,_,_):
+		{
+			AddDependence(s, i);  //19-11
+		}
+		//if the arguments have an directionexpression, also do this:
+		case d:directionExpression(exp,dir):
+		{
+			//if the argument is given as ref or out parameter, this will count as an assignment
+			if(dir is fieldDirectionRef ||
+			   dir is fieldDirectionOut)
+			{
+				//add as an assignment
+				AddNewAssignment(exp, s);
+				
+				//if it counts an an assignment, it also depends on the last read operation.
+				AddDependence(s, ExpressionLoc(exp), true);
+			}
+		}		
 	}
 	
 	targetTypeNode = GetNodeByExactType(\type);
@@ -209,21 +279,23 @@ public void Handle(objectCreateExpression(list[Expression] arguments, Expression
 	//if the type is unknown, it is probably from an external library and 
 	//will not contain dependencies to places inside the project
 	//or so we presume.
-	if(targetContainingNode != astNodePlaceholder())
+	if(targetTypeNode != astNodePlaceholder())
 		AddDependence(s, targetTypeNode);
 		
 	//todo add dependence to the constructor node
+	
+	AddToReadMap(arguments, s);
 }
 public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator operatorU), Statement s)
 {
-	//depends on the declaration, it has to be declared before this statement can be executed.
+	//dependence to the declaration, it has to be declared before this statement can be executed.
 	AstNode decl;
 	if(expression is identifierExpression)
 	{
 		decl = ResolveIdentifier(expression);
 		if(decl is statement && decl.nodeStatement is variableDeclarationStatement)
 			AddDependence(s, decl);
-	}	
+	}
 	
 	visit(operatorU)
 	{
@@ -231,6 +303,8 @@ public void Handle(unaryOperatorExpression(Expression expression, UnaryOperator 
   		case op:postDecrement():	AddNewAssignment(expression, s);
   		case value x:				println("Unhandeled unaryOperatorExpression with operator: <operatorU>");
 	}
+	
+	AddToReadMap(expression, s);
 }
 public void Handle(e:conditionalExpression(Expression condition, Expression falseExpression, Expression trueExpression))
 {

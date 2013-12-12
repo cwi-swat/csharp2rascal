@@ -20,6 +20,7 @@ namespace AST_Getter
 
             var files = Directory.GetFiles(GlobalConstants.ExampleCodePath, "*.cs", SearchOption.TopDirectoryOnly).ToList();
             files.AddRange(Directory.GetFiles(Path.Combine(GlobalConstants.ExampleCodePath, "SpecificCases"), "*.cs", SearchOption.TopDirectoryOnly).ToList());
+            files.AddRange(Directory.GetFiles(Path.Combine(GlobalConstants.ExampleCodePath, "EvaluationTests"), "*.cs", SearchOption.TopDirectoryOnly).ToList());
 
             var firsttoproces = GlobalConstants.ExampleCodePath + GlobalConstants.FirstFileToProcess + ".cs";
             files.Insert(0, firsttoproces);

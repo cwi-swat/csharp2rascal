@@ -2,6 +2,8 @@
 {
     class Program
     {
+        public static void Main(string[] args)
+        { }
         public Program()
         {
             var a = 1;

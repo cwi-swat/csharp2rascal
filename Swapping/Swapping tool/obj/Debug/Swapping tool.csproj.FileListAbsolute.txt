@@ -1,0 +1,7 @@
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\bin\Debug\Swapping tool.exe.config
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\bin\Debug\Input\SwapFiles.txt
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\bin\Debug\Swapping tool.exe
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\bin\Debug\Swapping tool.pdb
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\obj\Debug\Swapping tool.csprojResolveAssemblyReference.cache
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\obj\Debug\Swapping tool.exe
+C:\Uitvoering\Workspace\git\csharp2rascal\Swapping\Swapping tool\obj\Debug\Swapping tool.pdb

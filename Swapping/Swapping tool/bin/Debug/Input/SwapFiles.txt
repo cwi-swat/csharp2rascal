@@ -1,0 +1,13 @@
+﻿/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|108,109
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|110,113
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|110,113
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153
+/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|114,130
+-/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|131,132
+>/C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/Joe.cs|152,153

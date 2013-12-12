@@ -17,8 +17,20 @@ public void AddDependence(Statement s, list[Statement] statements) = AddDependen
 public void AddDependence(Statement s, list[AstNode] astnodes) { for(ast<-astnodes) AddDependence(s, ast); }
 public void AddDependence(Statement s, Expression e) = AddDependence(s, ExpressionLoc(e));
 public void AddDependence(Statement s, Statement s2) = AddDependence(s, StatementLoc(s2));
-public void AddDependence(Statement s, AstNode astnode)
+public void AddDependence(Statement s, AstNode astnode) = AddDependence(s, astnode, false);
+public void AddDependence(Statement s, AstNode astnode, bool isReadOperation) = AddDependence(s, astnode, isReadOperation, false);
+public void AddDependence(Statement s, AstNode astnode, bool isReadOperation, bool fromInvocationHandler)
 {
+	//add a dependence from s to astnode.
+	//if the node is an expression, it is either a memberReferenceExpression or a identifierExpression
+	//in these cases, find the last known assign or read statement, and add a dependence from s to this.
+	//if this last known assign or read statement is in an optional path, add the condition for this as a dependence from s to it.
+	//then find the next assign or read statement before the one in the optional path, and repeat untill one is found that is not inside an optional path.
+	//
+	//isReadOperation indicates whether we are looking at assignments or read operations
+	//fromInvocationHandler indicates if the function is called from the invocation-handler function.
+	//	this is to avoid double execution
+
 	if(astnode is expression)
 	{
 		if(astnode.nodeExpression is memberReferenceExpression)
@@ -31,22 +43,30 @@ public void AddDependence(Statement s, AstNode astnode)
 			uniqueName = GetUniqueNameForResolvedIdentifier(astnode.nodeExpression.memberName, resolved);
 
 			s2 = emptyStatement();
-			if(uniqueName in mapAssignments)
-				s2 = GetLastListElement(mapAssignments[uniqueName]);
+			if(isReadOperation)
+			{
+				if(uniqueName in mapReads)
+					s2 = GetLastListElement(mapReads[uniqueName]);
+			}
+			else
+			{
+				if(uniqueName in mapAssignments)
+					s2 = GetLastListElement(mapAssignments[uniqueName]);
+			}
 			
 			if(s2 is emptyStatement)
 			{
 				//the member was not assigned inside the body
-				//so it is just dependant on the member itself
+				//so it just depends on the member itself
 				ExtendRelDependence(s, resolved);
 			}
 			else
 			{
 				//we found the last assignment, check if its inside an optional path
 				if(s2 is expressionStatement)
-					CheckForOptionalPath(uniqueName, StatementLoc(s2), s);
+					CheckForOptionalPath(uniqueName, StatementLoc(s2), s, isReadOperation);
 				else
-					CheckForOptionalPath(uniqueName, s2, s);
+					CheckForOptionalPath(uniqueName, s2, s, isReadOperation);
 			}
 		}
 		else if(astnode.nodeExpression is identifierExpression)
@@ -64,12 +84,14 @@ public void AddDependence(Statement s, AstNode astnode)
 			       tp.nodeAttributedNode.classType == enum()) //skip unsupported enums
 		   			return;
 			}
+						
 			//it can be a invocationexpression
 			AstNode parent = GetParent(astnode);
 			if(parent is expression &&
-			   parent.nodeExpression is invocationExpression)
-			   return; //this is handled in the invocationExpression Handle-method
-		
+			   parent.nodeExpression is invocationExpression && 
+			   !fromInvocationHandler)
+			   return; //Only handle when coming from the invocation statement itself
+			
 			//the dependence is to an identifier, check where it was last assigned.
 			memberName = astnode.nodeExpression.identifier;
 
@@ -80,11 +102,21 @@ public void AddDependence(Statement s, AstNode astnode)
 			AstNode s2 = statement(emptyStatement());
 			str uniqueName = GetUniqueNameForIdentifier(astnode.nodeExpression);
 			
-			if(uniqueName in mapAssignments)
-				s2 = StatementLoc(GetLastListElement(mapAssignments[uniqueName]));
-			//it might be a local-var (for/using/etc)
+			if(isReadOperation)
+			{
+				//it might be a local-var (for/using/etc)
+				a = mapReads;
+				if(uniqueName in mapReads)
+					s2 = GetLastListElement(mapReads[uniqueName]);
+			}
 			else
-				s2 = GetLastLocalAssignment(memberName);
+			{
+				//it might be a local-var (for/using/etc)
+				if(uniqueName in mapAssignments)
+					s2 = StatementLoc(GetLastListElement(mapAssignments[uniqueName]));
+				else
+					s2 = GetLastLocalAssignment(memberName);
+			}
 			
 			if(	s2 is statement &&
 				s2.nodeStatement is emptyStatement ||
@@ -108,7 +140,7 @@ public void AddDependence(Statement s, AstNode astnode)
 			else
 			{
 				//we found the last assignment, check if its inside an optional path
-				CheckForOptionalPath(uniqueName, s2, s);
+				CheckForOptionalPath(uniqueName, s2, s, isReadOperation);
 			}
 		}
 	}
@@ -119,12 +151,12 @@ public void AddDependence(Statement s, AstNode astnode)
 		ExtendRelDependence(s,astnode);
 	}
 }
-private void CheckForOptionalPath(str uniqueName, AstNode s2, Statement s)
+private void CheckForOptionalPath(str uniqueName, AstNode s2, Statement s, bool isReadOperation)
 {
 	//check if s2 is inside an optional path (if/switch/do/for/etc)
 	//if so, return the statement as a depenceny
 	//also return the last assignment before the if/switch-statement
-	listStatements = InsideOptionalPath(uniqueName, s, s2, []);
+	listStatements = InsideOptionalPath(uniqueName, s, s2, [], isReadOperation);
 	
 	if(!(isEmpty(listStatements ))) //add the found dependency statements to the rel
 		ExtendRelDependence(s,listStatements);

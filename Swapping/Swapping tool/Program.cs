@@ -12,7 +12,8 @@ namespace Swapping_tool
         public static void Main(string[] args)
         {
             //empty the output directory
-            Directory.Delete(Constants.OutputPath, true);
+            if(Directory.Exists(Constants.OutputPath))
+                Directory.Delete(Constants.OutputPath, true);
 
             var swapFile = File.ReadAllLines(Constants.SwapFile);
             
@@ -20,10 +21,13 @@ namespace Swapping_tool
             for (int i = 0; i < swapFile.Length; i++)
             {
                 var line = swapFile[i];
+                if (String.IsNullOrEmpty(line))
+                    continue;
+
                 if (line.StartsWith("-"))
-                {
                     swapLine.AddAvailableSwap(new SwapLine(line));
-                }
+                else if (line.StartsWith(">"))
+                    swapLine.UntillSwapLine = new SwapLine(line);
                 else
                 {
                     if (swapLine != null)
@@ -33,7 +37,6 @@ namespace Swapping_tool
                 }
             }
             swapLine.Process();
-
         }
     }
 }

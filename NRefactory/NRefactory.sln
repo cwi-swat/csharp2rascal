@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASTGetter", "ASTGetter\AST Getter.csproj", "{9416D919-3DF0-4CC1-A392-B2162D4C06E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AST Getter", "ASTGetter\AST Getter.csproj", "{9416D919-3DF0-4CC1-A392-B2162D4C06E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assemblies", "Assemblies", "{639A51ED-CCE3-444F-8065-2A0CA331195C}"
 	ProjectSection(SolutionItems) = preProject

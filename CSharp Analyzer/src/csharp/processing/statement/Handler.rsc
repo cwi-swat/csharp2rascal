@@ -31,6 +31,8 @@ public void Handle(Statement s:ifElseStatement(Expression c, Statement elseBranc
 	AddDependenceToIdentifiersInExpression(c, s);
 	AddDependenceForBranch(ifBranch, s);
 	AddDependenceForBranch(elseBranch, s);
+	
+	AddToReadMap(c, s);
 }
 
 public void Handle(Statement s:variableDeclarationStatement(list[Modifiers] modifiers, list[AstNode] variables, AstType \type))
@@ -46,7 +48,8 @@ public void Handle(Statement s:variableDeclarationStatement(list[Modifiers] modi
 		if(!(variable.initializer is emptyExpression))
 		{
 			AddNewAssignment(s, TopMostStatement);
-						
+			AddToReadMap(variable.initializer, s);
+				
 			visit(variable.initializer)
 			{
 				case i:identifierExpression(_,_,_):
@@ -61,13 +64,14 @@ public void Handle(Statement s:variableDeclarationStatement(list[Modifiers] modi
 	}
 }
 
-public void Handle(Statement s:switchStatement(Expression expression, list[AstNode] switchSections))
+public void Handle(Statement s:switchStatement(Expression e, list[AstNode] switchSections))
 {
-	AddDependenceToIdentifiersInExpression(expression, s);
-		
+	AddDependenceToIdentifiersInExpression(e, s);
+	
 	for(section <- switchSections, statement <- section.statements)
 		AddDependenceForBranch(statement, section);
 	
+	AddToReadMap(e, s);
 }
 
 public void Handle(Statement s:returnStatement(Expression exp))
@@ -114,11 +118,15 @@ public void Handle(Statement s:doWhileStatement(Expression condition, Statement 
 {
 	AddDependenceToIdentifiersInExpression(condition, s);
 	AddDependenceForBranch(embeddedStatement, s);
+	
+	AddToReadMap(condition, s);
 }
 public void Handle(Statement s:whileStatement(Expression condition, Statement embeddedStatement))
 {
 	AddDependenceToIdentifiersInExpression(condition, s);
 	AddDependenceForBranch(embeddedStatement, s);
+	
+	AddToReadMap(condition, s);
 }
 public void Handle(Statement s:forStatement(Expression condition, Statement embeddedStatement, list[Statement] initializers, list[Statement] iterators))
 {
@@ -136,6 +144,8 @@ public void Handle(Statement s:forStatement(Expression condition, Statement embe
 	AddDependenceToIdentifiersInExpression(condition, s);
 	
 	AddDependenceForBranch(embeddedStatement, s);
+	
+	AddToReadMap(condition, s);
 }
 public void Handle(Statement s:foreachStatement(Statement embeddedStatement, Expression inExpression, str variableName))
 {
@@ -145,6 +155,8 @@ public void Handle(Statement s:foreachStatement(Statement embeddedStatement, Exp
 	AddLocalAssignment(StatementLoc(s), uniqueName, StatementLoc(s));
 	
 	AddDependenceForBranch(embeddedStatement, s);
+	
+	AddToReadMap(inExpression, s);
 }
 public void Handle(Statement s:tryCatchStatement(Statement tryBlock, list[AstNode] catchClauses, Statement finallyBlock))
 {
