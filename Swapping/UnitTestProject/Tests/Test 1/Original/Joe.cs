@@ -107,7 +107,7 @@ public static void LiveDay(ref Person joe)
 {
     var isAlive = joe.IsAlive;
     
-    while ( joe.SleptForHours <= 8) {
+    while ( joe.SleptForHours <= 8 ) {
         joe.SleepForHour();
     }
 
@@ -120,9 +120,8 @@ public static void LiveDay(ref Person joe)
             }
         }
         catch ( Exception ex ) {
-            if ( refrigerator.IsEmpty ) {
+            if ( refrigerator.IsEmpty )
                 refrigerator.Fill(joe.DoGroceries(new Supermarket()));
-            }
             else //joe is no expert
                 joe.CallMechanic();
         }
@@ -141,7 +140,7 @@ public static void LiveDay(ref Person joe)
                 joe.Driving = false;
             }
         }
-        if(joe.IsAlive)
+        if ( joe.IsAlive )
             joe.DoWork(work);
     }
     if ( isAlive ) {
