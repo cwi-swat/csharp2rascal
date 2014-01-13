@@ -148,14 +148,6 @@ public static void LiveDay(ref Person joe)
         if ( joe.DaysAlive > 9000 )
             isAlive = false;
     }
-
-    var test = joe.IsAlive;
-
-    if ( 1 == 2 )
-    {
-        var test2 = joe.IsAlive;
-    }
-
     joe.IsAlive = isAlive;
 }
 //joe.IsAlive

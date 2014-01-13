@@ -1,5 +1,0 @@
-[cSharpFile("C:\\Uitvoering\\Workspace\\git\\csharp2rascal\\NRefactory\\ExampleCode\\EvaluationTests\\joe_tmp.cs",[namespaceDeclaration("EvaluationTests","ExampleCode.EvaluationTests",[],[attributedNode(typeDeclaration("joe_tmp",[],[],class(),[],[],[],[modifiersNone(),],[])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/joe_tmp.cs|(0,0,<4,5>,<65,6>)]
-)[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/joe_tmp.cs|(0,0,<4,5>,<65,6>)]
-])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/joe_tmp.cs|(0,0,<2,1>,<66,2>)]
-,])[@location=|file:///C/Uitvoering/Workspace/git/csharp2rascal/NRefactory/ExampleCode/EvaluationTests/joe_tmp.cs|(0,0,<1,1>,<67,1>)]
-]

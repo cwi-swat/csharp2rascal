@@ -75,7 +75,10 @@
     <None Include="GeneratedOutput\Case4.rsc" />
     <None Include="GeneratedOutput\Circular.rsc" />
     <None Include="GeneratedOutput\Company.rsc" />
+    <None Include="GeneratedOutput\EvaluationTests\Joe.rsc" />
     <None Include="GeneratedOutput\EvaluationTests\Test1.rsc" />
+    <None Include="GeneratedOutput\EvaluationTests\Test2.rsc" />
+    <None Include="GeneratedOutput\EvaluationTests\Test3.rsc" />
     <None Include="GeneratedOutput\Indirect.rsc" />
     <None Include="GeneratedOutput\ISellable.rsc" />
     <None Include="GeneratedOutput\Item.rsc" />
@@ -118,6 +121,7 @@
       <Name>ExampleCode</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
